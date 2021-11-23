@@ -1,0 +1,129 @@
+ <Modal
+            size="md"
+            isOpen={this.state.manageModal}
+            toggle={this.toggleManageModal}
+          >
+            <ModalHeader toggle={this.toggleManageModal}>
+              {this.state.##MODEL_NAME## && this.state.##MODEL_NAME##.ID
+                ? "Update ##MODEL_DISPLAY_NAME##"
+                : "Add ##MODEL_DISPLAY_NAME##"}
+            </ModalHeader>
+            <Formik
+              initialValues={initialValues}
+              validationSchema={##MODEL_NAME##Validation}
+              onSubmit={this.handleSubmit}
+              validateOnBlur={false}
+              validateOnChange={false}
+            >
+              {({ errors, values, setFieldValue }) => (
+                <Form className="av-tooltip tooltip-label-bottom">
+                  <ModalBody>
+                    <Fragment>
+                      <Row className="mb-10">
+                        <Col lg="12" sm="12" md="12" lg="12">
+                          <FormGroup className="form-group has-float-label">
+                            <Label className="requiredField">Name</Label>
+                            <Field className="form-control" name="Name" />
+                            {errors.Name && (
+                              <div className="invalid-feedback d-block">
+                                {errors.Name}
+                              </div>
+                            )}
+                          </FormGroup>
+                        </Col>
+                        <Col lg="12" sm="12" md="12" lg="12">
+                          <FormGroup className="form-group has-float-label">
+                            <DropDown
+                              className="react-select"
+                              classNamePrefix="react-select"
+                              labelClassName="requiredField"
+                              label="E-Beat Location Type"
+                              name=""
+                              MobcolSplit={12}
+                              isClearable
+                              //labelClassName="requiredField"
+                              isSearchable
+                              options={this.state.##MODEL_FOREIGN_1##}
+                              ClearAction={() => {
+                                setFieldValue(`##MODEL_FOREIGN_1##ID`, "")
+                              }}
+                              Action={entity => {
+                                if (entity) {
+                                  setFieldValue(
+                                    "##MODEL_FOREIGN_1##ID",
+                                    entity ? entity.value : null
+                                  )
+                                  setFieldValue(
+                                    "##MODEL_FOREIGN_1##",
+                                    entity ? entity.value : null
+                                  )
+                                }
+                              }}
+                              errors={errors.##MODEL_FOREIGN_1##ID}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col lg="12" sm="12" md="12" lg="12">
+                          <FormGroup className="form-group has-float-label">
+                            <Label className="requiredField">Address</Label>
+                            <Field className="form-control" name="Address" />
+                            {errors.Address && (
+                              <div className="invalid-feedback d-block">
+                                {errors.Address}
+                              </div>
+                            )}
+                          </FormGroup>
+                        </Col>
+                       
+                      </Row>
+                    </Fragment>
+                  </ModalBody>
+                  <ModalFooter>
+                    <div className="container-fluid">
+                      <Row>
+                        <Col lg="">
+                          <Label>
+                            <span style={{ color: "red" }}>* </span>
+                            Mandatory Fields
+                          </Label>
+                        </Col>
+
+                        <FormGroup className="float-right ">
+                          {this.state.##MODEL_NAME##.ID ? (
+                            <Button
+                              className={
+                                this.state.buttonAction ? "disabled" : ""
+                              }
+                              type="submit"
+                              outline
+                              color="primary"
+                            >
+                              Update
+                            </Button>
+                          ) : (
+                              <Button
+                                className={
+                                  this.state.buttonAction ? "disabled" : ""
+                                }
+                                type="submit"
+                                outline
+                                color="primary"
+                              >
+                                Add
+                              </Button>
+                            )}
+                          <Button
+                            color="danger"
+                            className="ml-2"
+                            onClick={() => this.toggleManageModal()}
+                          >
+                            Cancel
+                          </Button>
+                        </FormGroup>
+                      </Row>
+                    </div>
+                  </ModalFooter>
+                </Form>
+              )}
+            </Formik>
+          </Modal>

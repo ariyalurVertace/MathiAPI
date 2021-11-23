@@ -1,0 +1,47 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+    - dev
+
+resources:
+    - repo: self
+
+variables:
+    tag: "$(Build.BuildId)"
+
+stages:
+    - stage: Build
+      displayName: Build image
+      jobs:
+          - job: Build
+            displayName: Build
+            pool:
+                vmImage: ubuntu-latest
+            steps:
+                - task: DownloadSecureFile@1
+                  name: secureEnvFile
+                  inputs:
+                      secureFile: ".env"
+                - script: cp $(secureEnvFile.secureFilePath) .
+                  displayName: "moving env into the Dockerfile context"
+                - task: Docker@2
+                  inputs:
+                      containerRegistry: "Vertace Docker"
+                      command: "buildAndPush"
+                      Dockerfile: "**/Dockerfile"
+                      repository: "$(DOCKER_IMAGE_NAME)"
+                      tags: |
+                          $(GIT_BRANCH)
+                - task: SSH@0
+                  inputs:
+                      sshEndpoint: "Vertace API VM"
+                      runOptions: "commands"
+                      commands: "docker pull $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(GIT_BRANCH)"
+                - task: DockerCompose@0
+                  inputs:
+                      containerregistrytype: "Container Registry"
+                      dockerRegistryEndpoint: "Vertace Docker"
+                      dockerComposeFile: "**/docker-compose.yml"
+                      dockerComposeCommand: "up --detach --no-build"

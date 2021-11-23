@@ -1,0 +1,22 @@
+GetAll##MODEL_FOREIGN## = () => {
+    let { ##MODEL_FOREIGN_CAMELCASE##RequestModel } = this.state
+
+    CallService(
+      ##MODEL_FOREIGN_CAMELCASE##.GetAll,
+      MethodType.POST,
+      false,
+      ##MODEL_FOREIGN_CAMELCASE##RequestModel,
+      "",
+      this.GetAll##MODEL_FOREIGN##Response
+    )
+  };
+
+  GetAll##MODEL_FOREIGN##Response = data => {
+    if (data.result) {
+      this.setState({
+        ##MODEL_FOREIGN_CAMELCASE##List: data.result.map(function (a) {
+          return { value: a.ID, label: a.Name }
+        }),
+      })
+    }
+  };

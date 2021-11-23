@@ -1,0 +1,70 @@
+ <Modal
+            className="viewDocumentModal"
+            isOpen={this.state.viewModal}
+            size="lg"
+            toggle={this.ToggleViewModal}
+          >
+            <ModalHeader toggle={this.ToggleViewModal}>
+              <b>View</b>
+            </ModalHeader>
+            <ModalBody>
+
+              <div id="divToPrint" className="mt-2" style={{
+                // width: '170mm',
+                minHeight: '200mm',
+                // // marginLeft: 'auto',
+                // marginRight: 'auto'
+                marginTop:'0'
+              }}>
+                <div className="text-sm-center">
+                  <img
+                    src={logo}
+                    alt=""
+                    height="120"
+                    width="120"
+                    className="auth-logo-dark m-auto"
+                  />
+
+                  <Row className="mt-5">
+                    <Col lg="4" style={{textAlign:"right"}}>
+                      <h5><b>Name :</b></h5>
+                    </Col>
+                    <Col lg="6"  style={{textAlign:"left"}}>
+                      <h5>{this.state.##MODEL_NAME##Detail ? this.state.##MODEL_NAME##Detail.Name : ""}</h5>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col lg="4" style={{textAlign:"right"}}>
+                      <h5><b>Address :</b></h5>
+                    </Col>
+                    <Col lg="6" style={{textAlign:"left"}}>
+                      <h5>{this.state.##MODEL_NAME##Detail ? this.state.##MODEL_NAME##Detail.Address : ""}</h5>
+                    </Col>
+                  </Row>
+                </div>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <FormGroup>
+                {/* <a href={this.state.QRValue}> */}
+                <Button
+                  id="print"
+                  className="default   btn-sm mb-2 btn-addon"
+                  color="primary"
+                  onClick={() => this.printDocument()}
+                >
+                  Download
+                  </Button>{" "}
+                {/* </a> */}
+                <Button
+                  className="default   btn-sm mb-2 btn-addon"
+                  color="danger"
+                  onClick={() => this.ToggleViewModal()}
+                >
+                  Close
+                </Button>
+              </FormGroup>
+            </ModalFooter>
+          </Modal>
+          

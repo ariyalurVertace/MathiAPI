@@ -1,0 +1,1349 @@
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 2 (class 3079 OID 16384)
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 3537 (class 0 OID 0)
+-- Dependencies: 2
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+--
+-- TOC entry 3 (class 3079 OID 16627)
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- TOC entry 3538 (class 0 OID 0)
+-- Dependencies: 3
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
+--
+-- TOC entry 746 (class 1247 OID 16887)
+-- Name: FieldType; Type: TYPE; Schema: public; Owner: postgres
+--
+--
+
+--
+-- TOC entry 3542 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: Area_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 208 (class 1259 OID 16503)
+-- Name: Designation; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Designation" (
+    "ID" smallint NOT NULL,
+    "Name" text NOT NULL,
+    "Rank" smallint NOT NULL
+);
+
+
+ALTER TABLE public."Designation" OWNER TO superadmin;
+
+--
+-- TOC entry 207 (class 1259 OID 16501)
+-- Name: Designation_ID_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."Designation_ID_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Designation_ID_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3543 (class 0 OID 0)
+-- Dependencies: 207
+-- Name: Designation_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."Designation_ID_seq" OWNED BY public."Designation"."ID";
+
+
+--
+-- TOC entry 219 (class 1259 OID 16664)
+-- Name: EBeatCheckin; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."EBeatCheckin" (
+    "ID" integer NOT NULL,
+    "CheckinBy" smallint NOT NULL,
+    "CheckinDate" time with time zone NOT NULL,
+    "Lat" double precision NOT NULL,
+    "Long" double precision NOT NULL,
+    "Distance" smallint NOT NULL,
+    "CheckinLocation" smallint
+);
+
+
+ALTER TABLE public."EBeatCheckin" OWNER TO superadmin;
+
+--
+-- TOC entry 218 (class 1259 OID 16638)
+-- Name: EBeatLocation; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."EBeatLocation" (
+    "ID" smallint NOT NULL,
+    "Name" text NOT NULL,
+    "EBeatLocationTypeID" smallint NOT NULL,
+    "CreatedBy" smallint NOT NULL,
+    "CreatedAt" smallint NOT NULL,
+    "CreationDateTime" time with time zone NOT NULL,
+    "Address" text NOT NULL,
+    "Lat" double precision,
+    "Long" double precision,
+    "ActivatedDateTime" time with time zone,
+    "ActivatedBy" smallint,
+    "EBeatLocationQR" uuid
+);
+
+
+ALTER TABLE public."EBeatLocation" OWNER TO superadmin;
+
+--
+-- TOC entry 220 (class 1259 OID 16675)
+-- Name: EBeatLocationType; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."EBeatLocationType" (
+    "ID" smallint NOT NULL,
+    "Name" text NOT NULL
+);
+
+
+ALTER TABLE public."EBeatLocationType" OWNER TO superadmin;
+
+--
+-- TOC entry 240 (class 1259 OID 17122)
+-- Name: EntityState; Type: TABLE; Schema: public; Owner: postgres
+--
+
+--
+-- TOC entry 216 (class 1259 OID 16558)
+-- Name: FeedbackStatus; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."FeedbackStatus" (
+    "ID" smallint NOT NULL,
+    "Name" text NOT NULL
+);
+
+
+ALTER TABLE public."FeedbackStatus" OWNER TO superadmin;
+
+--
+-- TOC entry 215 (class 1259 OID 16556)
+-- Name: FeedbackStatus_ID_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."FeedbackStatus_ID_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."FeedbackStatus_ID_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3546 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: FeedbackStatus_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."FeedbackStatus_ID_seq" OWNED BY public."FeedbackStatus"."ID";
+
+
+--
+-- TOC entry 214 (class 1259 OID 16536)
+-- Name: FeedbackType; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."FeedbackType" (
+    "ID" smallint NOT NULL,
+    "Name" text NOT NULL
+);
+
+
+ALTER TABLE public."FeedbackType" OWNER TO superadmin;
+
+--
+-- TOC entry 213 (class 1259 OID 16534)
+-- Name: FeedbackType_ID_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."FeedbackType_ID_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."FeedbackType_ID_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3547 (class 0 OID 0)
+-- Dependencies: 213
+-- Name: FeedbackType_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."FeedbackType_ID_seq" OWNED BY public."FeedbackType"."ID";
+
+
+--
+-- TOC entry 237 (class 1259 OID 17078)
+-- Name: Feedback_ID_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."Feedback_ID_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Feedback_ID_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3548 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: Feedback_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."Feedback_ID_seq" OWNED BY public."Feedback"."ID";
+
+
+--
+-- TOC entry 206 (class 1259 OID 16470)
+-- Name: Level; Type: TABLE; Schema: public; Owner: postgres
+--
+
+
+--
+-- TOC entry 210 (class 1259 OID 16514)
+-- Name: Office; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Office" (
+    "ID" smallint NOT NULL,
+    "AreaID" smallint NOT NULL,
+    "ControllingOfficerID" smallint,
+    "Name" text NOT NULL,
+    "Address" text NOT NULL,
+    "Lat" double precision,
+    "Long" double precision,
+    "OfficeTypeID" smallint,
+    "ReportingOfficeID" smallint
+);
+
+
+ALTER TABLE public."Office" OWNER TO superadmin;
+
+--
+-- TOC entry 209 (class 1259 OID 16512)
+-- Name: Office_ID_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."Office_ID_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Office_ID_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3550 (class 0 OID 0)
+-- Dependencies: 209
+-- Name: Office_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."Office_ID_seq" OWNED BY public."Office"."ID";
+
+
+--
+-- TOC entry 212 (class 1259 OID 16525)
+-- Name: Officer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Officer" (
+    "ID" smallint NOT NULL,
+    "Name" text NOT NULL,
+    "DesignationID" smallint NOT NULL,
+    "MobileNumber1" text NOT NULL,
+    "MobileNumber2" text,
+    "OfficeID" smallint,
+    "UserID" smallint,
+    "IsDeleted" boolean DEFAULT false
+);
+
+
+ALTER TABLE public."Officer" OWNER TO superadmin;
+
+--
+-- TOC entry 211 (class 1259 OID 16523)
+-- Name: Officer_ID_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."Officer_ID_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Officer_ID_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3551 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: Officer_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."Officer_ID_seq" OWNED BY public."Officer"."ID";
+
+
+--
+-- TOC entry 230 (class 1259 OID 16923)
+-- Name: Role; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Role" (
+    "Name" text NOT NULL,
+    "IsDeleted" boolean DEFAULT false NOT NULL,
+    "ID" smallint NOT NULL
+);
+
+
+ALTER TABLE public."Role" OWNER TO superadmin;
+
+--
+-- TOC entry 229 (class 1259 OID 16921)
+-- Name: Role_ID_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."Role_ID_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Role_ID_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3552 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: Role_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."Role_ID_seq" OWNED BY public."Role"."ID";
+
+
+--
+-- TOC entry 222 (class 1259 OID 16694)
+-- Name: UIModule; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."UIModule" (
+    id smallint NOT NULL,
+    "Name" text NOT NULL,
+    "IsDeleted" boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public."UIModule" OWNER TO superadmin;
+
+--
+-- TOC entry 224 (class 1259 OID 16706)
+-- Name: UIModuleComponent; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."UIModuleComponent" (
+    id smallint NOT NULL,
+    "Name" text NOT NULL,
+    "UIModuleId" smallint,
+    "IsItemSpecific" boolean DEFAULT false NOT NULL,
+    "IsDeleted" boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public."UIModuleComponent" OWNER TO superadmin;
+
+--
+-- TOC entry 223 (class 1259 OID 16704)
+-- Name: UIModuleComponent_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."UIModuleComponent_id_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."UIModuleComponent_id_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3553 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: UIModuleComponent_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."UIModuleComponent_id_seq" OWNED BY public."UIModuleComponent".id;
+
+
+--
+-- TOC entry 221 (class 1259 OID 16692)
+-- Name: UIModule_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."UIModule_id_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."UIModule_id_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3554 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: UIModule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."UIModule_id_seq" OWNED BY public."UIModule".id;
+
+
+--
+-- TOC entry 202 (class 1259 OID 16394)
+-- Name: User; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."User" (
+    "Name" text,
+    "Username" text NOT NULL,
+    "Password" text,
+    "Salt" text,
+    "ForcePasswordChange" boolean,
+    "PasswordValidFrom" integer,
+    "ID" smallint NOT NULL,
+    "IsActive" boolean,
+    "IsDeleted" boolean,
+    "LastLoginDateTime" time with time zone
+);
+
+
+ALTER TABLE public."User" OWNER TO superadmin;
+
+--
+-- TOC entry 226 (class 1259 OID 16719)
+-- Name: UserLoginLog; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."UserLoginLog" (
+    id smallint NOT NULL,
+    "Username" text NOT NULL,
+    "Result" text NOT NULL,
+    "Address" text NOT NULL,
+    "DateTime" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public."UserLoginLog" OWNER TO superadmin;
+
+--
+-- TOC entry 225 (class 1259 OID 16717)
+-- Name: UserLoginLog_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."UserLoginLog_id_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."UserLoginLog_id_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3555 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: UserLoginLog_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."UserLoginLog_id_seq" OWNED BY public."UserLoginLog".id;
+
+
+--
+-- TOC entry 236 (class 1259 OID 17028)
+-- Name: UserRole; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."UserRole" (
+    "ID" smallint NOT NULL,
+    "UserId" smallint NOT NULL,
+    "RoleId" smallint NOT NULL
+);
+
+
+ALTER TABLE public."UserRole" OWNER TO superadmin;
+
+--
+-- TOC entry 235 (class 1259 OID 17026)
+-- Name: UserRole_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."UserRole_id_seq"
+    AS smallint
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."UserRole_id_seq" OWNER TO superadmin;
+
+--
+-- TOC entry 3556 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: UserRole_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."UserRole_id_seq" OWNED BY public."UserRole"."ID";
+
+
+--
+-- TOC entry 217 (class 1259 OID 16615)
+-- Name: User_ID_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."User" ALTER COLUMN "ID" ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public."User_ID_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 3292 (class 2604 OID 16880)
+-- Name: APIModule ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."APIModule" ALTER COLUMN "ID" SET DEFAULT nextval('public."APIModule_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3296 (class 2604 OID 16939)
+-- Name: APIModuleParameter ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."APIModuleParameter" ALTER COLUMN "ID" SET DEFAULT nextval('public."APIModuleParameter_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3297 (class 2604 OID 16956)
+-- Name: APIModuleRoleAccess ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."APIModuleRoleAccess" ALTER COLUMN "ID" SET DEFAULT nextval('public."APIModuleRoleAccess_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3274 (class 2604 OID 16459)
+-- Name: Area ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3278 (class 2604 OID 16506)
+-- Name: Designation ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Designation" ALTER COLUMN "ID" SET DEFAULT nextval('public."Designation_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3301 (class 2604 OID 17125)
+-- Name: EntityState ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3302 (class 2604 OID 17136)
+-- Name: EntityStateProgress ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3299 (class 2604 OID 17083)
+-- Name: Feedback ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Feedback" ALTER COLUMN "ID" SET DEFAULT nextval('public."Feedback_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3283 (class 2604 OID 16561)
+-- Name: FeedbackStatus ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."FeedbackStatus" ALTER COLUMN "ID" SET DEFAULT nextval('public."FeedbackStatus_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3282 (class 2604 OID 16539)
+-- Name: FeedbackType ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."FeedbackType" ALTER COLUMN "ID" SET DEFAULT nextval('public."FeedbackType_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3276 (class 2604 OID 16473)
+-- Name: Level ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3279 (class 2604 OID 16517)
+-- Name: Office ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Office" ALTER COLUMN "ID" SET DEFAULT nextval('public."Office_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3280 (class 2604 OID 16528)
+-- Name: Officer ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Officer" ALTER COLUMN "ID" SET DEFAULT nextval('public."Officer_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3294 (class 2604 OID 16927)
+-- Name: Role ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Role" ALTER COLUMN "ID" SET DEFAULT nextval('public."Role_ID_seq"'::regclass);
+
+
+--
+-- TOC entry 3284 (class 2604 OID 16697)
+-- Name: UIModule id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UIModule" ALTER COLUMN id SET DEFAULT nextval('public."UIModule_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3286 (class 2604 OID 16709)
+-- Name: UIModuleComponent id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UIModuleComponent" ALTER COLUMN id SET DEFAULT nextval('public."UIModuleComponent_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3289 (class 2604 OID 16722)
+-- Name: UserLoginLog id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserLoginLog" ALTER COLUMN id SET DEFAULT nextval('public."UserLoginLog_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3298 (class 2604 OID 17031)
+-- Name: UserRole ID; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserRole" ALTER COLUMN "ID" SET DEFAULT nextval('public."UserRole_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3354 (class 2606 OID 16944)
+-- Name: APIModuleParameter APIModuleParameter_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."APIModuleParameter"
+    ADD CONSTRAINT "APIModuleParameter_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3357 (class 2606 OID 16958)
+-- Name: APIModuleRoleAccess APIModuleRoleAccess_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."APIModuleRoleAccess"
+    ADD CONSTRAINT "APIModuleRoleAccess_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3350 (class 2606 OID 16885)
+-- Name: APIModule APIModule_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."APIModule"
+    ADD CONSTRAINT "APIModule_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3309 (class 2606 OID 16461)
+-- Name: Area Area_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+--
+-- TOC entry 3316 (class 2606 OID 16511)
+-- Name: Designation Designation_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Designation"
+    ADD CONSTRAINT "Designation_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3339 (class 2606 OID 16668)
+-- Name: EBeatCheckin EBeatCheckin_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EBeatCheckin"
+    ADD CONSTRAINT "EBeatCheckin_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3342 (class 2606 OID 16682)
+-- Name: EBeatLocationType EBeatLocationType_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EBeatLocationType"
+    ADD CONSTRAINT "EBeatLocationType_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3333 (class 2606 OID 16645)
+-- Name: EBeatLocation EBeatLocation_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EBeatLocation"
+    ADD CONSTRAINT "EBeatLocation_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3374 (class 2606 OID 17138)
+-- Name: EntityStateProgress EntityStateProgress_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+
+--
+-- TOC entry 3331 (class 2606 OID 16566)
+-- Name: FeedbackStatus FeedbackStatus_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."FeedbackStatus"
+    ADD CONSTRAINT "FeedbackStatus_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3329 (class 2606 OID 16544)
+-- Name: FeedbackType FeedbackType_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."FeedbackType"
+    ADD CONSTRAINT "FeedbackType_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3365 (class 2606 OID 17088)
+-- Name: Feedback Feedback_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Feedback"
+    ADD CONSTRAINT "Feedback_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3313 (class 2606 OID 16478)
+-- Name: Level Level_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+
+--
+-- TOC entry 3322 (class 2606 OID 17159)
+-- Name: Officer MobileNumber1; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Officer"
+    ADD CONSTRAINT "MobileNumber1" UNIQUE ("MobileNumber1");
+
+
+--
+-- TOC entry 3318 (class 2606 OID 16522)
+-- Name: Office Office_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Office"
+    ADD CONSTRAINT "Office_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3324 (class 2606 OID 16533)
+-- Name: Officer Officer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Officer"
+    ADD CONSTRAINT "Officer_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3352 (class 2606 OID 16932)
+-- Name: Role Role_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Role"
+    ADD CONSTRAINT "Role_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3346 (class 2606 OID 16716)
+-- Name: UIModuleComponent UIModuleComponent_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UIModuleComponent"
+    ADD CONSTRAINT "UIModuleComponent_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3344 (class 2606 OID 16703)
+-- Name: UIModule UIModule_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UIModule"
+    ADD CONSTRAINT "UIModule_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3305 (class 2606 OID 16604)
+-- Name: User UniqueUsername; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+
+--
+-- TOC entry 3348 (class 2606 OID 16728)
+-- Name: UserLoginLog UserLoginLog_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserLoginLog"
+    ADD CONSTRAINT "UserLoginLog_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3361 (class 2606 OID 17033)
+-- Name: UserRole UserRole_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserRole"
+    ADD CONSTRAINT "UserRole_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3307 (class 2606 OID 16618)
+-- Name: User User_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."User"
+    ADD CONSTRAINT "User_pkey" PRIMARY KEY ("ID");
+
+
+--
+-- TOC entry 3355 (class 1259 OID 16983)
+-- Name: fki_APIModuleID; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_APIModuleID" ON public."APIModuleParameter" USING btree ("APIModuleId");
+
+
+--
+-- TOC entry 3358 (class 1259 OID 16971)
+-- Name: fki_APIModuleIDFK; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_APIModuleIDFK" ON public."APIModuleRoleAccess" USING btree ("APIModuleId");
+
+
+--
+-- TOC entry 3359 (class 1259 OID 16998)
+-- Name: fki_APIModuleRoleID; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_APIModuleRoleID" ON public."APIModuleRoleAccess" USING btree ("RoleId");
+
+
+--
+-- TOC entry 3310 (class 1259 OID 17053)
+-- Name: fki_AreaLevel; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_AreaLevel" ON public."Area" USING btree ("LevelID");
+
+
+--
+-- TOC entry 3340 (class 1259 OID 16674)
+-- Name: fki_CheckinBy; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_CheckinBy" ON public."EBeatCheckin" USING btree ("CheckinBy");
+
+
+--
+-- TOC entry 3319 (class 1259 OID 16602)
+-- Name: fki_ControllingOfficer; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_ControllingOfficer" ON public."Office" USING btree ("ControllingOfficerID");
+
+
+--
+-- TOC entry 3375 (class 1259 OID 17144)
+-- Name: fki_CurrentEntityState; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_CurrentEntityState" ON public."EntityStateProgress" USING btree ("CurrentEntityStateID");
+
+
+--
+-- TOC entry 3334 (class 1259 OID 16663)
+-- Name: fki_EBeatLocationActivatedBy; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_EBeatLocationActivatedBy" ON public."EBeatLocation" USING btree ("ActivatedBy");
+
+
+--
+-- TOC entry 3335 (class 1259 OID 16657)
+-- Name: fki_EBeatLocationCreatedAt; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_EBeatLocationCreatedAt" ON public."EBeatLocation" USING btree ("CreatedAt");
+
+
+--
+-- TOC entry 3336 (class 1259 OID 16651)
+-- Name: fki_EBeatLocationCreatedBy; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_EBeatLocationCreatedBy" ON public."EBeatLocation" USING btree ("CreatedBy");
+
+
+--
+-- TOC entry 3337 (class 1259 OID 16688)
+-- Name: fki_EBeatLocationType; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_EBeatLocationType" ON public."EBeatLocation" USING btree ("EBeatLocationTypeID");
+
+
+--
+-- TOC entry 3366 (class 1259 OID 17157)
+-- Name: fki_EntityState; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_EntityState" ON public."Feedback" USING btree ("EntityStateID");
+
+
+--
+-- TOC entry 3367 (class 1259 OID 17094)
+-- Name: fki_FeedbackType; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_FeedbackType" ON public."Feedback" USING btree ("FeedbackTypeID");
+
+
+--
+-- TOC entry 3376 (class 1259 OID 17150)
+-- Name: fki_NextEntityState; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_NextEntityState" ON public."EntityStateProgress" USING btree ("NextEntityStateID");
+
+
+--
+-- TOC entry 3325 (class 1259 OID 17059)
+-- Name: fki_OfficerDesignation; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_OfficerDesignation" ON public."Officer" USING btree ("DesignationID");
+
+
+--
+-- TOC entry 3326 (class 1259 OID 17071)
+-- Name: fki_OfficerOffice; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_OfficerOffice" ON public."Officer" USING btree ("OfficeID");
+
+
+--
+-- TOC entry 3327 (class 1259 OID 17065)
+-- Name: fki_OfficerUser; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_OfficerUser" ON public."Officer" USING btree ("UserID");
+
+
+--
+-- TOC entry 3320 (class 1259 OID 17077)
+-- Name: fki_ReportingOffice; Type: INDEX; Schema: public; Owner: postgres
+--
+
+
+--
+-- TOC entry 3311 (class 1259 OID 16484)
+-- Name: fki_SelfReferenceParent; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_SelfReferenceParent" ON public."Area" USING btree ("ParentArea");
+
+
+--
+-- TOC entry 3314 (class 1259 OID 16495)
+-- Name: fki_SelfReferenceParentLevel; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_SelfReferenceParentLevel" ON public."Level" USING btree ("ParentLevel");
+
+
+--
+-- TOC entry 3368 (class 1259 OID 17106)
+-- Name: fki_SubmissionDesignation; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_SubmissionDesignation" ON public."Feedback" USING btree ("SubmissionDesignationID");
+
+
+--
+-- TOC entry 3369 (class 1259 OID 17112)
+-- Name: fki_SubmissionStation; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_SubmissionStation" ON public."Feedback" USING btree ("SubmissionStationID");
+
+
+--
+-- TOC entry 3370 (class 1259 OID 17100)
+-- Name: fki_SubmittedBy; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_SubmittedBy" ON public."Feedback" USING btree ("SubmittedByID");
+
+
+--
+-- TOC entry 3362 (class 1259 OID 17045)
+-- Name: fki_UserRole_Role; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_UserRole_Role" ON public."UserRole" USING btree ("RoleId");
+
+
+--
+-- TOC entry 3363 (class 1259 OID 17039)
+-- Name: fki_UserRole_User; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "fki_UserRole_User" ON public."UserRole" USING btree ("UserId");
+
+
+--
+-- TOC entry 3390 (class 2606 OID 16984)
+-- Name: APIModuleParameter APIModuleID; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."APIModuleParameter"
+    ADD CONSTRAINT "APIModuleID" FOREIGN KEY ("APIModuleId") REFERENCES public."APIModule"("ID");
+
+
+--
+-- TOC entry 3391 (class 2606 OID 16972)
+-- Name: APIModuleRoleAccess APIModuleIDFK; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."APIModuleRoleAccess"
+    ADD CONSTRAINT "APIModuleIDFK" FOREIGN KEY ("APIModuleId") REFERENCES public."APIModule"("ID");
+
+
+--
+-- TOC entry 3392 (class 2606 OID 16999)
+-- Name: APIModuleRoleAccess APIModuleRoleID; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."APIModuleRoleAccess"
+    ADD CONSTRAINT "APIModuleRoleID" FOREIGN KEY ("RoleId") REFERENCES public."Role"("ID");
+
+
+--
+-- TOC entry 3378 (class 2606 OID 17048)
+-- Name: Area AreaLevel; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Area"
+    ADD CONSTRAINT "AreaLevel" FOREIGN KEY ("LevelID") REFERENCES public."Level"("ID");
+
+
+--
+-- TOC entry 3389 (class 2606 OID 16669)
+-- Name: EBeatCheckin CheckinBy; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EBeatCheckin"
+    ADD CONSTRAINT "CheckinBy" FOREIGN KEY ("CheckinBy") REFERENCES public."Officer"("ID");
+
+
+--
+-- TOC entry 3380 (class 2606 OID 16597)
+-- Name: Office ControllingOfficer; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Office"
+    ADD CONSTRAINT "ControllingOfficer" FOREIGN KEY ("ControllingOfficerID") REFERENCES public."Officer"("ID");
+
+
+--
+-- TOC entry 3400 (class 2606 OID 17139)
+-- Name: EntityStateProgress CurrentEntityState; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EntityStateProgress"
+    ADD CONSTRAINT "CurrentEntityState" FOREIGN KEY ("CurrentEntityStateID") REFERENCES public."EntityState"("ID") NOT VALID;
+
+
+--
+-- TOC entry 3386 (class 2606 OID 16658)
+-- Name: EBeatLocation EBeatLocationActivatedBy; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EBeatLocation"
+    ADD CONSTRAINT "EBeatLocationActivatedBy" FOREIGN KEY ("ActivatedBy") REFERENCES public."Officer"("ID");
+
+
+--
+-- TOC entry 3387 (class 2606 OID 16652)
+-- Name: EBeatLocation EBeatLocationCreatedAt; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EBeatLocation"
+    ADD CONSTRAINT "EBeatLocationCreatedAt" FOREIGN KEY ("CreatedAt") REFERENCES public."Office"("ID");
+
+
+--
+-- TOC entry 3385 (class 2606 OID 16646)
+-- Name: EBeatLocation EBeatLocationCreatedBy; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EBeatLocation"
+    ADD CONSTRAINT "EBeatLocationCreatedBy" FOREIGN KEY ("CreatedBy") REFERENCES public."Officer"("ID");
+
+
+--
+-- TOC entry 3388 (class 2606 OID 16683)
+-- Name: EBeatLocation EBeatLocationType; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EBeatLocation"
+    ADD CONSTRAINT "EBeatLocationType" FOREIGN KEY ("EBeatLocationTypeID") REFERENCES public."EBeatLocationType"("ID");
+
+
+--
+-- TOC entry 3395 (class 2606 OID 17152)
+-- Name: Feedback EntityState; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Feedback"
+    ADD CONSTRAINT "EntityState" FOREIGN KEY ("EntityStateID") REFERENCES public."EntityState"("ID");
+
+
+--
+-- TOC entry 3396 (class 2606 OID 17089)
+-- Name: Feedback FeedbackType; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Feedback"
+    ADD CONSTRAINT "FeedbackType" FOREIGN KEY ("FeedbackTypeID") REFERENCES public."FeedbackType"("ID");
+
+
+--
+-- TOC entry 3401 (class 2606 OID 17145)
+-- Name: EntityStateProgress NextEntityState; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EntityStateProgress"
+    ADD CONSTRAINT "NextEntityState" FOREIGN KEY ("NextEntityStateID") REFERENCES public."EntityState"("ID") NOT VALID;
+
+
+--
+-- TOC entry 3382 (class 2606 OID 17054)
+-- Name: Officer OfficerDesignation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Officer"
+    ADD CONSTRAINT "OfficerDesignation" FOREIGN KEY ("DesignationID") REFERENCES public."Designation"("ID");
+
+
+--
+-- TOC entry 3383 (class 2606 OID 17066)
+-- Name: Officer OfficerOffice; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Officer"
+    ADD CONSTRAINT "OfficerOffice" FOREIGN KEY ("OfficeID") REFERENCES public."Office"("ID");
+
+
+--
+-- TOC entry 3384 (class 2606 OID 17060)
+-- Name: Officer OfficerUser; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Officer"
+    ADD CONSTRAINT "OfficerUser" FOREIGN KEY ("UserID") REFERENCES public."User"("ID");
+
+
+--
+-- TOC entry 3381 (class 2606 OID 17072)
+-- Name: Office ReportingOffice; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+
+--
+-- TOC entry 3377 (class 2606 OID 16496)
+-- Name: Area SelfReferenceParentArea; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Area"
+    ADD CONSTRAINT "SelfReferenceParentArea" FOREIGN KEY ("ParentArea") REFERENCES public."Area"("ID");
+
+
+--
+-- TOC entry 3379 (class 2606 OID 16490)
+-- Name: Level SelfReferenceParentLevel; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Level"
+    ADD CONSTRAINT "SelfReferenceParentLevel" FOREIGN KEY ("ParentLevel") REFERENCES public."Level"("ID");
+
+
+--
+-- TOC entry 3397 (class 2606 OID 17101)
+-- Name: Feedback SubmissionDesignation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Feedback"
+    ADD CONSTRAINT "SubmissionDesignation" FOREIGN KEY ("SubmissionDesignationID") REFERENCES public."Designation"("ID");
+
+
+--
+-- TOC entry 3398 (class 2606 OID 17107)
+-- Name: Feedback SubmissionStation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Feedback"
+    ADD CONSTRAINT "SubmissionStation" FOREIGN KEY ("SubmissionStationID") REFERENCES public."Office"("ID");
+
+
+--
+-- TOC entry 3399 (class 2606 OID 17095)
+-- Name: Feedback SubmittedBy; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Feedback"
+    ADD CONSTRAINT "SubmittedBy" FOREIGN KEY ("SubmittedByID") REFERENCES public."Officer"("ID");
+
+
+--
+-- TOC entry 3394 (class 2606 OID 17040)
+-- Name: UserRole UserRole_Role; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserRole"
+    ADD CONSTRAINT "UserRole_Role" FOREIGN KEY ("RoleId") REFERENCES public."Role"("ID");
+
+
+--
+-- TOC entry 3393 (class 2606 OID 17034)
+-- Name: UserRole UserRole_User; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserRole"
+    ADD CONSTRAINT "UserRole_User" FOREIGN KEY ("UserId") REFERENCES public."User"("ID");
+
+
+-- Completed on 2021-07-08 14:53:36 IST
+
+--
+-- PostgreSQL database dump complete
+--
+

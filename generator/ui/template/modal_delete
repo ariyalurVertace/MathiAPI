@@ -1,0 +1,45 @@
+ <Modal
+            isOpen={this.state.deleteModal}
+            toggle={this.toggleDeleteModal}
+          >
+            <ModalHeader toggle={this.toggleDeleteModal}>
+              Delete ##MODEL_NAME##
+            </ModalHeader>
+
+            <AvForm
+              onSubmit={() =>
+                this.delete##MODEL_NAME##(this.state.##MODEL_NAME##.ID)
+              }
+            >
+              <ModalBody>
+                <Fragment>
+                  <Row className="mb-4">
+                    <Label className="av-label ml-3">
+                      <h5>
+                        Are you sure you want to delete this{" "}
+                        {this.state.##MODEL_NAME##
+                          ? this.state.##MODEL_NAME##.Name
+                          : ""}{" "}
+                        ##MODEL_NAME## ?
+                      </h5>
+                    </Label>
+                  </Row>
+                </Fragment>
+              </ModalBody>
+
+              <ModalFooter>
+                <FormGroup className="float-sm-right ">
+                  <Button type="submit" outline color="primary">
+                    Yes
+                  </Button>
+                  <Button
+                    color="danger"
+                    className="ml-2"
+                    onClick={() => this.toggleDeleteModal()}
+                  >
+                    No
+                  </Button>
+                </FormGroup>
+              </ModalFooter>
+            </AvForm>
+          </Modal>

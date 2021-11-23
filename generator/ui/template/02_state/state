@@ -1,0 +1,26 @@
+
+      currentpage: 1,
+      buttonAction: false,
+      isLoading: true,
+      pageSizeOptions: [10, 50, 100],
+      pageLimit: 10,
+      totalCount: 0,
+      keyField: "ID",
+      viewModal: false,
+      ##MODEL_NAME_CAMELCASE##List: [],
+      ##MODEL_FOREIGN##
+      ListRequestModel: {
+        searchString: "",
+        sortCondition: null,
+        pageNumber: 1,
+        pageLimit: 10,
+      },
+      ##FOREIGN_LIST_REQUEST##
+      ##MODEL_NAME##: {
+        ##model_field##
+      },
+      columns: [
+        ##TEXT_COLUMNS##
+        ##ACTION_COLUMNS##
+      ],
+    

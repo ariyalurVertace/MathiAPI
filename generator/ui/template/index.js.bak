@@ -1,0 +1,479 @@
+import React, { Fragment, Component } from "react";
+import { Message } from "helpers/language_helper";
+import {
+    Row, Col, Card, CardHeader, CardBody, Container, Button, Modal, ModalHeader, ModalBody, ModalFooter,
+    FormGroup, Label, UncontrolledButtonDropdown, DropdownToggle,
+    DropdownItem,
+    DropdownMenu,
+} from "reactstrap";
+import ListPage from "../../components/Custom/ListPage";
+import { defaultPageLimit, MethodType, StatusCodes, Locations } from "../../constants/defaultValues";
+import { GetPaginatedModuleParameter, DeleteModuleParameter, CreateModuleParameter, GetOneModuleParameter, UpdateModuleParameter } from "../../constants/config";
+import { CallService } from "../../helpers/servicecall";
+import { Formik, Form, Field } from "formik";
+import { moduleParameterValidation } from "../../helpers/validations";
+import Dropdown from "components/Custom/Dropdown";
+import { SuccessMessage, ErrorMessage } from "../../helpers/notifications";
+
+class APIModuleParameter extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            columns: [
+                {
+                    name: "Name",
+                    selector: "Name",
+                    sortable: true,
+                    cell: (row) => <span>{row.Name ? row.Name : ""}</span>,
+                },
+                {
+                    name: "Variable",
+                    selector: "Variable",
+                    sortable: true,
+                    cell: (row) => <span>{row?.Variable}</span>,
+                },
+                {
+                    name: "Location",
+                    selector: "Location",
+                    sortable: true,
+                    cell: (row) => <span>{row?.Location}</span>,
+                },
+                {
+                    name: "",
+                    selector: "id",
+                    sortable: false,
+                    cell: (row) =>
+                        <UncontrolledButtonDropdown >
+                            <DropdownToggle size="sm" color="ghost-dark">
+                                <i
+                                    className="fa fa-ellipsis-v "
+                                    title="Actions"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                    }}
+                                ></i>
+                            </DropdownToggle>
+                            <DropdownMenu className="w-10">
+                                <DropdownItem
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        this.ManageModuleParameterModal("edit", row);
+                                    }}
+                                    className="text-primary"
+                                >
+                                    {Message("button.update")}
+                                    <i className="fa fa-edit ml-2"></i>{" "}
+                                </DropdownItem>
+                                <DropdownItem
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        this.ManageModuleParameterModal("delete", row);
+                                    }}
+                                    className="text-danger"
+                                >
+                                    {Message("button.remove")}
+                                    <i
+                                        className="fa fa-trash ml-2"
+                                    ></i>{" "}
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </UncontrolledButtonDropdown>
+                },
+            ],
+            ModuleParameters: [],
+            totalCount: 0,
+            IsDataLoading: true,
+            ListRequestModel: {
+                searchString: "",
+                sortCondition: { id: 1 },
+                pageNumber: 1,
+                pageLimit: defaultPageLimit,
+                ApiModuleId: 160
+            },
+            SearchAvailable: false,
+            ModuleParameterModel: {
+                Name: "",
+                Variable: "",
+                Location: "",
+                APIModuleId: 160
+            },
+            manageModuleParameterModal: false,
+            IsEditMode: false
+        }
+    }
+
+    componentDidMount() {
+        this.GetModuleParameters();
+    }
+
+    GetModuleParameters = () => {
+        let { ListRequestModel } = this.state;
+        CallService(
+            GetPaginatedModuleParameter,
+            MethodType.POST,
+            false,
+            ListRequestModel,
+            "",
+            this.GetModuleParametersResponse
+        );
+    };
+    GetModuleParametersResponse = (data) => {
+        this.setState({
+            IsDataLoading: false,
+            ModuleParameters: data.result,
+            totalCount: data.pagination.totalCount,
+        });
+    };
+
+    handleSort = (column, sortDirection) => {
+        var sortObj = {};
+        sortObj[column.selector] = sortDirection === "asc" ? 1 : -1;
+        this.setState(
+            {
+                IsDataLoading: true,
+                ListRequestModel: {
+                    ...this.state.ListRequestModel,
+                    sortCondition: sortObj,
+                },
+            },
+            function () {
+                this.GetModuleParameters();
+            }
+        );
+    };
+
+    handlePerRowsChange = async (perPage) => {
+        this.setState(
+            {
+                pageLimit: perPage,
+                pageNumber: 1,
+                IsDataLoading: true,
+                ListRequestModel: {
+                    ...this.state.ListRequestModel,
+                    pageLimit: perPage,
+                    pageNumber: 1,
+                },
+            },
+            function () {
+                this.GetModuleParameters();
+            }
+        );
+    };
+    handlePageChange = async (page) => {
+        this.setState(
+            {
+                pageNumber: page,
+                IsDataLoading: true,
+                ListRequestModel: {
+                    ...this.state.ListRequestModel,
+                    pageNumber: page,
+                },
+            },
+            function () {
+                this.GetModuleParameters();
+            }
+        );
+    };
+
+    ManageModuleParameterModal = (mode, obj) => {
+        switch (mode) {
+            case "add":
+                this.setState(
+                    {
+                        IsEditMode: false,
+                        ModuleParameterModel: {
+                            Name: "",
+                            Variable: "",
+                            Location: "",
+                            APIModuleId: 160
+                        }
+                    },
+                    function () {
+                        this.toggleManageModuleParameterModal();
+                    }
+                );
+                break;
+            case "edit":
+                this.GetModuleParameterDetail(obj.id);
+                break;
+            case "delete":
+                this.setState(
+                    {
+                        IsEditMode: false,
+                        CurrentRecordToBeDeleted: obj
+                    },
+                    function () {
+                        this.toggleDeleteModuleParameterModal();
+                    }
+                );
+                break;
+            default:
+                break;
+        }
+    };
+
+    toggleManageModuleParameterModal = () => {
+        this.setState({
+            manageModuleParameterModal: !this.state.manageModuleParameterModal,
+        });
+    };
+
+    toggleDeleteModuleParameterModal = () => {
+        this.setState({
+            deleteModuleParameterModal: !this.state.deleteModuleParameterModal,
+        });
+    };
+
+    DeleteModuleParameter = (id) => {
+        CallService(
+            DeleteModuleParameter,
+            MethodType.DELETE,
+            true,
+            "",
+            id,
+            this.DeleteModuleParameterResponse
+        );
+    };
+    DeleteModuleParameterResponse = (data) => {
+        if (data.statusCode === StatusCodes.Success) {
+            this.setState(
+                {
+                    CurrentRecordToBeDeleted: undefined,
+                },
+                () => {
+                    SuccessMessage(Message("module.parameter.remove.success"), Message("module.parameter"));
+                }
+            );
+            this.toggleDeleteModuleParameterModal();
+        }
+    };
+
+    GetModuleParameterDetail = (id) => {
+        CallService(
+            GetOneModuleParameter,
+            MethodType.GET,
+            true,
+            "",
+            id,
+            this.GetModuleParameterDetailResponse
+        );
+    };
+    GetModuleParameterDetailResponse = (data) => {
+        if (data.statusCode === StatusCodes.Success) {
+            data.result.LocationDDL = Locations.find(x => x.value === data.result.Location);
+            this.setState(
+                {
+                    ModuleParameterModel: data.result,
+                    IsEditMode: true,
+                },
+                function () {
+                    this.toggleManageModuleParameterModal();
+                }
+            );
+        }
+    };
+
+    ManageModuleParameter = (values) => {
+        delete values.LocationDDL;
+        if (this.state.IsEditMode) {
+            values._id = this.state.ModuleParameterModel._id;
+            CallService(
+                UpdateModuleParameter,
+                MethodType.PATCH,
+                true,
+                values,
+                values.id,
+                this.ManageModuleParameterResponse
+            );
+        } else {
+            CallService(
+                CreateModuleParameter,
+                MethodType.PUT,
+                false,
+                values,
+                "",
+                this.ManageModuleParameterResponse
+            );
+        }
+    };
+    ManageModuleParameterResponse = (data) => {
+        if (data.statusCode === StatusCodes.Success) {
+            if (this.state.IsEditMode) {
+                SuccessMessage(Message("module.parameter.update.success"), Message("module.parameter"));
+            } else {
+                SuccessMessage(Message("module.parameter.add.success"), Message("module.parameter"));
+            }
+        } else {
+            ErrorMessage(Message("api.error"), Message(""));
+        }
+        this.toggleManageModuleParameterModal();
+        this.GetModuleParameters();
+    };
+
+    render() {
+        return (<Fragment>
+            <div className="page-content">
+                <Container fluid>
+                    <Row>
+                        <Col xs="12" sm="12" md="12" lg="12">
+                            <Card className="border " >
+                                <CardHeader className="bg-soft-dark text-dark" >
+                                    {Message("module.parameter")}
+                                    <Button
+                                        className="float-right"
+                                        type="button"
+                                        color="success"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            this.ManageModuleParameterModal("add");
+                                        }}
+                                    >
+                                        {Message("button.add")}
+                                    </Button>
+                                </CardHeader>
+                                <CardBody>
+                                    <ListPage
+                                        className="cursor-pointer"
+                                        columns={this.state.columns}
+                                        data={this.state.ModuleParameters}
+                                        keyField={this.state.keyField}
+                                        totalCount={this.state.totalCount}
+                                        rowsPerPageOnChange={this.handlePerRowsChange}
+                                        pageChange={this.handlePageChange}
+                                        overFlowXRemoval={true}
+                                        onSort={this.handleSort}
+                                        isDataLoading={this.state.IsDataLoading}
+                                        SearchAvailable={this.state.SearchAvailable}
+                                    />
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+                <Modal
+                    isOpen={this.state.manageModuleParameterModal}
+                    toggle={this.toggleManageModuleParameterModal}
+                    className={
+                        (this.state.IsEditMode ? "modal-primary " : "modal-success ") +
+                        "modal-lg " +
+                        this.props.className
+                    }
+                >
+                    <ModalHeader toggle={this.toggleManageModuleParameterModal}>
+                        {(this.state.IsEditMode ? Message("button.update") : Message("button.add")) + " " + Message("module.parameter")}
+                    </ModalHeader>
+                    <Formik
+                        initialValues={this.state.ModuleParameterModel}
+                        validationSchema={moduleParameterValidation}
+                        onSubmit={this.ManageModuleParameter}
+                        validateOnBlur={false}
+                        validateOnChange={false}
+                        enableReinitialize={true}
+                    >
+                        {({ errors, values, setFieldValue }) => (
+                            <Form >
+                                <ModalBody>
+                                    <FormGroup>
+                                        <Label>{Message("module.parameter.name")}</Label>
+                                        <Field
+                                            type="text"
+                                            autoFocus
+                                            className="form-control"
+                                            name="Name"
+                                        />
+                                        {errors.Name && (
+                                            <div className="invalid-feedback d-block">
+                                                {errors.Name}
+                                            </div>
+                                        )}
+                                    </FormGroup>
+                                    <FormGroup >
+                                        <Label>{Message("module.parameter.variable")}</Label>
+                                        <Field
+                                            type="text"
+                                            className="form-control"
+                                            name="Variable"
+                                        />
+                                        {errors.Variable && (
+                                            <div className="invalid-feedback d-block">
+                                                {errors.Variable}
+                                            </div>
+                                        )}
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Dropdown
+                                            label={Message("module.parameter.location")}
+                                            value={values.LocationDDL}
+                                            name="Location"
+                                            isMulti={false}
+                                            isClearable={false}
+                                            options={Locations}
+                                            Action={(selObj) => {
+                                                setFieldValue("LocationDDL", selObj);
+                                                setFieldValue("Location", selObj.value);
+                                            }}
+                                            errors={errors.Location}
+                                        >
+
+                                        </Dropdown>
+                                    </FormGroup>
+
+                                </ModalBody>
+                                <ModalFooter>
+                                    {this.state.IsEditMode ? (
+                                        <Button color="primary" type="submit">
+                                            {Message("button.update")}
+                                        </Button>
+                                    ) : (
+                                            <Button color="success" type="submit">
+                                                {Message("button.add")}
+                                            </Button>
+                                        )}
+                                    <Button
+                                        color="secondary"
+                                        onClick={this.toggleManageModuleParameterModal}
+                                    >
+                                        Cancel
+                      </Button>
+                                </ModalFooter>
+                            </Form>
+                        )}
+                    </Formik>
+                </Modal>
+                <Modal
+                    isOpen={this.state.deleteModuleParameterModal}
+                    toggle={this.toggleDeleteModuleParameterModal}
+                    className={"modal-warning " + this.props.className}
+                >
+                    <ModalHeader toggle={this.toggleDeleteModuleParameterModal}>
+                        {Message("button.remove")}   {Message("module.parameter")}
+                    </ModalHeader>
+                    <ModalBody>
+                        {"Do you want to delete this " + Message("module.parameter") +
+                            (this.state.CurrentRecordToBeDeleted
+                                ? this.state.CurrentRecordToBeDeleted.Name
+                                : "") +
+                            "?"}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            color="warning"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                this.DeleteModuleParameter(this.state.CurrentRecordToBeDeleted.id);
+                            }}
+                        >
+                            {Message("button.remove")}
+                        </Button>{" "}
+                        <Button color="secondary" onClick={this.toggleDeleteModuleParameterModal}>
+                            {Message("button.cancel")}
+                        </Button>
+                    </ModalFooter>
+                </Modal>
+
+            </div>
+        </Fragment>);
+    }
+}
+
+export default APIModuleParameter

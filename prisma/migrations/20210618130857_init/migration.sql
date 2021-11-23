@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "VolunteerFeedback" ALTER COLUMN "DateTime" SET DEFAULT CURRENT_TIMESTAMP;

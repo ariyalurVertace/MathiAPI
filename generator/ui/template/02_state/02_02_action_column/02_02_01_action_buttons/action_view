@@ -1,0 +1,8 @@
+ <Button
+    outline
+    color="success"
+    className="mobileViewFont"
+    onClick={() => this.ToggleViewModal(row)}
+>
+    View
+</Button>

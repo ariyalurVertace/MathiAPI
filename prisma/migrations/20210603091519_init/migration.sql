@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "z_UserLoginLog" ALTER COLUMN "DateTime" SET DEFAULT CURRENT_TIMESTAMP;

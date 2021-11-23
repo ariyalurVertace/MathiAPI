@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "z_AuditLog" ALTER COLUMN "UserId" DROP NOT NULL;
+
+-- AddForeignKey
+ALTER TABLE "z_AuditLog" ADD FOREIGN KEY ("UserId") REFERENCES "z_User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

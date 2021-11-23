@@ -1,0 +1,6 @@
+ {
+    name: "##Header##",
+    selector: "##Field##",
+    sortable: ##Sortable##,
+    cell: row => <span>{row.##Field## ? row.##Field## : ""}</span>,
+},

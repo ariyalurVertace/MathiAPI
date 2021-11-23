@@ -1,0 +1,14 @@
+version: "3.5"
+services:
+    api:
+        image: docker-registry.vertace.net/${DOCKER_IMAGE_NAME}:${ENVIRONMENT}
+        container_name: ${DOCKER_IMAGE_NAME}_${ENVIRONMENT}
+        build: .
+        restart: unless-stopped
+        ports:
+            - "${HTTP_PORT}:${HTTP_PORT}"
+            - "${HTTPS_PORT}:${HTTPS_PORT}"
+        network_mode: "bridge"
+        volumes:
+            - /home/VertaceVM/.config/acme:/root/.config/acme
+            - /tmp/acme-challenge:/tmp/acme-challenge

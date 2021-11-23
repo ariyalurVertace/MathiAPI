@@ -1,0 +1,8 @@
+  <Button
+                  outline
+                  color="primary"
+                  className="mobileViewFont ml-2"
+                  onClick={() => this.HandleRowClicked(row)}
+                >
+                  Edit
+                </Button>

@@ -1,0 +1,8 @@
+ <Button
+                  outline
+                  color="danger"
+                  className="mobileViewFonts pl-1 pr-1 ml-2"
+                  onClick={() => this.toggleDeleteModal(row)}
+                >
+                  Delete
+                </Button>

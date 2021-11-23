@@ -1,0 +1,18 @@
+{
+    name: "Action",
+    selector: "action",
+    sortable: false,
+    cell: row => (
+    <Row>
+        <ButtonGroup className="mb-2" style={{ top: "4px" }}>
+        
+        ##action_view##
+
+        ##action_edit##
+        
+        ##action_delete##
+        
+        </ButtonGroup>
+    </Row>
+    ),
+},

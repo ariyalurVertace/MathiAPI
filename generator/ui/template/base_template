@@ -1,0 +1,66 @@
+##IMPORT##
+
+class ##MODEL_NAME## extends Component {
+
+  ##component##
+render() {
+
+  const initialValues = this.state.##MODEL_NAME##
+  const conditionalRowStyles = [
+    {
+      when: row => row,
+      style: {
+        "&:hover": {
+          cursor: "pointer",
+        },
+      },
+    },
+  ]
+  return (
+    <Fragment>
+      <div className="page-content">
+        <div className="container-fluid">
+          <Card>
+            <CardBody>
+              <div className="PoliceView">
+                <ListPageHeader
+                  heading={`${ModulesName.Home}.${ModulesName.##MODEL_NAME##}`}
+                  buttonText={"Add  " + ModulesName.##MODEL_NAME##}
+                  onTextChange={this.SearchQueryChanged}
+                  buttonClick={this.addBtnClick}
+                  searchValue={this.state.ListRequestModel.searchString}
+                />
+              </div>
+              <Row>
+                ##FILTER_CONTENT##
+              </Row>
+              <div className="PoliceView">
+                <ListPage
+                  conditionalRowStyles={conditionalRowStyles}
+                  columns={this.state.columns}
+                  data={this.state.##MODEL_NAME_CAMELCASE##List}
+                  keyField={this.state.keyField}
+                  totalCount={this.state.totalCount}
+                  rowClicked={this.HandleRowClicked}
+                  onSort={this.handleSort}
+                  rowsPerPageOnChange={this.handlePerRowsChange}
+                  pageChange={this.handlePageChange}
+                  isDataLoading={this.state.isLoading}
+                  overFlowXRemoval={true}
+                />
+              </div>
+            </CardBody>
+          </Card>
+          ##VIEW_MODAL##
+        
+          ##DELETE_MODAL##
+
+          ##UPDATE_MODAL##
+        </div>
+      </div>
+    </Fragment>
+  )
+}
+}
+
+export default withRouter(##MODEL_NAME##)

@@ -1,0 +1,792 @@
+import React, { Component, Fragment } from "react"
+import { Formik, Form, Field } from "formik"
+import { withRouter } from "react-router-dom"
+import {
+  Row,
+  Label,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  FormGroup,
+  Card,
+  CardBody,
+  Col,
+  Input,
+  ButtonGroup,
+} from "reactstrap"
+import ListPageHeader from "../../components/custom/ListPageHeader"
+import { CallService } from "../../helpers/ServiceCall"
+import {
+  MethodType,
+  StatusCodes,
+  entityStateEnum,
+} from "../../constants/defaultValues"
+import { entity_state } from "../../constants/config"
+import ListPage from "../../components/custom/ListPage"
+import { EntityStateValidation } from "../../helpers/validations"
+import toastr from "toastr"
+import "toastr/build/toastr.min.css"
+import { Message } from "../../helpers/language_helper"
+import DropDown from "components/custom/DropDown"
+import {
+  SuccessMessage,
+  ErrorMessage,
+  WarningMessage,
+} from "../../helpers/notifications"
+
+class EntityState extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      buttonAction: false,
+      isLoading: true,
+      totalCount: 0,
+      keyField: "",
+      filterEntity: "",
+      filterIsActive: false,
+      filterIsDefault: false,
+      entityStateList: [],
+      listRequestModel: {
+        searchString: "",
+        sortCondition: null,
+        pageNumber: 1,
+        pageLimit: 10,
+      },
+      nextEntityStateRequestModel: {
+        Entity: "",
+      },
+      entityState: {
+        Name: "",
+        Entity: "",
+        IsActive: true,
+        IsDefault: true,
+        Color: "",
+      },
+      nextEntityStatesList: [],
+      columns: [
+        {
+          name: "Name",
+          selector: "Name",
+
+          sortable: true,
+          cell: row => <span>{row.Name ? row.Name : ""}</span>,
+        },
+
+        {
+          name: "Entity",
+          selector: "Entity",
+          sortable: true,
+          cell: row => <span>{row.Entity ? row.Entity : ""}</span>,
+        },
+        {
+          name: "Active",
+          selector: "IsActive",
+          sortable: true,
+          cell: row => <span>{row.IsActive ? "Active" : "InActive"}</span>,
+        },
+        {
+          name: "Default",
+          selector: "IsDefault",
+          sortable: true,
+          cell: row => (
+            <span>{row.IsDefault ? "Default" : " Not Default"}</span>
+          ),
+        },
+        {
+          name: "Colour",
+          selector: "Color",
+          center: true,
+          sortable: false,
+          cell: row =>
+            row.Color ? (
+              <Col sm="6" md="6" lg="6">
+                <Input
+                  name="Color"
+                  className="form-control"
+                  width="5"
+                  type="color"
+                  value={row.Color}
+                  id="color-input"
+                />
+              </Col>
+            ) : (
+              <span></span>
+            ),
+        },
+        {
+          name: "Action",
+          selector: "action",
+          center: true,
+          sortable: false,
+          cell: row => (
+            <Row>
+              <ButtonGroup className="mb-2" style={{ top: "4px" }}>
+                <Button
+                  outline
+                  color="primary"
+                  className="mobileViewFont ml-2"
+                  onClick={() => this.handleRowClicked(row)}
+                >
+                  Edit
+                </Button>
+
+                <Button
+                  outline
+                  color="danger"
+                  className="mobileViewFonts pl-1 pr-1 ml-2"
+                  onClick={() => this.toggleDeleteModal(row)}
+                >
+                  Delete
+                </Button>
+              </ButtonGroup>
+            </Row>
+          ),
+        },
+      ],
+    }
+  }
+
+  componentDidMount() {
+    this.getAllEntityState()
+  }
+  getAllEntityState() {
+    this.setState({
+      isLoading: true,
+      Entity: this.state.entity ? this.state.entity : "",
+      IsActive: this.state.filterIsActive,
+      IsDefault: this.state.filterIsActive,
+    })
+    const { listRequestModel } = this.state
+    listRequestModel.Entity = this.state.filterEntity
+      ? this.state.filterEntity
+      : ""
+
+    CallService(
+      entity_state.GetAll,
+      MethodType.POST,
+      false,
+      listRequestModel,
+      "",
+      this.getAllEntityStateResponse
+    )
+  }
+  getNextEntityStates() {
+    const { nextEntityStateRequestModel } = this.state
+    nextEntityStateRequestModel.Entity = this.state.Entity
+    CallService(
+      entity_state.getNextStates,
+      MethodType.POST,
+      false,
+      nextEntityStateRequestModel,
+      "",
+      this.getNextEntityStatesResponse
+    )
+  }
+  getNextEntityStatesResponse = data => {
+    if (data) {
+      let nextEntityStates = []
+      nextEntityStates = data.result.map(x => {
+        return { label: x.Name, value: x.ID }
+      })
+      this.setState({
+        nextEntityStatesList: nextEntityStates,
+      })
+    }
+  }
+
+  getAllEntityStateResponse = data => {
+    if (data.pagination && data.result) {
+      this.setState({
+        isLoading: false,
+        totalPage: data.pagination.totalCount / data.pagination.pageLimit,
+        entityStateList: data.result,
+        totalCount: data.pagination.totalCount,
+      })
+    } else
+      this.setState({
+        isLoading: false,
+      })
+  }
+
+  /** handle list page  start  */
+  handleSort = (column, sortDirection) => {
+    var sortObj = {}
+    sortObj[column.selector] = sortDirection === "asc" ? "asc" : "desc"
+    this.setState(
+      {
+        listRequestModel: {
+          ...this.state.listRequestModel,
+          sortCondition: sortObj,
+        },
+      },
+      function () {
+        this.getAllEntityState()
+      }
+    )
+  }
+
+  handlePerRowsChange = async perPage => {
+    this.setState(
+      {
+        pageLimit: perPage,
+        pageNumber: 1,
+        listRequestModel: {
+          ...this.state.listRequestModel,
+          pageLimit: perPage,
+          pageNumber: 1,
+        },
+      },
+      async function () {
+        this.getAllEntityState()
+      }
+    )
+  }
+
+  handlePageChange = async page => {
+    this.setState(
+      {
+        pageNumber: page,
+        listRequestModel: {
+          ...this.state.listRequestModel,
+          pageNumber: page,
+        },
+      },
+      function () {
+        this.getAllEntityState()
+      }
+    )
+  }
+
+  searchQueryChanged = search => {
+    this.setState(
+      {
+        listRequestModel: {
+          ...this.state.listRequestModel,
+          searchString: search.target.value,
+        },
+      },
+      function () {
+        if (
+          this.state.listRequestModel.searchString === "" ||
+          this.state.listRequestModel.searchString.length > 2
+        ) {
+          this.getAllEntityState()
+        }
+      }
+    )
+  }
+
+  handleRowClicked = row => {
+    if (row) {
+      row.NextStates = row.CurrentEntityStateID.map(x => {
+        return { value: x.NextEntityState.ID, label: x.NextEntityState.Name }
+      })
+      this.setState(
+        {
+          entityState: row,
+          Entity: row.Entity,
+          manageModal: !this.state.manageModal,
+        },
+        () => {
+          this.getNextEntityStates()
+        }
+      )
+    }
+  }
+
+  /** Submit Function Start */
+  handleSubmit = values => {
+    delete values.CurrentEntityStateID
+    CallService(
+      values.ID ? entity_state.Update + values.ID : entity_state.Create,
+      values.ID ? MethodType.PATCH : MethodType.PUT,
+      false,
+      values,
+      "",
+      this.manageEntityStateResponse
+    )
+  }
+
+  addBtnClick = () => {
+    this.setState({
+      entityState: {
+        Name: "",
+        Entity: "",
+        IsActive: true,
+        IsDefault: true,
+        Color: "",
+      },
+      manageModal: !this.state.manageModal,
+    })
+    //  this.toggleManageModal();
+  }
+
+  toggleDeleteModal = row => {
+    this.setState({
+      deleteModal: !this.state.deleteModal,
+      entityState: row,
+    })
+  }
+
+  toggleManageModal = () => {
+    this.setState({
+      entityState: {},
+      manageModal: !this.state.manageModal,
+    })
+  }
+
+  deleteEntityState = id => {
+    CallService(
+      entity_state.Delete + id,
+      MethodType.DELETE,
+      false,
+      "",
+      "",
+      this.deleteEntityStateResponse
+    )
+  }
+
+  deleteEntityStateResponse = data => {
+    this.setState({
+      buttonAction: false,
+    })
+    this.toggleDeleteModal()
+    if (data.statusCode === StatusCodes.Success) {
+      SuccessMessage(Message("entityState.delete.success"))
+      this.getAllEntityState()
+    } else if (data.statusCode === StatusCodes.NotAllowed) {
+      WarningMessage(Message("entityState.api.notAllowed"))
+    }
+  }
+  manageEntityStateResponse = data => {
+    if (data.statusCode === StatusCodes.Success) {
+      SuccessMessage(
+        this.state.entityState.ID
+          ? Message("entityState.update.success")
+          : Message("entityState.add.success")
+      )
+      this.getAllEntityState()
+      this.setState({
+        buttonAction: false,
+        manageModal: !this.state.manageModal,
+      })
+    } else {
+      ErrorMessage(Message("entityState.api.error"))
+      this.setState({
+        buttonAction: false,
+      })
+    }
+  }
+
+  render() {
+    const initialValues = this.state.entityState
+    const conditionalRowStyles = [
+      {
+        when: row => row,
+        style: {
+          "&:hover": {
+            cursor: "pointer",
+          },
+        },
+      },
+    ]
+    return (
+      <Fragment>
+        <div className="page-content">
+          <div className="container-fluid">
+            <Card>
+              <CardBody>
+                <div className="PoliceView">
+                  <ListPageHeader
+                    heading={`${"Home"}.${"Entity State"}`}
+                    buttonText="Add Entity State "
+                    onTextChange={this.searchQueryChanged}
+                    buttonClick={this.addBtnClick}
+                    searchValue={this.state.listRequestModel.searchString}
+                  />
+                </div>
+
+                <div className="PoliceView">
+                  <Row>
+                    <Col sm="4" md="4" lg="4">
+                      <FormGroup className="form-group has-float-label">
+                        <DropDown
+                          label={Message("entityState.entity")}
+                          MobcolSplit={12}
+                          isClearable={true}
+                          isSearchable
+                          options={entityStateEnum}
+                          value={
+                            this.state.filterEntity &&
+                            (typeof this.state.filterEntity === "string"
+                              ? entityStateEnum.find(
+                                  r => r.value === this.state.filterEntity
+                                )
+                              : entityStateEnum.find(
+                                  r => r.value === this.state.filterEntity
+                                ))
+                          }
+                          ClearAction={() => {
+                            this.setState({
+                              filterEntity: "",
+                            })
+                          }}
+                          Action={entity => {
+                            if (entity) {
+                              this.setState(
+                                {
+                                  filterEntity: entity.value,
+                                },
+                                () => {
+                                  this.getAllEntityState()
+                                }
+                              )
+                            } else {
+                              this.setState(
+                                {
+                                  filterEntity: "",
+                                },
+                                () => {
+                                  this.getAllEntityState()
+                                }
+                              )
+                            }
+                          }}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+
+                  <ListPage
+                    conditionalRowStyles={conditionalRowStyles}
+                    columns={this.state.columns}
+                    data={this.state.entityStateList}
+                    keyField={this.state.keyField}
+                    totalCount={this.state.totalCount}
+                    // rowClicked={this.handleRowClicked}
+                    onSort={this.handleSort}
+                    rowsPerPageOnChange={this.handlePerRowsChange}
+                    pageChange={this.handlePageChange}
+                    isDataLoading={this.state.isLoading}
+                    overFlowXRemoval={true}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+
+            <Modal
+              isOpen={this.state.deleteModal}
+              toggle={this.toggleDeleteModal}
+            >
+              <ModalHeader toggle={this.toggleDeleteModal}>
+                {Message("entityState.deleteState")}
+              </ModalHeader>
+
+              <ModalBody>
+                <Fragment>
+                  <Row className="mb-4">
+                    <Label className="av-label ml-3">
+                      <h5>
+                        {Message("common.deleteMessage")}{" "}
+                        {this.state.entityState
+                          ? this.state.entityState.Name
+                          : ""}{" "}
+                        {Message("entityState.entityState")} ?
+                      </h5>
+                    </Label>
+                  </Row>
+                </Fragment>
+              </ModalBody>
+
+              <ModalFooter>
+                <FormGroup className="float-sm-right ">
+                  <Button
+                    type="submit"
+                    outline
+                    color="primary"
+                    onClick={() =>
+                      this.deleteEntityState(this.state.entityState.ID)
+                    }
+                  >
+                    {Message("common.yes")}
+                  </Button>
+                  <Button
+                    color="danger"
+                    className="ml-2"
+                    onClick={() => this.toggleDeleteModal()}
+                  >
+                    {Message("common.no")}
+                  </Button>
+                </FormGroup>
+              </ModalFooter>
+            </Modal>
+
+            <Modal
+              isOpen={this.state.manageModal}
+              toggle={this.toggleManageModal}
+            >
+              <ModalHeader toggle={this.toggleManageModal}>
+                {this.state.entityState && this.state.entityState.ID
+                  ? Message("entityState.updateState")
+                  : Message("entityState.addState")}
+              </ModalHeader>
+              <Formik
+                initialValues={initialValues}
+                validationSchema={EntityStateValidation}
+                onSubmit={this.handleSubmit}
+                validateOnBlur={false}
+                validateOnChange={false}
+              >
+                {({ errors, values, setFieldValue }) => (
+                  <Form className="av-tooltip tooltip-label-bottom">
+                    <ModalBody>
+                      <Fragment>
+                        <Row>
+                          <Col lg="12" sm="12" md="12" lg="12">
+                            <FormGroup className="form-group has-float-label">
+                              <Label className="requiredField">
+                                {Message("common.name")}
+                              </Label>
+                              <Field className="form-control" name="Name" />
+                              {errors.Name && (
+                                <div className="invalid-feedback d-block">
+                                  {errors.Name}
+                                </div>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="2" sm="2" md="2" lg="2">
+                            <Label className="requiredField">
+                              {Message("common.color")}
+                            </Label>
+
+                            <FormGroup className="form-group has-float-label">
+                              <Field
+                                name="Color"
+                                className="form-control"
+                                type="color"
+                                defaultValue="#556ee6"
+                                id="colorcode-color-input"
+                              />
+                              {errors.Color && (
+                                <div className="invalid-feedback d-block">
+                                  {errors.Color}
+                                </div>
+                              )}
+                            </FormGroup>
+                          </Col>
+                          <Col lg="5" sm="5" md="5" lg="5">
+                            <FormGroup className="form-group has-float-label ml-2 pl-1 slider-padding">
+                              <Row>
+                                <Label className="mt-1 ">
+                                  {Message("common.active")}
+                                </Label>
+                                <FormGroup className="custom-control custom-switch mt-1 ml-2">
+                                  <Input
+                                    autoComplete="off"
+                                    type="checkbox"
+                                    className="custom-control-input ml-2 "
+                                    id="IsActive"
+                                    checked={values ? values.IsActive : true}
+                                    onClick={e => {
+                                      setFieldValue(
+                                        "IsActive",
+                                        !values.IsActive
+                                      )
+                                    }}
+                                  />
+                                  <Label
+                                    className="custom-control-label"
+                                    htmlFor="IsActive"
+                                  ></Label>
+                                </FormGroup>
+                              </Row>
+                            </FormGroup>
+                          </Col>
+                          <Col lg="5" sm="5" md="5" lg="5">
+                            <FormGroup className="form-group has-float-label ml-2 pl-1 slider-padding">
+                              <Row>
+                                <Label className="mt-1 ">
+                                  {Message("common.default")}
+                                </Label>
+                                <FormGroup className="custom-control custom-switch mt-1 ml-2">
+                                  <Input
+                                    autoComplete="off"
+                                    type="checkbox"
+                                    className="custom-control-input ml-2"
+                                    id="isDefault"
+                                    checked={values ? values.IsDefault : true}
+                                    onClick={e => {
+                                      setFieldValue(
+                                        "IsDefault",
+                                        !values.IsDefault
+                                      )
+                                    }}
+                                  />
+                                  <Label
+                                    className="custom-control-label"
+                                    htmlFor="isDefault"
+                                  ></Label>
+                                </FormGroup>
+                              </Row>
+                            </FormGroup>
+                          </Col>
+                        </Row>{" "}
+                        <Row>
+                          <Col lg="12" sm="12" md="12" lg="12">
+                            <FormGroup className="form-group has-float-label">
+                              <DropDown
+                                label={Message("entityState.entity")}
+                                MobcolSplit={12}
+                                isClearable={true}
+                                labelClassName="requiredField"
+                                isSearchable
+                                options={entityStateEnum}
+                                value={
+                                  values &&
+                                  values.Entity &&
+                                  (typeof values.Entity === "string"
+                                    ? entityStateEnum.find(
+                                        r => r.value === values.Entity
+                                      )
+                                    : entityStateEnum.find(
+                                        r => r.value === values.Entity
+                                      ))
+                                }
+                                ClearAction={() => {
+                                  setFieldValue(`Entity`, "")
+                                }}
+                                Action={entity => {
+                                  if (entity) {
+                                    setFieldValue("Entity", entity.value)
+                                    setFieldValue(`NextStates`, "")
+                                    this.setState(
+                                      { Entity: entity.value },
+                                      () => {
+                                        this.getNextEntityStates()
+                                      }
+                                    )
+                                  } else {
+                                    setFieldValue(`Entity`, "")
+                                    setFieldValue(`NextStates`, "")
+                                  }
+                                }}
+                                errors={errors.Entity}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg="12" sm="12" md="12" lg="12">
+                            <FormGroup className="form-group has-float-label z-index">
+                              <DropDown
+                                label={Message("entityState.nextEntity")}
+                                MobcolSplit={12}
+                                isClearable={true}
+                                labelClassName="requiredField"
+                                isSearchable
+                                isMulti
+                                options={this.state.nextEntityStatesList}
+                                value={
+                                  values &&
+                                  values.NextStates &&
+                                  this.state.nextEntityStatesList
+                                    .filter(a => {
+                                      return values.NextStates.some(r => {
+                                        return (
+                                          a.value ===
+                                          (typeof r === "object"
+                                            ? r.value
+                                              ? r.value
+                                              : r.value
+                                            : r)
+                                        )
+                                      })
+                                    })
+                                    .map(function (o) {
+                                      return o
+                                    })
+                                }
+                                ClearAction={() => {
+                                  setFieldValue("NextStates", "")
+                                }}
+                                Action={entity => {
+                                  if (entity) {
+                                    setFieldValue(
+                                      "NextStates",
+                                      entity.map(x => {
+                                        return x.value
+                                      })
+                                    )
+                                  } else {
+                                    setFieldValue("NextStates", "")
+                                  }
+                                }}
+                                errors={errors.NextStates}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </Fragment>
+                    </ModalBody>
+                    <ModalFooter>
+                      <div className="container-fluid">
+                        <Row>
+                          <Col lg="">
+                            <Label>
+                              <span style={{ color: "red" }}>* </span>
+                              {Message("common.mandatoryFields")}
+                            </Label>
+                          </Col>
+
+                          <FormGroup className="float-right ">
+                            {this.state.entityState.ID ? (
+                              <Button
+                                className={
+                                  this.state.buttonAction ? "disabled" : ""
+                                }
+                                type="submit"
+                                outline
+                                color="primary"
+                              >
+                                {Message("common.update")}
+                              </Button>
+                            ) : (
+                              <Button
+                                className={
+                                  this.state.buttonAction ? "disabled" : ""
+                                }
+                                type="submit"
+                                outline
+                                color="primary"
+                              >
+                                {Message("common.add")}
+                              </Button>
+                            )}
+                            <Button
+                              color="danger"
+                              className="ml-2"
+                              onClick={() => this.toggleManageModal()}
+                            >
+                              {Message("common.cancel")}
+                            </Button>
+                          </FormGroup>
+                        </Row>
+                      </div>
+                    </ModalFooter>
+                  </Form>
+                )}
+              </Formik>
+            </Modal>
+          </div>
+        </div>
+      </Fragment>
+    )
+  }
+}
+
+export default withRouter(EntityState)

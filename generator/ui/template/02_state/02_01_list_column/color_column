@@ -1,0 +1,21 @@
+ {
+    name: "##FIELD_1_DISPLAYNAME##",
+    selector: "##FIELD_1##",
+          center: true,
+    sortable: false,
+   cell: row =>
+            row.Color ? (
+              <Col sm="6" md="6" lg="6">
+                <Input
+                  name="Color"
+                  className="form-control"
+                  width="5"
+                  type="color"
+                  value={row.##FIELD_1##}
+                  id="color-input"
+                />
+              </Col>
+            ) : (
+              <span></span>
+            ),
+},

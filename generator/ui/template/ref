@@ -1,0 +1,320 @@
+
+//import QRCode from "qrcode"
+
+class ##MODEL_NAME## extends Component {
+
+    ##component##
+  render() {
+
+    const initialValues = this.state.##MODEL_NAME##
+    const conditionalRowStyles = [
+      {
+        when: row => row,
+        style: {
+          "&:hover": {
+            cursor: "pointer",
+          },
+        },
+      },
+    ]
+    return (
+      <Fragment>
+        <div className="page-content">
+          <div className="container-fluid">
+            <Card>
+              <CardBody>
+                <div className="PoliceView">
+                  <ListPageHeader
+                    heading={`${ModulesName.Home}.${ModulesName.eBeat}`}
+                    buttonText={"Add  " + ModulesName.eBeat}
+                    onTextChange={this.SearchQueryChanged}
+                    buttonClick={this.addBtnClick}
+                    searchValue={this.state.ListRequestModel.searchString}
+                  />
+                </div>
+
+                <div className="PoliceView">
+                  <ListPage
+                    conditionalRowStyles={conditionalRowStyles}
+                    columns={this.state.columns}
+                    data={this.state.##MODEL_NAME_CAMELCASE##List}
+                    keyField={this.state.keyField}
+                    totalCount={this.state.totalCount}
+                    // rowClicked={this.HandleRowClicked}
+                    rowsPerPageOnChange={this.handlePerRowsChange}
+                    pageChange={this.handlePageChange}
+                    isDataLoading={this.state.isLoading}
+                    overFlowXRemoval={true}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+            <Modal
+              className="viewDocumentModal"
+              isOpen={this.state.viewModal}
+              size="lg"
+              toggle={this.ToggleViewModal}
+            >
+              <ModalHeader toggle={this.ToggleViewModal}>
+                <b>View</b>
+              </ModalHeader>
+              <ModalBody>
+
+                <div id="divToPrint" className="mt-2" style={{
+                  // width: '170mm',
+                  minHeight: '200mm',
+                  // // marginLeft: 'auto',
+                  // marginRight: 'auto'
+                  marginTop:'0'
+                }}>
+                  <div className="text-sm-center">
+                    <img
+                      src={logo}
+                      alt=""
+                      height="120"
+                      width="120"
+                      className="auth-logo-dark m-auto"
+                    />
+                    {/* <h3 className="pt-3" style={{ textAlign: "center" }}>
+                          Police - Central Zone{" "}
+                        </h3> */}
+
+                    <Row className="mt-5">
+                      <Col lg="4" style={{textAlign:"right"}}>
+                        <h5><b>Name :</b></h5>
+                      </Col>
+                      <Col lg="6"  style={{textAlign:"left"}}>
+                        <h5>{this.state.##MODEL_NAME##Detail ? this.state.##MODEL_NAME##Detail.Name : ""}</h5>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col lg="4" style={{textAlign:"right"}}>
+                        <h5><b>Address :</b></h5>
+                      </Col>
+                      <Col lg="6" style={{textAlign:"left"}}>
+                        <h5>{this.state.##MODEL_NAME##Detail ? this.state.##MODEL_NAME##Detail.Address : ""}</h5>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xxs="12" className="mt-5 ml-2">
+                        {/* <img
+                      alt="docView"
+                      src={this.state.QRValue}
+                      title="documentview"
+                      height="600px"
+                      width="100%"
+                      style={{ objectFit: "contain" }}
+                    /> */}
+
+                        <QRCode value={"UniqueID=" + this.state.QRValue} />
+                      </Col>
+                    </Row>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <FormGroup>
+                  {/* <a href={this.state.QRValue}> */}
+                  <Button
+                    id="print"
+                    className="default   btn-sm mb-2 btn-addon"
+                    color="primary"
+                    onClick={() => this.printDocument()}
+                  >
+                    Download
+                    </Button>{" "}
+                  {/* </a> */}
+                  <Button
+                    className="default   btn-sm mb-2 btn-addon"
+                    color="danger"
+                    onClick={() => this.ToggleViewModal()}
+                  >
+                    Close
+                  </Button>
+                </FormGroup>
+              </ModalFooter>
+            </Modal>
+            <Modal
+              isOpen={this.state.deleteModal}
+              toggle={this.toggleDeleteModal}
+            >
+              <ModalHeader toggle={this.toggleDeleteModal}>
+                Delete E-Beat Location
+              </ModalHeader>
+
+              <AvForm
+                onSubmit={() =>
+                  this.delete##MODEL_NAME##(this.state.##MODEL_NAME##.ID)
+                }
+              >
+                <ModalBody>
+                  <Fragment>
+                    <Row className="mb-4">
+                      <Label className="av-label ml-3">
+                        <h5>
+                          Are you sure you want to delete this{" "}
+                          {this.state.##MODEL_NAME##
+                            ? this.state.##MODEL_NAME##.Name
+                            : ""}{" "}
+                          E-Beat Location ?
+                        </h5>
+                      </Label>
+                    </Row>
+                  </Fragment>
+                </ModalBody>
+
+                <ModalFooter>
+                  <FormGroup className="float-sm-right ">
+                    <Button type="submit" outline color="primary">
+                      Yes
+                    </Button>
+                    <Button
+                      color="danger"
+                      className="ml-2"
+                      onClick={() => this.toggleDeleteModal()}
+                    >
+                      No
+                    </Button>
+                  </FormGroup>
+                </ModalFooter>
+              </AvForm>
+            </Modal>
+
+            <Modal
+              size="md"
+              isOpen={this.state.manageModal}
+              toggle={this.toggleManageModal}
+            >
+              <ModalHeader toggle={this.toggleManageModal}>
+                {this.state.##MODEL_NAME## && this.state.##MODEL_NAME##.ID
+                  ? "Update E-Beat Location"
+                  : "Add E-Beat Location"}
+              </ModalHeader>
+              <Formik
+                initialValues={initialValues}
+                validationSchema={##MODEL_NAME##Validation}
+                onSubmit={this.handleSubmit}
+                validateOnBlur={false}
+                validateOnChange={false}
+              >
+                {({ errors, values, setFieldValue }) => (
+                  <Form className="av-tooltip tooltip-label-bottom">
+                    <ModalBody>
+                      <Fragment>
+                        <Row className="mb-10">
+                          <Col lg="12" sm="12" md="12" lg="12">
+                            <FormGroup className="form-group has-float-label">
+                              <Label className="requiredField">Name</Label>
+                              <Field className="form-control" name="Name" />
+                              {errors.Name && (
+                                <div className="invalid-feedback d-block">
+                                  {errors.Name}
+                                </div>
+                              )}
+                            </FormGroup>
+                          </Col>
+                          <Col lg="12" sm="12" md="12" lg="12">
+                            <FormGroup className="form-group has-float-label">
+                              <DropDown
+                                className="react-select"
+                                classNamePrefix="react-select"
+                                labelClassName="requiredField"
+                                label="E-Beat Location Type"
+                                name=""
+                                MobcolSplit={12}
+                                isClearable
+                                //labelClassName="requiredField"
+                                isSearchable
+                                options={this.state.##MODEL_FOREIGN_1##}
+                                ClearAction={() => {
+                                  setFieldValue(`##MODEL_FOREIGN_1##ID`, "")
+                                }}
+                                Action={entity => {
+                                  if (entity) {
+                                    setFieldValue(
+                                      "##MODEL_FOREIGN_1##ID",
+                                      entity ? entity.value : null
+                                    )
+                                    setFieldValue(
+                                      "##MODEL_FOREIGN_1##",
+                                      entity ? entity.value : null
+                                    )
+                                  }
+                                }}
+                                errors={errors.##MODEL_FOREIGN_1##ID}
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col lg="12" sm="12" md="12" lg="12">
+                            <FormGroup className="form-group has-float-label">
+                              <Label className="requiredField">Address</Label>
+                              <Field className="form-control" name="Address" />
+                              {errors.Address && (
+                                <div className="invalid-feedback d-block">
+                                  {errors.Address}
+                                </div>
+                              )}
+                            </FormGroup>
+                          </Col>
+                         
+                        </Row>
+                      </Fragment>
+                    </ModalBody>
+                    <ModalFooter>
+                      <div className="container-fluid">
+                        <Row>
+                          <Col lg="">
+                            <Label>
+                              <span style={{ color: "red" }}>* </span>
+                              Mandatory Fields
+                            </Label>
+                          </Col>
+
+                          <FormGroup className="float-right ">
+                            {this.state.##MODEL_NAME##.ID ? (
+                              <Button
+                                className={
+                                  this.state.buttonAction ? "disabled" : ""
+                                }
+                                type="submit"
+                                outline
+                                color="primary"
+                              >
+                                Update
+                              </Button>
+                            ) : (
+                                <Button
+                                  className={
+                                    this.state.buttonAction ? "disabled" : ""
+                                  }
+                                  type="submit"
+                                  outline
+                                  color="primary"
+                                >
+                                  Add
+                                </Button>
+                              )}
+                            <Button
+                              color="danger"
+                              className="ml-2"
+                              onClick={() => this.toggleManageModal()}
+                            >
+                              Cancel
+                            </Button>
+                          </FormGroup>
+                        </Row>
+                      </div>
+                    </ModalFooter>
+                  </Form>
+                )}
+              </Formik>
+            </Modal>
+          </div>
+        </div>
+      </Fragment>
+    )
+  }
+}
+
+export default withRouter(##MODEL_NAME##)
