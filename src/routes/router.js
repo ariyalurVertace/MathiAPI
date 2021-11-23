@@ -13,9 +13,11 @@ import uiModuleComponentRoleAccessRouter from "./predefined/ui_module_component_
 import cronScheduleRouter from "./predefined/cron_schedule_router.js";
 import uploadFilesRoute from "./predefined/fileupload_router.js";
 
-import {userResolver} from "../controllers/predefined/user_controller.js";
+// import {userResolver} from "../controllers/predefined/user_controller.js";
 
 //CUSTOM
+import orderRouter from "./custom/order_router.js";
+import productRouter from "./custom/product_router.js";
 
 export default function exportedRouter(app) {
     app.use("/api/user", userRouter());
@@ -34,6 +36,8 @@ export default function exportedRouter(app) {
     app.use("/api/cronschedule", cronScheduleRouter());
 
     app.use("/api/fileupload", uploadFilesRoute());
+    app.use("/api/order", orderRouter());
+    app.use("/api/product", productRouter());
 
     //NEW_REGISTER
 }
