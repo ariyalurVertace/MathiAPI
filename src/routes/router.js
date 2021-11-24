@@ -11,11 +11,13 @@ import apiModuleRoleAccessRouter from "./predefined/api_module_role_access_route
 import uiModuleRoleAccessRouter from "./predefined/ui_module_role_access_router.js";
 import uiModuleComponentRoleAccessRouter from "./predefined/ui_module_component_role_access_router.js";
 import cronScheduleRouter from "./predefined/cron_schedule_router.js";
-import uploadFilesRoute from "./predefined/fileupload_router.js";
+import uploadFilesRouter from "./predefined/fileupload_router.js";
 
-import {userResolver} from "../controllers/predefined/user_controller.js";
+// import {userResolver} from "../controllers/predefined/user_controller.js";
 
 //CUSTOM
+import districtRouter from "./custom/district_router.js";
+import stateRouter from "./custom/state_router.js";
 
 export default function exportedRouter(app) {
     app.use("/api/user", userRouter());
@@ -33,7 +35,9 @@ export default function exportedRouter(app) {
     );
     app.use("/api/cronschedule", cronScheduleRouter());
 
-    app.use("/api/fileupload", uploadFilesRoute());
+    app.use("/api/fileupload", uploadFilesRouter());
+    app.use("/api/district", districtRouter());
+    app.use("/api/state", stateRouter());
 
     //NEW_REGISTER
 }
