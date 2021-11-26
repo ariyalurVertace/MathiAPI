@@ -17,22 +17,86 @@ model address {
   districtid      Int
   postalcode      Int?
   landmark        String?
-  isdeleted       Boolean?          @default(false)
+  isDeleted       Boolean?          @default(false)
   district        district          @relation(fields: [districtid], references: [id])
-  customerprofile customerprofile[]
-  sellerprofile   sellerprofile[]
+  customerProfiles customerProfile[]
+  sellerProfiles   sellerProfile[]
 }
 
 model category {
   id               Int        @id
   name             String
   parentCategoryId Int?
+  isDeleted        Boolean    @default(false)
   category         category?  @relation("categoryTocategory_parentCategoryId", fields: [parentCategoryId], references: [id])
-  other_category   category[] @relation("categoryTocategory_parentCategoryId")
-  product          product[]
+  categories   category[] @relation("categoryTocategory_parentCategoryId")
+  products         product[]
 }
 
-model customerprofile {
+model district {
+  id        Int       @id
+  name      String
+  stateid   Int
+  isdeleted Boolean?  @default(false)
+  state     state     @relation(fields: [stateid], references: [id])
+  addresses   address[]
+}
+
+model product {
+  id            Int           @id @default(autoincrement())
+  name          String
+  image         String
+  price         Decimal       @db.Decimal
+  description   String
+  stock         Int
+  categoryId    Int
+  sellerId      Int
+  category      category      @relation(fields: [categoryId], references: [id])
+  sellerProfile sellerProfile @relation(fields: [sellerId], references: [id])
+  banners        banner[]
+  carts          cart[]
+  favourites     favourite[]
+  order         order[]
+}
+
+model state {
+  id        Int        @id
+  name      String?
+  isdeleted Boolean
+  districts  district[]
+}
+
+model user {
+  id                  Int        @id @default(autoincrement())
+  name                String?
+  userName            String     @unique
+  password            String?
+  salt                String?
+  forcePasswordChange Boolean?
+  passwordValidFrom   Int?
+  isActive            Boolean?   @default(true)
+  lastLoginDateTime   DateTime?  @db.Timetz(6)
+  isDeleted           Boolean?   @default(false)
+  userRoles            userRole[]
+}
+
+model banner {
+  id        Int      @id @default(autoincrement())
+  name      String
+  isActive  Boolean? @default(false)
+  isDeleted Boolean? @default(false)
+  image     String
+  productId Int
+  product   product  @relation(fields: [productId], references: [id])
+}
+
+model cart {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   product @relation(fields: [productId], references: [id])
+}
+
+model customerProfile {
   id          Int      @id
   firstname   String
   lastname    String
@@ -43,56 +107,45 @@ model customerprofile {
   address     address  @relation(fields: [addressid], references: [id])
 }
 
-model district {
-  id        Int       @id
-  name      String
-  stateid   Int
-  isdeleted Boolean?  @default(false)
-  state     state     @relation(fields: [stateid], references: [id])
-  address   address[]
+model favourite {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   product @relation(fields: [productId], references: [id])
 }
 
-model product {
-  id            Int           @id
-  name          String
-  image         String
-  price         Decimal       @db.Decimal
-  description   String
-  stock         Int
-  categoryId    Int
-  sellerId      Int
-  category      category      @relation(fields: [categoryId], references: [id])
-  sellerprofile sellerprofile @relation(fields: [sellerId], references: [id])
+model order {
+  id           Int      @id @default(autoincrement())
+  productId    Int
+  shippingDate Decimal  @db.Decimal
+  isDelivered  Boolean?
+  isDeleted    Boolean? @default(false)
+  product      product  @relation(fields: [productId], references: [id])
 }
 
-model sellerprofile {
+model role {
+  id       Int        @id @default(autoincrement())
+  name     String
+  userRoles userRole[]
+}
+
+model sellerProfile {
   id          Int       @id
-  firstname   String
-  lastname    String
-  phonenumber Int
-  emailid     String
-  addressid   Int
-  isapproved  Boolean?  @default(false)
-  isdeleted   Boolean?  @default(false)
-  address     address   @relation(fields: [addressid], references: [id])
-  product     product[]
+  firstName   String
+  lastName    String
+  phoneNumber Int
+  email       String
+  addressId   Int
+  isApproved  Boolean?  @default(false)
+  isDeleted   Boolean?  @default(false)
+  user        Int
+  address     address   @relation(fields: [addressId], references: [id])
+  products    product[]
 }
 
-model state {
-  id        Int        @id
-  name      String?
-  isdeleted Boolean
-  district  district[]
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model user {
-  id        BigInt?
-  firstName String? @db.VarChar
-  lastName  String? @db.VarChar
-  password  String? @db.VarChar
-  email     String? @db.VarChar
-  userName  String? @db.VarChar
-
-  @@ignore
+model userRole {
+  id     Int  @id @default(autoincrement())
+  roleId Int
+  userId Int
+  role   role @relation(fields: [roleId], references: [id])
+  user   user @relation(fields: [userId], references: [id])
 }
