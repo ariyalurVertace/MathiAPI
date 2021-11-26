@@ -9,76 +9,180 @@ datasource db {
 }
 
 model address {
-  id              Int               @id
-  name            String
-  addressline1    String
-  addressline2    String?
-  stateid         Int
-  districtid      Int
-  postalcode      Int?
-  landmark        String?
-  isdeleted       Boolean?          @default(false)
-  district        district          @relation(fields: [districtid], references: [id])
-  customerprofile customerprofile[]
-  sellerprofile   sellerprofile[]
-}
-
-model customerprofile {
-  id          Int      @id
-  firstname   String
-  lastname    String
-  phonenumber Int
-  emailid     Int
-  addressid   Int
-  isdeleted   Boolean? @default(false)
-  address     address  @relation(fields: [addressid], references: [id])
+  id               Int               @id
+  name             String
+  addressLine1     String
+  addressLine2     String?
+  districtId       Int
+  postalCode       Int?
+  landmark         String?
+  isDeleted        Boolean           @default(false)
+  district         district          @relation(fields: [districtId], references: [id])
+  customerProfiles customerProfile[]
+  sellerProfiles   sellerProfile[]
 }
 
 model district {
   id        Int       @id
   name      String
-  stateid   Int
-  isdeleted Boolean?  @default(false)
-  state     state     @relation(fields: [stateid], references: [id])
+  stateId   Int
+  isDeleted Boolean   @default(false)
+  state     state     @relation(fields: [stateId], references: [id])
   address   address[]
-}
-
-model sellerprofile {
-  id          Int      @id
-  firstname   String
-  lastname    String
-  phonenumber Int
-  emailid     String
-  addressid   Int
-  isapproved  Boolean? @default(false)
-  isdeleted   Boolean? @default(false)
-  address     address  @relation(fields: [addressid], references: [id])
 }
 
 model state {
   id        Int        @id
-  name      String?
-  isdeleted Boolean
+  name      String
+  isDeleted Boolean
   district  district[]
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model user {
-  id        BigInt?
-  firstName String? @db.VarChar
-  lastName  String? @db.VarChar
-  password  String? @db.VarChar
-  email     String? @db.VarChar
-  userName  String? @db.VarChar
-
-
-  @@ignore
+  id                  Int               @id @default(autoincrement())
+  name                String?
+  userName            String            @unique
+  password            String?
+  salt                String?
+  forcePasswordChange Boolean?
+  passwordValidFrom   Int?
+  isActive            Boolean?          @default(true)
+  lastLoginDateTime   DateTime?         @db.Timetz(6)
+  isDeleted           Boolean?          @default(false)
+  customerProfile     customerProfile[]
+  userRoles           userRole[]
 }
 
 model category {
   id               Int        @id
   name             String
   parentCategoryId Int?
+  image            String?    @default(dbgenerated("false"))
+  description      String?
+  isDeleted        Boolean    @default(false)
   category         category?  @relation("categoryTocategory_parentCategoryId", fields: [parentCategoryId], references: [id])
-  other_category   category[] @relation("categoryTocategory_parentCategoryId")
+  categories       category[] @relation("categoryTocategory_parentCategoryId")
+  products         product[]
+}
+
+model banner {
+  id        Int      @id @default(autoincrement())
+  name      String
+  isActive  Boolean? @default(false)
+  isDeleted Boolean  @default(false)
+  image     String
+  productId Int
+  product   product  @relation(fields: [productId], references: [id])
+}
+
+model cart {
+  id              Int             @id @default(autoincrement())
+  productId       Int
+  count           Int
+  isDeleted       Boolean         @default(false)
+  customerId      Int
+  customerProfile customerProfile @relation(fields: [customerId], references: [id])
+  product         product         @relation(fields: [productId], references: [id])
+}
+
+model customerProfile {
+  id          Int         @id
+  firstName   String
+  lastName    String
+  phoneNumber String
+  email       String?
+  addressId   Int
+  isDeleted   Boolean     @default(false)
+  userId      Int
+  address     address     @relation(fields: [addressId], references: [id])
+  user        user        @relation(fields: [userId], references: [id])
+  cart        cart[]
+  favourite   favourite[]
+  order       order[]
+}
+
+model favourite {
+  id              Int             @id @default(autoincrement())
+  productId       Int
+  customerId      Int
+  isDeleted       Boolean         @default(false)
+  customerProfile customerProfile @relation(fields: [customerId], references: [id])
+  product         product         @relation(fields: [productId], references: [id])
+}
+
+model order {
+  id              Int             @id @default(autoincrement())
+  productId       Int
+  customerId      Int
+  shippingDate    DateTime        @db.Timestamptz(6)
+  isDelivered     Boolean?
+  isDeleted       Boolean         @default(false)
+  orderDate       DateTime        @db.Timestamptz(6)
+  customerProfile customerProfile @relation(fields: [customerId], references: [id])
+  product         product         @relation(fields: [productId], references: [id])
+}
+
+model product {
+  id            Int           @id @default(autoincrement())
+  name          String
+  image         String
+  price         Decimal       @db.Decimal
+  description   String
+  stock         Int
+  categoryId    Int
+  sellerId      Int
+  isDeleted     Boolean?      @default(false)
+  category      category      @relation(fields: [categoryId], references: [id])
+  sellerProfile sellerProfile @relation(fields: [sellerId], references: [id])
+  banners       banner[]
+  carts         cart[]
+  favourites    favourite[]
+  orders        order[]
+}
+
+model role {
+  id        Int        @id @default(autoincrement())
+  name      String
+  isDeleted Boolean    @default(false)
+  userRoles userRole[]
+}
+
+model sellerProfile {
+  id          Int       @id
+  firstName   String
+  lastName    String
+  phoneNumber Int
+  email       String
+  addressId   Int
+  isApproved  Boolean?  @default(false)
+  isDeleted   Boolean?  @default(false)
+  user        Int
+  address     address   @relation(fields: [addressId], references: [id])
+  products    product[]
+}
+
+model userRole {
+  id     Int  @id @default(autoincrement())
+  roleId Int
+  userId Int
+  role   role @relation(fields: [roleId], references: [id])
+  user   user @relation(fields: [userId], references: [id])
+}
+
+model entityState {
+  id                                                                  Int                   @id
+  name                                                                String?
+  type                                                                String?
+  isDeleted                                                           Boolean?              @default(false)
+  isDefault                                                           Boolean?
+  entityStateProgress_entityStateToentityStateProgress_currentStateId entityStateProgress[] @relation("entityStateToentityStateProgress_currentStateId")
+  entityStateProgress_entityStateToentityStateProgress_nextStateId    entityStateProgress[] @relation("entityStateToentityStateProgress_nextStateId")
+}
+
+model entityStateProgress {
+  id                                                          Int         @id
+  currentStateId                                              Int
+  nextStateId                                                 Int
+  entityState_entityStateToentityStateProgress_currentStateId entityState @relation("entityStateToentityStateProgress_currentStateId", fields: [currentStateId], references: [id])
+  entityState_entityStateToentityStateProgress_nextStateId    entityState @relation("entityStateToentityStateProgress_nextStateId", fields: [nextStateId], references: [id])
 }
