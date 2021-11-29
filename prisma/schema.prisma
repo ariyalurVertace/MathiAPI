@@ -50,7 +50,7 @@ model category {
   description      String?
   isDeleted        Boolean    @default(false)
   category         category?  @relation("categoryTocategory_parentCategoryId", fields: [parentCategoryId], references: [id])
-  other_categories   category[] @relation("categoryTocategory_parentCategoryId")
+  categories       category[] @relation("categoryTocategory_parentCategoryId")
   products          product[]
 }
 
