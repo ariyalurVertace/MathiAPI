@@ -33,7 +33,7 @@ export async function update(req, res, next) {
         let newJson = {...json};
         const item = await genericUpdate({
             Table,
-            condition: {ID: parseInt(req.params.id, 10), IsDeleted: false},
+            condition: {id: parseInt(req.params.id, 10), isDeleted: false},
             json: newJson,
             req,
             res,
@@ -54,7 +54,7 @@ export async function remove(req, res, next) {
     try {
         let result = await genericDelete({
             Table,
-            condition: {ID: parseInt(req.params.id, 10), IsDeleted: false},
+            condition: {id: parseInt(req.params.id, 10), isDeleted: false},
             softDelete: true,
             req,
             res,
@@ -75,46 +75,7 @@ export async function getOne(req, res, next) {
     try {
         let selectFields = {
             id: true,
-            name: true,
-            productId: {
-                where: {
-                    isDeleted: false,
-                },
-                select: {},
-            },
-            // Method: true,
-        };
-        let includeFields = null;
-        let sortConditions = null;
-
-        let item = await genericGetOne({
-            Table,
-            condition: {ID: parseInt(req.params.id, 10), IsDeleted: false},
-            selectFields,
-            includeFields,
-            sortConditions,
-        });
-
-        return genericResponse({
-            res,
-            result: item,
-            exception: null,
-            pagination: null,
-            statusCode: item ? statusCodes.SUCCESS : statusCodes.NOT_FOUND,
-        });
-    } catch (error) {
-        return next(error);
-    }
-}
-
-export async function getAll(req, res, next) {
-    try {
-        const json = req.body;
-        let condition = {IsDeleted: false};
-        let selectFields = {
-            id: true,
             productId: true,
-
             product: {
                 where: {
                     isDeleted: false,
@@ -158,7 +119,22 @@ export async function getAll(req, res, next) {
                             id: true,
                             firstName: true,
                             lastName: true,
-                            emailId: true,
+                            email: true,
+                            userId: true,
+                            user: {
+                                where: {
+                                    isDeleted: false,
+                                },
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    password: true,
+                                    forcePasswordChange: true,
+                                    passwordValidFrom: true,
+                                    isActive: true,
+                                    lastLoginDateTime: true,
+                                },
+                            },
                             addressId: true,
 
                             address: {
@@ -211,7 +187,220 @@ export async function getAll(req, res, next) {
                     firstName: true,
                     lastName: true,
                     phoneNumber: true,
-                    emailId: true,
+                    email: true,
+                    userId: true,
+                    user: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            password: true,
+                            forcePasswordChange: true,
+                            passwordValidFrom: true,
+                            isActive: true,
+                            lastLoginDateTime: true,
+                        },
+                    },
+                    addressId: true,
+
+                    address: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            addressLine1: true,
+                            addressLine2: true,
+                            districtId: true,
+
+                            district: {
+                                where: {
+                                    isDeleted: false,
+                                },
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    stateId: true,
+
+                                    state: {
+                                        where: {
+                                            isDeleted: false,
+                                        },
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                        },
+                                    },
+                                },
+                            },
+                            postalCode: true,
+                            landMark: true,
+                        },
+                    },
+                },
+            },
+        };
+        let includeFields = null;
+        let sortConditions = null;
+
+        let item = await genericGetOne({
+            Table,
+            condition: {id: parseInt(req.params.id, 10), isDeleted: false},
+            selectFields,
+            includeFields,
+            sortConditions,
+        });
+
+        return genericResponse({
+            res,
+            result: item,
+            exception: null,
+            pagination: null,
+            statusCode: item ? statusCodes.SUCCESS : statusCodes.NOT_FOUND,
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+export async function getAll(req, res, next) {
+    try {
+        const json = req.body;
+        let condition = {isDeleted: false};
+        let selectFields = {
+            id: true,
+            productId: true,
+
+            product: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    price: true,
+                    description: true,
+                    image: true,
+                    color: true,
+                    categoryId: true,
+
+                    category: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            parentCategoryId: true,
+
+                            parentCategory: {
+                                where: {
+                                    isDeleted: false,
+                                },
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                    sellerId: true,
+
+                    seller: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                            email: true,
+                            userId: true,
+                            user: {
+                                where: {
+                                    isDeleted: false,
+                                },
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    password: true,
+                                    forcePasswordChange: true,
+                                    passwordValidFrom: true,
+                                    isActive: true,
+                                    lastLoginDateTime: true,
+                                },
+                            },
+                            addressId: true,
+
+                            address: {
+                                where: {
+                                    isDeleted: false,
+                                },
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    addressLine1: true,
+                                    addressLine2: true,
+                                    districtId: true,
+
+                                    district: {
+                                        where: {
+                                            isDeleted: false,
+                                        },
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            stateId: true,
+
+                                            state: {
+                                                where: {
+                                                    isDeleted: false,
+                                                },
+                                                select: {
+                                                    id: true,
+                                                    name: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    postalCode: true,
+                                    landMark: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            customerId: true,
+
+            customer: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    phoneNumber: true,
+                    email: true,
+                    userId: true,
+                    user: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            password: true,
+                            forcePasswordChange: true,
+                            passwordValidFrom: true,
+                            isActive: true,
+                            lastLoginDateTime: true,
+                        },
+                    },
                     addressId: true,
 
                     address: {
