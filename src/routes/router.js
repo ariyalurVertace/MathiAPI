@@ -15,16 +15,13 @@ import uploadFilesRouter from "./predefined/fileupload_router.js";
 // import {userResolver} from "../controllers/predefined/user_controller.js";
 
 //CUSTOM
+
 import sellerProfileRouter from "./custom/sellerProfile_router.js";
 import categoryRouter from "./custom/category_router.js";
-
-//import {userResolver} from "../controllers/predefined/user_controller.js";
-
-//CUSTOM
+import cartRouter from "./custom/cart_router.js";
+import favouriteRouter from "./custom/favourite_router.js";
 import addressRouter from "./custom/address_router.js";
 import customerProfileRouter from "./custom/customerProfile_router.js";
-// import {userResolver} from "../controllers/predefined/user_controller.js";
-
 import districtRouter from "./custom/district_router.js";
 import stateRouter from "./custom/state_router.js";
 
@@ -51,6 +48,8 @@ export default function exportedRouter(app) {
     app.use("/api/fileupload", uploadFilesRouter());
     app.use("/api/district", districtRouter());
     app.use("/api/state", stateRouter());
+    app.use("/api/cart", cartRouter());
+    app.use("/api/favourite", favouriteRouter());
 
     //NEW_REGISTER
 }
