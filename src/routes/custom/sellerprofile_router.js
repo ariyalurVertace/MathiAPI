@@ -7,7 +7,7 @@ import {
     getOne,
     getAll,
     getCount,
-} from "../../controllers/custom/sellerprofile_controller.js";
+} from "../../controllers/custom/sellerProfile_controller.js";
 
 export default function exportedRouter() {
     const options = {
