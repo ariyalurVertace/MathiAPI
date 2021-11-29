@@ -107,19 +107,43 @@ export async function getAll(req, res, next) {
         const json = req.body;
         let condition = {IsDeleted: false};
         let selectFields = {
-            ID: true,
-            Name: true,
-            Route: true,
-            Method: true,
-            APIModuleParameter: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+            email: true,
+            addressId: true,
+            address: {
                 where: {
-                    IsDeleted: false,
+                    isDeleted: false,
                 },
                 select: {
-                    ID: true,
-                    Name: true,
-                    Variable: true,
-                    Location: true,
+                    id: true,
+                    name: true,
+                    addressLine1: true,
+                    addressLine2: true,
+                    districtId: true,
+                    district: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            stateId: true,
+                            state: {
+                                where: {
+                                    isDeleted: false,
+                                },
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                    postalCode: true,
+                    landmark: true,
                 },
             },
         };
