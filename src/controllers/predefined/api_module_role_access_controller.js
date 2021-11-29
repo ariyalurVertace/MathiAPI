@@ -14,7 +14,7 @@ export async function grantAccess(req, res, next) {
         //Check Role
         let role = await genericGetOne({
             Table: "Role",
-            condition: {ID: req.body.RoleId, IsDeleted: false},
+            condition: {id: req.body.RoleId, isDeleted: false},
         });
         if (!role) {
             return genericResponse({
@@ -68,16 +68,16 @@ export async function getAccess(req, res, next) {
             RoleId: parseInt(req.params.id, 10),
         };
         let selectFields = {
-            ID: true,
+            id: true,
             APIModule: {
                 select: {
-                    ID: true,
+                    id: true,
                     Name: true,
                     Route: true,
                     Method: true,
                     APIModuleParameter: {
                         select: {
-                            ID: true,
+                            id: true,
                             Name: true,
                             Variable: true,
                             Location: true,

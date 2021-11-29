@@ -17,7 +17,7 @@ export async function create(req, res, next) {
         delete json.NoResponse;
         let role = await genericGetOne({
             Table: "z_Role",
-            condition: {id: json.RoleId, IsDeleted: false},
+            condition: {id: json.RoleId, isDeleted: false},
         });
         if (!role) {
             return genericResponse({

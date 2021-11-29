@@ -12,11 +12,12 @@ import uiModuleRoleAccessRouter from "./predefined/ui_module_role_access_router.
 import uiModuleComponentRoleAccessRouter from "./predefined/ui_module_component_role_access_router.js";
 import cronScheduleRouter from "./predefined/cron_schedule_router.js";
 import uploadFilesRouter from "./predefined/fileupload_router.js";
-import sellerProfileRouter from "./custom/sellerprofile_router.js";
 
 // import {userResolver} from "../controllers/predefined/user_controller.js";
 
 //CUSTOM
+import sellerProfileRouter from "./custom/sellerprofile_router.js";
+import categoryRouter from "./custom/category_router.js";
 
 export default function exportedRouter(app) {
     app.use("/api/user", userRouter());
@@ -36,6 +37,7 @@ export default function exportedRouter(app) {
 
     app.use("/api/fileupload", uploadFilesRouter());
     app.use("/api/sellerProfile", sellerProfileRouter());
+    app.use("/api/category", categoryRouter());
 
     //NEW_REGISTER
 }

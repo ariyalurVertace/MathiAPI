@@ -22,7 +22,7 @@ export async function getEntityStates(Table) {
             let condition = {Entity: Table, IsActive: true};
             let selectFields = {
                 NextEntityState: {
-                    select: {ID: true, Name: true, Color: true},
+                    select: {id: true, Name: true, Color: true},
                 },
             };
             const items = await prisma.entityState.findMany({
@@ -55,7 +55,7 @@ export async function assignNextState(req, res, next) {
             return {
                 CurrentEntityStateID: currentEntityState,
                 NextEntityStateID: nextStateId,
-                IsDeleted: false,
+                isDeleted: false,
             };
         });
 
@@ -79,7 +79,7 @@ export async function assignNextState(req, res, next) {
 
 export async function getFinaltEntityState(Table) {
     try {
-        const entityStates = await prisma.$queryRaw`Select "ID" from Public."EntityState" Where "Entity" = ${Table} And  "ID" in (SELECT DISTINCT "NextEntityStateID" 
+        const entityStates = await prisma.$queryRaw`Select "id" from Public."EntityState" Where "Entity" = ${Table} And  "id" in (SELECT DISTINCT "NextEntityStateID" 
         FROM public."EntityStateProgress" WHERE "NextEntityStateID"  NOT IN 
         ( SELECT "CurrentEntityStateID" FROM public."EntityStateProgress"))`;
         return entityStates;
@@ -90,10 +90,10 @@ export async function getFinaltEntityState(Table) {
 
 export async function getNextEntityStates(EntityStateID) {
     try {
-        let condition = {CurrentEntityStateID: EntityStateID, IsDeleted: false};
+        let condition = {CurrentEntityStateID: EntityStateID, isDeleted: false};
         let selectFields = {
             NextEntityState: {
-                select: {ID: true, Name: true, Color: true},
+                select: {id: true, Name: true, Color: true},
             },
         };
         const items = await prisma.entityStateProgress.findMany({
@@ -115,7 +115,7 @@ export async function getDefaultEntityState(Table) {
             where: condition,
         });
 
-        return item.ID;
+        return item.id;
     } catch (error) {
         throw new Error(error);
     }
@@ -142,7 +142,7 @@ export async function takeEntityAction(
             const json = {EntityStateID}; //New state to update
             const item = await genericUpdate({
                 Table,
-                condition: {ID: parseInt(EntityID, 10), IsDeleted: false},
+                condition: {id: parseInt(EntityID, 10), isDeleted: false},
                 json,
                 req,
                 res,
@@ -192,16 +192,16 @@ export async function isActionAllowed(UserID, Table, EntityID, EntityStateID) {
     try {
         Table = Table.charAt(0).toLowerCase() + Table.substring(1);
         const obj = await prisma[Table].findFirst({
-            where: {ID: parseInt(EntityID, 10)},
+            where: {id: parseInt(EntityID, 10)},
         });
         let condition = {
             CurrentEntityStateID: obj.EntityStateID,
             NextEntityStateID: EntityStateID,
-            IsDeleted: false,
+            isDeleted: false,
         };
         const item = await prisma.entityStateProgress.findMany({
             where: condition,
-            select: {ID: true},
+            select: {id: true},
         });
 
         return item.length > 0;

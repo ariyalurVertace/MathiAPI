@@ -35,7 +35,7 @@ export async function update(req, res, next) {
             Table,
             condition: {
                 id: parseInt(req.params.id, 10),
-                IsDeleted: false,
+                isDeleted: false,
             },
             json: newJson,
             req,
@@ -59,7 +59,7 @@ export async function remove(req, res, next) {
             Table,
             condition: {
                 id: parseInt(req.params.id, 10),
-                IsDeleted: false,
+                isDeleted: false,
             },
             softDelete: true,
             req,
@@ -92,7 +92,7 @@ export async function getOne(req, res, next) {
             Table,
             condition: {
                 id: parseInt(req.params.id, 10),
-                IsDeleted: false,
+                isDeleted: false,
             },
             selectFields,
             includeFields,
@@ -116,7 +116,7 @@ export async function getAll(req, res, next) {
         const json = req.body;
         let condition = {
             APIModuleId: json.ApiModuleId,
-            IsDeleted: false,
+            isDeleted: false,
         };
         let selectFields = {
             id: true,
@@ -155,7 +155,7 @@ export async function getCount(req, res, next) {
         const json = req.body;
         let condition = {
             APIModuleId: json.ApiModuleId,
-            IsDeleted: false,
+            isDeleted: false,
         };
 
         let count = await genericGetCount({

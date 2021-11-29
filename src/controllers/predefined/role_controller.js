@@ -33,7 +33,7 @@ export async function update(req, res, next) {
         let newJson = {...json};
         const item = await genericUpdate({
             Table,
-            condition: {ID: parseInt(req.params.id, 10)},
+            condition: {id: parseInt(req.params.id, 10)},
             json: newJson,
             req,
             res,
@@ -55,7 +55,7 @@ export async function remove(req, res, next) {
     try {
         let result = await genericDelete({
             Table,
-            condition: {ID: parseInt(req.params.id, 10), IsDeleted: false},
+            condition: {id: parseInt(req.params.id, 10), isDeleted: false},
             softDelete: true,
             req,
             res,
@@ -76,7 +76,7 @@ export async function remove(req, res, next) {
 export async function getByName(name) {
     let item = await genericGetOne({
         Table,
-        condition: {Name: name, IsDeleted: false},
+        condition: {Name: name, isDeleted: false},
     });
     return item;
 }
@@ -89,7 +89,7 @@ export async function getOne(req, res, next) {
 
         let item = await genericGetOne({
             Table,
-            condition: {ID: parseInt(req.params.id, 10)},
+            condition: {id: parseInt(req.params.id, 10)},
             selectFields,
             includeFields,
             sortConditions,
@@ -111,7 +111,7 @@ export async function getOne(req, res, next) {
 export async function getAll(req, res, next) {
     try {
         const json = req.body;
-        let condition = {IsDeleted: false};
+        let condition = {isDeleted: false};
         let selectFields = null;
         let includeFields = null;
         let sortConditions = null;
@@ -143,7 +143,7 @@ export async function getAll(req, res, next) {
 export async function getCount(req, res, next) {
     try {
         const json = req.body;
-        let condition = {IsDeleted: false};
+        let condition = {isDeleted: false};
 
         let count = await genericGetCount({
             Table,

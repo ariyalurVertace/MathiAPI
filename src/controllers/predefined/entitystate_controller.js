@@ -20,7 +20,7 @@ export async function create(req, res, next) {
 
         delete json.NextStates;
         const item = await genericCreate({Table, json, req, res});
-        await assignNextState(nextStates, item.ID);
+        await assignNextState(nextStates, item.id);
         return genericResponse({
             res,
             result: item || null,
@@ -41,7 +41,7 @@ export async function update(req, res, next) {
         delete newJson.NextStates;
         const item = await genericUpdate({
             Table,
-            condition: {ID: parseInt(req.params.id, 10)},
+            condition: {id: parseInt(req.params.id, 10)},
             json: newJson,
             req,
             res,
@@ -52,12 +52,12 @@ export async function update(req, res, next) {
 
         let result = await genericGetOne({
             Table,
-            condition: {ID: parseInt(req.params.id, 10)},
+            condition: {id: parseInt(req.params.id, 10)},
             selectFields,
             includeFields,
             sortConditions,
         });
-        await assignNextState(nextStates, result.ID);
+        await assignNextState(nextStates, result.id);
         return genericResponse({
             res,
             result: null,
@@ -74,7 +74,7 @@ export async function remove(req, res, next) {
     try {
         let result = await genericDelete({
             Table,
-            condition: {ID: parseInt(req.params.id, 10)},
+            condition: {id: parseInt(req.params.id, 10)},
             softDelete: false,
             req,
             res,
@@ -99,7 +99,7 @@ export async function getOne(req, res, next) {
 
         let item = await genericGetOne({
             Table,
-            condition: {ID: parseInt(req.params.id, 10)},
+            condition: {id: parseInt(req.params.id, 10)},
             selectFields,
             includeFields,
             sortConditions,
@@ -137,7 +137,7 @@ export async function getAll(req, res, next) {
                 Entity: json.Entity,
             };
         let selectFields = {
-            ID: true,
+            id: true,
             Name: true,
             Color: true,
             Entity: true,
@@ -147,7 +147,7 @@ export async function getAll(req, res, next) {
                 select: {
                     NextEntityState: {
                         select: {
-                            ID: true,
+                            id: true,
                             Name: true,
                         },
                     },
@@ -216,7 +216,7 @@ export async function assignNextState(nextStateIds, currentState) {
             return {
                 CurrentEntityStateID: currentEntityState,
                 NextEntityStateID: nextStateId,
-                IsDeleted: false,
+                isDeleted: false,
             };
         });
         let result = await genericCreateMany({
@@ -246,16 +246,16 @@ export async function getAllEntityStateProgress(req, res, next) {
             CurrentEntityState: {is: {Entity: json.Entity}},
         };
         let selectFields = {
-            ID: true,
+            id: true,
             CurrentEntityState: {
                 select: {
-                    ID: true,
+                    id: true,
                     Name: true,
                 },
             },
             NextEntityState: {
                 select: {
-                    ID: true,
+                    id: true,
                     Name: true,
                 },
             },

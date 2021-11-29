@@ -8,779 +8,144 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model APIModule {
-  Name                String
-  Route               String
-  IsDeleted           Boolean               @default(false)
-  ID                  Int                   @id @default(autoincrement()) @db.SmallInt
-  Method              Method?
-  APIModuleParameter  APIModuleParameter[]
-  APIModuleRoleAccess APIModuleRoleAccess[]
+model address {
+  id              Int               @id
+  name            String
+  addressline1    String
+  addressline2    String?
+  stateid         Int
+  districtid      Int
+  postalcode      Int?
+  landmark        String?
+  isDeleted       Boolean?          @default(false)
+  district        district          @relation(fields: [districtid], references: [id])
+  customerProfiles customerProfile[]
+  sellerProfiles   sellerProfile[]
 }
 
-model APIModuleRoleAccess {
-  APIModuleId Int       @db.SmallInt
-  RoleId      Int       @db.SmallInt
-  ID          Int       @id @default(autoincrement()) @db.SmallInt
-  APIModule   APIModule @relation(fields: [APIModuleId], references: [ID])
-  Role        Role      @relation(fields: [RoleId], references: [ID])
-
-  @@index([APIModuleId], name: "fki_APIModuleIDFK")
-  @@index([RoleId], name: "fki_APIModuleRoleID")
+model cart {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   product @relation(fields: [productId], references: [id])
 }
 
-model Area {
-  ID                          Int                           @id @default(autoincrement()) @db.SmallInt
-  Name                        String?
-  ParentAreaID                Int?                          @db.SmallInt
-  IsDeleted                   Boolean?                      @default(false)
-  LevelID                     Int                           @db.SmallInt
-  Level                       Level                         @relation(fields: [LevelID], references: [ID])
-  ParentArea                  Area?                         @relation("AreaToArea_ParentAreaID", fields: [ParentAreaID], references: [ID])
-  other_Area                  Area[]                        @relation("AreaToArea_ParentAreaID")
-  ReachMeRequest              ReachMeRequest[]
-  ReachMeVolunteer            ReachMeVolunteer[]
-  ReachMeVolunteerServingArea ReachMeVolunteerServingArea[]
-
-  @@index([LevelID], name: "fki_AreaLevel")
-  @@index([ParentAreaID], name: "fki_SelfReferenceParent")
+model category {
+  id               Int        @id
+  name             String
+  parentCategoryId Int?
+  isDeleted        Boolean    @default(false)
+  category         category?  @relation("categoryTocategory_parentCategoryId", fields: [parentCategoryId], references: [id])
+  parentCategories  category[] @relation("categoryTocategory_parentCategoryId")
+  products         product[]
 }
 
-model Designation {
-  ID      Int       @id @default(autoincrement()) @db.SmallInt
-  Name    String
-  Rank    Int       @db.SmallInt
-  Officer Officer[]
+model district {
+  id        Int       @id
+  name      String
+  stateid   Int
+  isdeleted Boolean?  @default(false)
+  state     state     @relation(fields: [stateid], references: [id])
+  addresses   address[]
 }
 
-model EBeatCheckin {
-  CheckinByID     Int                       @db.SmallInt
-  Lat             Float
-  Long            Float
-  Distance        Int                       @db.SmallInt
-  EBeatLocationID Int                       @db.SmallInt
-  ID              Int                       @id @default(autoincrement())
-  CheckinDate     DateTime?                 @db.Timestamptz(6)
-  SelfieURL       String?
-  CheckinBy       WelfareDepartmentOfficial @relation(fields: [CheckinByID], references: [ID])
-  EBeatLocation   EBeatLocation             @relation(fields: [EBeatLocationID], references: [ID])
-
-  @@index([CheckinByID], name: "fki_CheckinBy")
-  @@index([EBeatLocationID], name: "fki_EBeatLocation")
+model order {
+  id           Int      @id @default(autoincrement())
+  productId    Int
+  shippingDate Decimal  @db.Decimal
+  isDelivered  Boolean?
+  isDeleted    Boolean? @default(false)
+  product      product  @relation(fields: [productId], references: [id])
 }
 
-model EBeatLocation {
-  Name                String
-  EBeatLocationTypeID Int                        @db.SmallInt
-  CreatedByID         Int                        @db.SmallInt
-  CreatedAtStationID  Int                        @db.SmallInt
-  Address             String
-  Lat                 Float?
-  Long                Float?
-  ActivatedByID       Int?                       @db.SmallInt
-  EBeatLocationQR     String?                    @db.Uuid
-  IsDeleted           Boolean?                   @default(false)
-  ID                  Int                        @id @default(autoincrement()) @db.SmallInt
-  CreationDateTime    DateTime?                  @db.Timestamptz(6)
-  ActivatedDateTime   DateTime?                  @db.Timestamptz(6)
-  ActivatedBy         WelfareDepartmentOfficial? @relation(fields: [ActivatedByID], references: [ID])
-  CreatedAtStation    Office                     @relation(fields: [CreatedAtStationID], references: [ID])
-  CreatedBy           User                       @relation(fields: [CreatedByID], references: [ID])
-  EBeatLocationType   EBeatLocationType          @relation(fields: [EBeatLocationTypeID], references: [ID])
-  EBeatCheckin        EBeatCheckin[]
-
-  @@index([ActivatedByID], name: "fki_EBeatLocationActivatedBy")
-  @@index([CreatedAtStationID], name: "fki_EBeatLocationCreatedAt")
-  @@index([CreatedByID], name: "fki_EBeatLocationCreatedBy")
-  @@index([EBeatLocationTypeID], name: "fki_EBeatLocationType")
+model product {
+  id            Int           @id @default(autoincrement())
+  name          String
+  image         String
+  price         Decimal       @db.Decimal
+  description   String
+  stock         Int
+  categoryId    Int
+  sellerId      Int
+  category      category      @relation(fields: [categoryId], references: [id])
+  sellerProfile sellerProfile @relation(fields: [sellerId], references: [id])
+  banners       banner[]
+  carts         cart[]
+  favourites     favourite[]
+  orders        order[]
 }
 
-model EBeatLocationType {
-  ID            Int             @id @default(autoincrement()) @db.SmallInt
-  Name          String
-  EBeatLocation EBeatLocation[]
+model state {
+  id        Int        @id
+  name      String?
+  isdeleted Boolean
+  districts  district[]
 }
 
-model Feedback {
-  ID                      Int                           @id @default(autoincrement()) @db.SmallInt
-  Description             String
-  Title                   String
-  FeedbackTypeID          Int                           @db.SmallInt
-  SubmittedByID           Int                           @db.SmallInt
-  SubmittedDateTime       DateTime                      @db.Timestamptz(6)
-  SubmissionDesignationID Int?                          @db.SmallInt
-  SubmissionStationID     Int?                          @db.SmallInt
-  IsDeleted               Boolean?                      @default(false)
-  EntityStateID           Int?                          @db.SmallInt
-  SubmittedToStationID    Int?                          @db.SmallInt
-  EntityState             EntityState?                  @relation(fields: [EntityStateID], references: [ID])
-  FeedbackType            FeedbackType                  @relation(fields: [FeedbackTypeID], references: [ID])
-  SubmissionDesignation   WelfareDepartmentDesignation? @relation(fields: [SubmissionDesignationID], references: [ID])
-  SubmissionStation       Office?                       @relation("Feedback_SubmissionStationIDToOffice", fields: [SubmissionStationID], references: [ID])
-  SubmittedBy             WelfareDepartmentOfficial     @relation(fields: [SubmittedByID], references: [ID])
-  SubmittedToStation      Office?                       @relation("Feedback_SubmittedToStationIDToOffice", fields: [SubmittedToStationID], references: [ID])
-
-  @@index([EntityStateID], name: "fki_EntityState")
-  @@index([FeedbackTypeID], name: "fki_FeedbackType")
-  @@index([SubmissionDesignationID], name: "fki_SubmissionDesignation")
-  @@index([SubmissionStationID], name: "fki_SubmissionStation")
-  @@index([SubmittedByID], name: "fki_SubmittedBy")
-  @@index([SubmittedToStationID], name: "fki_SubmittedToStation")
+model user {
+  id                  Int        @id @default(autoincrement())
+  name                String?
+  userName            String     @unique
+  password            String?
+  salt                String?
+  forcePasswordChange Boolean?
+  passwordValidFrom   Int?
+  isActive            Boolean?   @default(true)
+  lastLoginDateTime   DateTime?  @db.Timetz(6)
+  isDeleted           Boolean?   @default(false)
+  userRoles            userRole[]
 }
 
-model FeedbackType {
-  ID        Int        @id @default(autoincrement()) @db.SmallInt
-  Name      String
-  IsDeleted Boolean?   @default(false)
-  Feedback  Feedback[]
+model banner {
+  id        Int      @id @default(autoincrement())
+  name      String
+  isActive  Boolean? @default(false)
+  isDeleted Boolean? @default(false)
+  image     String
+  productId Int
+  product   product  @relation(fields: [productId], references: [id])
 }
 
-model Level {
-  ID            Int      @id @default(autoincrement()) @db.SmallInt
-  Name          String
-  ParentLevelID Int?     @db.SmallInt
-  OfficeType    String
-  IsDeleted     Boolean? @default(false)
-  ParentLevel   Level?   @relation("LevelToLevel_ParentLevelID", fields: [ParentLevelID], references: [ID])
-  Area          Area[]
-  other_Level   Level[]  @relation("LevelToLevel_ParentLevelID")
-
-  @@index([ParentLevelID], name: "fki_SelfReferenceParentLevel")
+model role {
+  id       Int        @id @default(autoincrement())
+  name     String
+  userRoles userRole[]
 }
 
-model Office {
-  ID                                             Int                           @id @default(autoincrement()) @db.SmallInt
-  AreaID                                         Int                           @db.SmallInt
-  ControllingOfficerID                           Int?                          @db.SmallInt
-  Name                                           String
-  Address                                        String
-  Lat                                            Float?
-  Long                                           Float?
-  OfficeTypeID                                   Int?                          @db.SmallInt
-  ReportingOfficeID                              Int?                          @db.SmallInt
-  IsDeleted                                      Boolean?                      @default(false)
-  DepartmentID                                   Int?                          @db.SmallInt
-  ControllingOfficerDesignationID                Int?                          @default(70) @db.SmallInt
-  Area                                           DepartmentArea                @relation(fields: [AreaID], references: [ID])
-  ControllingOfficerDesignation                  WelfareDepartmentDesignation? @relation(fields: [ControllingOfficerDesignationID], references: [ID])
-  ControllingOfficer                             WelfareDepartmentPosting?     @relation(fields: [ControllingOfficerID], references: [ID])
-  Department                                     Department?                   @relation(fields: [DepartmentID], references: [ID])
-  OfficeType                                     OfficeType?                   @relation(fields: [OfficeTypeID], references: [ID])
-  ReportingOffice                                Office?                       @relation("OfficeToOffice_ReportingOfficeID", fields: [ReportingOfficeID], references: [ID])
-  EBeatLocation                                  EBeatLocation[]
-  Feedback_Feedback_SubmissionStationIDToOffice  Feedback[]                    @relation("Feedback_SubmissionStationIDToOffice")
-  Feedback_Feedback_SubmittedToStationIDToOffice Feedback[]                    @relation("Feedback_SubmittedToStationIDToOffice")
-  other_Office                                   Office[]                      @relation("OfficeToOffice_ReportingOfficeID")
-  Officer_OfficeToOfficer_OfficeID               Officer[]                     @relation("OfficeToOfficer_OfficeID")
-  ReachMeRequest                                 ReachMeRequest[]
-  WelfareDepartmentOfficial                      WelfareDepartmentOfficial[]
-
-  @@index([ControllingOfficerID], name: "fki_ControllingOfficer")
-  @@index([AreaID], name: "fki_OfficeAreaID")
-  @@index([OfficeTypeID], name: "fki_OfficeType")
-  @@index([ReportingOfficeID], name: "fki_ReportingOffice")
+model sellerProfile {
+  id          Int       @id
+  firstName   String
+  lastName    String
+  phoneNumber Int
+  email       String
+  addressId   Int
+  isApproved  Boolean?  @default(false)
+  isDeleted   Boolean?  @default(false)
+  user        Int
+  address     address   @relation(fields: [addressId], references: [id])
+  products     product[]
 }
 
-model Officer {
-  ID                            Int                             @id @default(autoincrement()) @db.SmallInt
-  Name                          String
-  DesignationID                 Int                             @db.SmallInt
-  MobileNumber1                 String                          @unique
-  MobileNumber2                 String?
-  OfficeID                      Int?                            @db.SmallInt
-  UserID                        Int?                            @db.SmallInt
-  IsDeleted                     Boolean?                        @default(false)
-  Email                         String?
-  PhotoURL                      String?
-  Designation                   Designation                     @relation(fields: [DesignationID], references: [ID])
-  Office                        Office?                         @relation("OfficeToOfficer_OfficeID", fields: [OfficeID], references: [ID])
-  User                          User?                           @relation(fields: [UserID], references: [ID])
-  WelfarePerson                 WelfarePerson[]
-  WelfareRequest                WelfareRequest[]
-  WelfareRequestLineItem        WelfareRequestLineItem[]
-  WelfareRequestLineItemLog     WelfareRequestLineItemLog[]
-  WelfareRequestLineItemRemarks WelfareRequestLineItemRemarks[]
-
-  @@index([DesignationID], name: "fki_OfficerDesignation")
-  @@index([OfficeID], name: "fki_OfficerOffice")
-  @@index([UserID], name: "fki_OfficerUser")
+model userRole {
+  id     Int  @id @default(autoincrement())
+  roleId Int
+  userId Int
+  role   role @relation(fields: [roleId], references: [id])
+  user   user @relation(fields: [userId], references: [id])
 }
 
-model Role {
-  Name                String
-  IsDeleted           Boolean               @default(false)
-  ID                  Int                   @id @default(autoincrement()) @db.SmallInt
-  APIModuleRoleAccess APIModuleRoleAccess[]
-  UserRole            UserRole[]
+model customerProfile {
+  id          Int      @id
+  firstName   String
+  lastName    String
+  phoneNumber Int
+  emailId     Int
+  addressId   Int
+  isDeleted   Boolean? @default(false)
+  address     address  @relation(fields: [addressid], references: [id])
 }
 
-model UIModule {
-  id        Int     @id @default(autoincrement()) @db.SmallInt
-  Name      String
-  IsDeleted Boolean @default(false)
-}
-
-model UIModuleComponent {
-  id             Int     @id @default(autoincrement()) @db.SmallInt
-  Name           String
-  UIModuleId     Int?    @db.SmallInt
-  IsItemSpecific Boolean @default(false)
-  IsDeleted      Boolean @default(false)
-}
-
-model User {
-  Name                      String?
-  Username                  String                      @unique
-  Password                  String?
-  Salt                      String?
-  ForcePasswordChange       Boolean?
-  PasswordValidFrom         Int?
-  ID                        Int                         @id @default(autoincrement()) @db.SmallInt
-  IsActive                  Boolean?
-  IsDeleted                 Boolean?
-  LastLoginDateTime         DateTime?                   @db.Timetz(6)
-  EBeatLocation             EBeatLocation[]
-  EntityStateLog            EntityStateLog[]
-  FileAttachment            FileAttachment[]
-  OTP                       OTP[]
-  Officer                   Officer[]
-  UserRole                  UserRole[]
-  WelfareDepartmentOfficial WelfareDepartmentOfficial[]
-
-  @@index([ID,IsActive,IsDeleted], name: "loginIndex")
-}
-
-model UserLoginLog {
-  id       Int      @id @default(autoincrement()) @db.SmallInt
-  Username String
-  Result   String
-  Address  String
-  DateTime DateTime @default(now())
-}
-
-model UserRole {
-  ID     Int  @id @default(autoincrement()) @db.SmallInt
-  UserId Int  @db.SmallInt
-  RoleId Int  @db.SmallInt
-  Role   Role @relation(fields: [RoleId], references: [ID])
-  User   User @relation(fields: [UserId], references: [ID])
-
-  @@index([RoleId], name: "fki_UserRole_Role")
-  @@index([UserId], name: "fki_UserRole_User")
-}
-
-model EntityState {
-  ID                        Int                         @id @default(autoincrement()) @db.SmallInt
-  Name                      String
-  Entity                    String
-  IsActive                  Boolean?
-  IsDefault                 Boolean?
-  Color                     String?
-  EntityStateLog            EntityStateLog[]
-  CurrentEntityState        EntityStateProgress[]       @relation("EntityStateToEntityStateProgress_CurrentEntityStateID")
-  NextEntityState           EntityStateProgress[]       @relation("EntityStateToEntityStateProgress_NextEntityStateID")
-  EntityStateViewRule       EntityStateViewRule[]
-  Feedback                  Feedback[]
-  WelfareRequest            WelfareRequest[]
-  WelfareRequestLineItem    WelfareRequestLineItem[]
-  WelfareRequestLineItemLog WelfareRequestLineItemLog[]
-}
-
-model EntityStateProgress {
-  ID                    Int                     @id @default(autoincrement()) @db.SmallInt
-  CurrentEntityStateID  Int                     @db.SmallInt
-  NextEntityStateID     Int                     @db.SmallInt
-  IsDeleted             Boolean?                @default(false)
-  CurrentEntityState    EntityState             @relation("EntityStateToEntityStateProgress_CurrentEntityStateID", fields: [CurrentEntityStateID], references: [ID])
-  NextEntityState       EntityState             @relation("EntityStateToEntityStateProgress_NextEntityStateID", fields: [NextEntityStateID], references: [ID])
-  EntityStateChangeRule EntityStateChangeRule[]
-
-  @@index([CurrentEntityStateID], name: "fki_CurrentEntityState")
-  @@index([NextEntityStateID], name: "fki_NextEntityState")
-}
-
-model OTP {
-  OTP          String
-  UserID       Int      @db.SmallInt
-  ValidUntil   DateTime @db.Timetz(6)
-  ID           BigInt   @id @default(autoincrement())
-  IsUsed       Boolean? @default(false)
-  MobileNumber String   @default(dbgenerated("1234567890"))
-  User         User     @relation(fields: [UserID], references: [ID])
-
-  @@index([UserID], name: "fki_OTPUser")
-}
-
-model EntityStateLog {
-  ID             BigInt      @id @default(autoincrement())
-  EntityType     String
-  EntityStateID  Int         @db.SmallInt
-  ActionByID     Int         @db.SmallInt
-  ActionDateTime DateTime    @db.Timestamptz(6)
-  ClientIP       String
-  EntityIDRef    Int?        @db.SmallInt
-  ActionBy       User        @relation(fields: [ActionByID], references: [ID])
-  EntityState    EntityState @relation(fields: [EntityStateID], references: [ID])
-
-  @@index([ActionByID], name: "fki_EntityActionBy")
-  @@index([EntityStateID], name: "fki_EntityStateLogState")
-}
-
-model FileAttachment {
-  ID               Int      @id @default(autoincrement())
-  EntityName       String
-  EntityIDRef      Int      @db.SmallInt
-  UploadedByID     Int      @db.SmallInt
-  UploadedDateTime DateTime @db.Timestamptz(6)
-  Filename         String
-  Remarks          String?
-  URL              String
-  UploadedBy       User     @relation(fields: [UploadedByID], references: [ID])
-}
-
-model APIModuleParameter {
-  Name        String
-  Location    ParameterLocation
-  APIModuleId Int               @db.SmallInt
-  IsDeleted   Boolean           @default(false)
-  Variable    String
-  ID          Int               @id @default(autoincrement()) @db.SmallInt
-  APIModule   APIModule         @relation(fields: [APIModuleId], references: [ID])
-
-  @@index([APIModuleId], name: "fki_APIModuleID")
-}
-
-model Department {
-  ID                        Int                         @id @default(autoincrement()) @db.SmallInt
-  Name                      String
-  IsDeleted                 Boolean                     @default(false)
-  IsActive                  Boolean                     @default(true)
-  DepartmentLogoURL         String?
-  DepartmentArea            DepartmentArea[]
-  DepartmentLevel           DepartmentLevel[]
-  Office                    Office[]
-  OfficeType                OfficeType[]
-  WelfareDepartmentOfficial WelfareDepartmentOfficial[]
-  WelfareDepartmentPosting  WelfareDepartmentPosting[]
-  WelfareRequestType        WelfareRequestType[]
-}
-
-model ServerLog {
-  ID                Int       @id @default(autoincrement())
-  Headers           String
-  RequestBody       String
-  ResponseBody      String?
-  ErrorBody         String?
-  Method            Method
-  Url               String
-  Address           String
-  ResponseTime      String?
-  IsError           Boolean?
-  RequestedDateTime DateTime
-  RespondedDateTime DateTime?
-  Params            String?
-  Route             String?
-}
-
-model WelfareRequest {
-  ID                         Int                        @id @default(autoincrement()) @db.SmallInt
-  WelfarePersonID            Int                        @db.SmallInt
-  WelfareRequestTypeID       Int                        @db.SmallInt
-  RequestCreatedDateTime     DateTime                   @db.Timestamptz(6)
-  Remarks                    String?
-  EntityStateID              Int                        @db.SmallInt
-  DepartmentAreaID           Int?                       @db.SmallInt
-  RequestCreatedByOfficialID Int?                       @db.SmallInt
-  RequestCreatedByPoliceID   Int?                       @db.SmallInt
-  DepartmentArea             DepartmentArea?            @relation(fields: [DepartmentAreaID], references: [ID])
-  EntityState                EntityState                @relation(fields: [EntityStateID], references: [ID])
-  RequestCreatedByOfficial   WelfareDepartmentOfficial? @relation(fields: [RequestCreatedByOfficialID], references: [ID])
-  RequestCreatedByPolice     Officer?                   @relation(fields: [RequestCreatedByPoliceID], references: [ID])
-  WelfarePerson              WelfarePerson              @relation(fields: [WelfarePersonID], references: [ID])
-  WelfareRequestType         WelfareRequestType         @relation(fields: [WelfareRequestTypeID], references: [ID])
-  WelfareRequestLineItem     WelfareRequestLineItem[]
-}
-
-model OfficeType {
-  ID           Int         @id @default(autoincrement()) @db.SmallInt
-  Name         String
-  DepartmentID Int?        @db.SmallInt
-  Department   Department? @relation(fields: [DepartmentID], references: [ID])
-  Office       Office[]
-}
-
-model DepartmentArea {
-  Name                     String
-  ParentAreaID             Int?                       @db.SmallInt
-  IsDeleted                Boolean                    @default(false)
-  LevelID                  Int                        @db.SmallInt
-  DepartmentID             Int                        @db.SmallInt
-  ID                       Int                        @id @default(autoincrement()) @db.SmallInt
-  Department               Department                 @relation(fields: [DepartmentID], references: [ID])
-  Level                    DepartmentLevel            @relation(fields: [LevelID], references: [ID])
-  ParentArea               DepartmentArea?            @relation("DepartmentAreaToDepartmentArea_ParentAreaID", fields: [ParentAreaID], references: [ID])
-  other_DepartmentArea     DepartmentArea[]           @relation("DepartmentAreaToDepartmentArea_ParentAreaID")
-  Office                   Office[]
-  WelfareDepartmentPosting WelfareDepartmentPosting[]
-  WelfareRequest           WelfareRequest[]
-}
-
-model DepartmentLevel {
-  Name                         String
-  ParentLevelID                Int?                           @db.SmallInt
-  IsDeleted                    Boolean                        @default(false)
-  DepartmentID                 Int                            @db.SmallInt
-  ID                           Int                            @id @default(autoincrement()) @db.SmallInt
-  Department                   Department                     @relation(fields: [DepartmentID], references: [ID])
-  ParentLevel                  DepartmentLevel?               @relation("DepartmentLevelToDepartmentLevel_ParentLevelID", fields: [ParentLevelID], references: [ID])
-  DepartmentArea               DepartmentArea[]
-  other_DepartmentLevel        DepartmentLevel[]              @relation("DepartmentLevelToDepartmentLevel_ParentLevelID")
-  WelfareDepartmentDesignation WelfareDepartmentDesignation[]
-
-  @@index([ParentLevelID], name: "fki_SelfReferenceParentDepartmentLevel")
-}
-
-model WelfareDepartmentDesignation {
-  ID                        Int                         @id @default(autoincrement()) @db.SmallInt
-  Name                      String
-  Rank                      Int                         @db.SmallInt
-  DepartmentLevelID         Int?                        @db.SmallInt
-  IsDeleted                 Boolean?                    @default(false)
-  DepartmentLevel           DepartmentLevel?            @relation(fields: [DepartmentLevelID], references: [ID])
-  Feedback                  Feedback[]
-  Office                         Office[]
-  WelfareDepartmentOfficial WelfareDepartmentOfficial[]
-  WelfareDepartmentPosting  WelfareDepartmentPosting[]
-}
-
-model WelfareDepartmentOfficial {
-  ID                              Int                             @id @default(autoincrement()) @db.SmallInt
-  MobileNumber1                   String                          @unique
-  Name                            String
-  MobileNumber2                   String?
-  Email                           String?
-  DepartmentID                    Int                             @db.SmallInt
-  WelfareDepartmentDesignationID  Int                             @db.SmallInt
-  UserID                          Int?                            @db.SmallInt
-  PhotoURL                        String?
-  IsDeleted                       Boolean?                        @default(false)
-  OfficeID                        Int?                            @db.SmallInt
-  IsVerified                      Boolean                         @default(false)
-  VerifiedDate                    DateTime?                       @db.Timestamptz(6)
-  VerifiedByID                    Int?                            @db.SmallInt
-  Department                      Department                      @relation(fields: [DepartmentID], references: [ID])
-  Office                          Office?                         @relation(fields: [OfficeID], references: [ID])
-  User                            User?                           @relation(fields: [UserID], references: [ID])
-  VerifiedBy                      WelfareDepartmentOfficial?      @relation("WelfareDepartmentOfficialToWelfareDepartmentOfficial_VerifiedByID", fields: [VerifiedByID], references: [ID])
-  WelfareDepartmentDesignation    WelfareDepartmentDesignation    @relation(fields: [WelfareDepartmentDesignationID], references: [ID])
-  EBeatCheckin                    EBeatCheckin[]
-  EBeatLocation                   EBeatLocation[]
-  Feedback                        Feedback[]
-  ReachMeRequest                  ReachMeRequest[]
-  ApprovedByOfficer               ReachMeVolunteer[]              @relation("ReachMeVolunteer_ApprovedByOfficerIDToWelfareDepartmentOfficial")
-  RejectedByOfficer               ReachMeVolunteer[]              @relation("ReachMeVolunteer_RejectedByOfficerIDToWelfareDepartmentOfficial")
-  other_WelfareDepartmentOfficial WelfareDepartmentOfficial[]     @relation("WelfareDepartmentOfficialToWelfareDepartmentOfficial_VerifiedByID")
-  WelfareDepartmentPosting        WelfareDepartmentPosting[]
-  WelfarePerson                   WelfarePerson[]
-  WelfareRequest                  WelfareRequest[]
-  WelfareRequestLineItem          WelfareRequestLineItem[]
-  WelfareRequestLineItemLog       WelfareRequestLineItemLog[]
-  WelfareRequestLineItemRemarks   WelfareRequestLineItemRemarks[]
-}
-
-model WelfareDepartmentPosting {
-  ID                             Int                           @id @default(autoincrement()) @db.SmallInt
-  DepartmentID                   Int?                          @db.SmallInt
-  WelfareDepartmentDesignationID Int?                          @db.SmallInt
-  DepartmentAreaID               Int?                          @db.SmallInt
-  WelfareDepartmentOfficialID    Int?                          @db.SmallInt
-  DepartmentArea                 DepartmentArea?               @relation(fields: [DepartmentAreaID], references: [ID])
-  Department                     Department?                   @relation(fields: [DepartmentID], references: [ID])
-  WelfareDepartmentDesignation   WelfareDepartmentDesignation? @relation(fields: [WelfareDepartmentDesignationID], references: [ID])
-  WelfareDepartmentOfficial      WelfareDepartmentOfficial?    @relation(fields: [WelfareDepartmentOfficialID], references: [ID])
-  Office                         Office[]
-  WelfareRequestLineItem         WelfareRequestLineItem[]
-  WelfareRequestLineItemLog      WelfareRequestLineItemLog[]
-}
-
-model WelfarePerson {
-  Name                          String
-  ID                            Int                        @id @default(autoincrement()) @db.SmallInt
-  Age                           Int                        @db.SmallInt
-  CreatedByPoliceID             Int?                       @db.SmallInt
-  CreatedByDepartmentOfficialID Int?                       @db.SmallInt
-  ContactNumber1                String?
-  ContactNumber2                String?
-  Address                       String?
-  Remarks                       String?
-  Gender                        Gender
-  PhotoURL                      String?
-  IsDeleted                     Boolean                    @default(false)
-  CreatedByDepartmentOfficial   WelfareDepartmentOfficial? @relation(fields: [CreatedByDepartmentOfficialID], references: [ID])
-  CreatedByPolice               Officer?                   @relation(fields: [CreatedByPoliceID], references: [ID])
-  ReachMeRequest                ReachMeRequest[]
-  WelfareRequest                WelfareRequest[]
-
-  @@unique([ContactNumber1, Name, Age, ContactNumber2, Address, Gender], name: "ContactNumber")
-}
-
-model WelfareRequestLineItem {
-  ID                            Int                             @id @default(autoincrement()) @db.SmallInt
-  RequestID                     Int                             @db.SmallInt
-  RequestTypeID                 Int                             @db.SmallInt
-  RequestedToID                 Int?                            @db.SmallInt
-  RequestedByOfficialID         Int?                            @db.SmallInt
-  RequestedByPoliceID           Int?                            @db.SmallInt
-  RequestedDatetime             DateTime?                       @db.Timestamptz(6)
-  Description                   String?
-  EntityStateID                 Int                             @db.SmallInt
-  Remarks                       String?
-  IsDeleted                     Boolean?
-  EntityState                   EntityState                     @relation(fields: [EntityStateID], references: [ID])
-  Request                       WelfareRequest                  @relation(fields: [RequestID], references: [ID])
-  RequestType                   WelfareRequestType              @relation(fields: [RequestTypeID], references: [ID])
-  RequestedByOfficial           WelfareDepartmentOfficial?      @relation(fields: [RequestedByOfficialID], references: [ID])
-  RequestedByPolice             Officer?                        @relation(fields: [RequestedByPoliceID], references: [ID])
-  RequestedTo                   WelfareDepartmentPosting?       @relation(fields: [RequestedToID], references: [ID])
-  WelfareRequestLineItemLog     WelfareRequestLineItemLog[]
-  WelfareRequestLineItemRemarks WelfareRequestLineItemRemarks[]
-}
-
-model WelfareRequestLineItemLog {
-  ID                       Int                        @id @default(autoincrement()) @db.SmallInt
-  WelfareRequestLineItemID Int                        @db.SmallInt
-  RequestedDatetime        DateTime                   @db.Timestamptz(6)
-  Remarks                  String?
-  ForwardRemarks           String?
-  RequestedToID            Int?                       @db.SmallInt
-  RequestedByOfficialID    Int?                       @db.SmallInt
-  RequestedByPoliceID      Int?                       @db.SmallInt
-  EntityStateID            Int?                       @db.SmallInt
-  EntityState              EntityState?               @relation(fields: [EntityStateID], references: [ID])
-  RequestedByOfficial      WelfareDepartmentOfficial? @relation(fields: [RequestedByOfficialID], references: [ID])
-  RequestedByPolice        Officer?                   @relation(fields: [RequestedByPoliceID], references: [ID])
-  RequestedTo              WelfareDepartmentPosting?  @relation(fields: [RequestedToID], references: [ID])
-  WelfareRequestLineItem   WelfareRequestLineItem     @relation(fields: [WelfareRequestLineItemID], references: [ID])
-}
-
-model WelfareRequestLineItemRemarks {
-  ID                  Int                        @id @default(autoincrement()) @db.SmallInt
-  Remarks             String
-  CreatedByOfficialID Int?                       @db.SmallInt
-  CreatedByPoliceID   Int?                       @db.SmallInt
-  CreatedDatetime     DateTime?                  @db.Timestamptz(6)
-  RequestLineItemID   Int                        @db.SmallInt
-  CreatedByOfficial   WelfareDepartmentOfficial? @relation(fields: [CreatedByOfficialID], references: [ID])
-  CreatedByPolice     Officer?                   @relation(fields: [CreatedByPoliceID], references: [ID])
-  RequestLineItem     WelfareRequestLineItem     @relation(fields: [RequestLineItemID], references: [ID])
-}
-
-model WelfareRequestType {
-  ID                       Int                      @id @default(autoincrement()) @db.SmallInt
-  RequestTypeName          String
-  ParentRequestTypeID      Int?                     @db.SmallInt
-  DepartmentID             Int                      @db.SmallInt
-  Description              String
-  Department               Department               @relation(fields: [DepartmentID], references: [ID])
-  ParentRequestType        WelfareRequestType?      @relation("WelfareRequestTypeToWelfareRequestType_ParentRequestTypeID", fields: [ParentRequestTypeID], references: [ID])
-  WelfareRequest           WelfareRequest[]
-  WelfareRequestLineItem   WelfareRequestLineItem[]
-  other_WelfareRequestType WelfareRequestType[]     @relation("WelfareRequestTypeToWelfareRequestType_ParentRequestTypeID")
-}
-
-model ReachMeRequest {
-  ID                        Int                        @id @default(autoincrement())
-  Title                     String?
-  WelfarePersonID           Int?                       @db.SmallInt
-  RequestCreatedByOfficerID Int                        @db.SmallInt
-  RequestingOfficeID        Int                        @db.SmallInt
-  RequestAreaID             Int                        @db.SmallInt
-  Description               String?
-  RequestCreatedDateTime    DateTime                   @db.Timestamptz(6)
-  ServiceRequiredDateTime   DateTime                   @db.Timestamptz(6)
-  CountRequired             Int?                       @db.SmallInt
-  ContactNumber             String
-  ContactPerson             String?
-  ReachMeRequestTypeID      Int?                       @db.SmallInt
-  RequestCompletedDateTime  DateTime?                  @db.Timestamptz(6)
-  ReachMeRequestType        ReachMeRequestType?        @relation(fields: [ReachMeRequestTypeID], references: [ID])
-  RequestArea               Area                       @relation(fields: [RequestAreaID], references: [ID])
-  RequestCreatedByOfficer   WelfareDepartmentOfficial  @relation(fields: [RequestCreatedByOfficerID], references: [ID])
-  RequestingOffice          Office                     @relation(fields: [RequestingOfficeID], references: [ID])
-  WelfarePerson             WelfarePerson?             @relation(fields: [WelfarePersonID], references: [ID])
-  ReachMeRequestAcceptance  ReachMeRequestAcceptance[]
-
-  @@index([RequestAreaID], name: "fki_RequestArea")
-  @@index([RequestingOfficeID], name: "fki_RequestingOffice")
-  @@index([RequestCreatedByOfficerID], name: "fki_RequestingOfficer")
-  @@index([WelfarePersonID], name: "fki_WelfarePersonReachMe")
-}
-
-model ReachMeRequestAcceptance {
-  ID                            Int                             @id @default(autoincrement())
-  RequestID                     Int
-  VolunteerID                   Int
-  AcceptedDateTime              DateTime                        @db.Timestamptz(6)
-  WithdrawDateTime              DateTime?                       @db.Timestamptz(6)
-  CompletedDateTime             DateTime?                       @db.Timestamptz(6)
-  Remarks                       String?
-  OfficerRemarks                String?
-  Request                       ReachMeRequest                  @relation(fields: [RequestID], references: [ID])
-  Volunteer                     ReachMeVolunteer                @relation(fields: [VolunteerID], references: [ID])
-  ReachMeRequestAcceptancePhoto ReachMeRequestAcceptancePhoto[]
-
-  @@index([RequestID], name: "fki_RequestAcceptance")
-  @@index([VolunteerID], name: "fki_RequestVolunteer")
-}
-
-model ReachMeRequestAcceptancePhoto {
-  ID                       Int                      @id @default(autoincrement())
-  RequestAcceptanceID      Int
-  PhotoURL                 String
-  ReachMeRequestAcceptance ReachMeRequestAcceptance @relation(fields: [RequestAcceptanceID], references: [ID])
-
-  @@index([RequestAcceptanceID], name: "fki_RequestAcceptancePhoto")
-}
-
-model ReachMeRequestType {
-  ID                           Int                            @id @default(autoincrement()) @db.SmallInt
-  Name                         String
-  Description                  String?
-  IsDeleted                    Boolean?
-  ParentRequestTypeID          Int?                           @db.SmallInt
-  RequestTypeURL               String?
-  ParentRequestType            ReachMeRequestType?            @relation("ReachMeRequestTypeToReachMeRequestType_ParentRequestTypeID", fields: [ParentRequestTypeID], references: [ID])
-  ReachMeRequest               ReachMeRequest[]
-  other_ReachMeRequestType     ReachMeRequestType[]           @relation("ReachMeRequestTypeToReachMeRequestType_ParentRequestTypeID")
-  ReachMeVolunteerRequestTypes ReachMeVolunteerRequestTypes[]
-
-  @@index([ParentRequestTypeID], name: "fki_ParentReachMeRequest")
-}
-
-model ReachMeVolunteer {
-  ID                           Int                            @id @default(autoincrement())
-  Name                         String
-  MobileNumber                 String
-  Address                      String
-  ResidenceAreaID              Int                            @db.SmallInt
-  Photo                        String?
-  IDProof                      String
-  AddressProof                 String
-  SignupDate                   DateTime                       @db.Timestamptz(6)
-  ApprovedDate                 DateTime?                      @db.Timestamptz(6)
-  ApprovedByOfficerID          Int?                           @db.SmallInt
-  IsBlocked                    Boolean?
-  BlockReason                  String?
-  IsActive                     Boolean?
-  IsRejected                   Boolean?
-  RejectedDate                 DateTime?                      @db.Timestamptz(6)
-  RejectedByOfficerID          Int?                           @db.SmallInt
-  ApprovedByOfficer            WelfareDepartmentOfficial?     @relation("ReachMeVolunteer_ApprovedByOfficerIDToWelfareDepartmentOfficial", fields: [ApprovedByOfficerID], references: [ID])
-  RejectedByOfficer            WelfareDepartmentOfficial?     @relation("ReachMeVolunteer_RejectedByOfficerIDToWelfareDepartmentOfficial", fields: [RejectedByOfficerID], references: [ID])
-  ResidenceArea                Area                           @relation(fields: [ResidenceAreaID], references: [ID])
-  ReachMeRequestAcceptance     ReachMeRequestAcceptance[]
-  ReachMeVolunteerOTP          ReachMeVolunteerOTP[]
-  ReachMeVolunteerRequestTypes ReachMeVolunteerRequestTypes[]
-  ReachMeVolunteerServingArea  ReachMeVolunteerServingArea[]
-
-  @@index([ApprovedByOfficerID], name: "fki_ApprovedByOfficer")
-  @@index([ResidenceAreaID], name: "fki_ResidenceArea")
-}
-
-model ReachMeVolunteerRequestTypes {
-  ID            Int                @id @default(autoincrement())
-  VolunteerID   Int
-  RequestTypeID Int                @db.SmallInt
-  RequestType   ReachMeRequestType @relation(fields: [RequestTypeID], references: [ID])
-  Volunteer     ReachMeVolunteer   @relation(fields: [VolunteerID], references: [ID])
-
-  @@index([VolunteerID], name: "fki_VolunteerRequestType")
-  @@index([RequestTypeID], name: "fki_VolunteerRequestTypeReq")
-}
-
-model ReachMeVolunteerServingArea {
-  ID            Int              @id @default(autoincrement())
-  VolunteerID   Int
-  ServingAreaID Int              @db.SmallInt
-  Area          Area             @relation(fields: [ServingAreaID], references: [ID])
-  Volunteer     ReachMeVolunteer @relation(fields: [VolunteerID], references: [ID])
-
-  @@index([ServingAreaID], name: "fki_VolunteerServingArea")
-  @@index([VolunteerID], name: "fki_VolunteerServingVol")
-}
-
-model ReachMeVolunteerOTP {
-  OTP                String
-  ReachMeVolunteerID Int
-  ValidUntil         DateTime         @db.Timetz(6)
-  ID                 BigInt           @id @default(autoincrement())
-  IsUsed             Boolean?         @default(false)
-  MobileNumber       String           @default(dbgenerated("1234567890"))
-  ReachMeVolunteer   ReachMeVolunteer @relation(fields: [ReachMeVolunteerID], references: [ID])
-
-  @@index([ReachMeVolunteerID], name: "fki_OTPReachMeVolunteer")
-}
-
-model EntityStateChangeRule {
-  ID                    Int                 @id @default(autoincrement())
-  EntityStateProgressID Int                 @db.SmallInt
-  Rule                  String
-  IsDeleted             Boolean             @default(false)
-  EntityStateProgress   EntityStateProgress @relation(fields: [EntityStateProgressID], references: [ID])
-
-  @@index([EntityStateProgressID], name: "fki_EntityStateProgress")
-}
-
-model EntityStateViewRule {
-  ID            Int         @id @default(autoincrement())
-  EntityStateID Int         @db.SmallInt
-  Rule          String
-  IsDeleted     Boolean     @default(false)
-  EntityState   EntityState @relation(fields: [EntityStateID], references: [ID])
-
-  @@index([EntityStateID], name: "fki_CurrentEntityStateID")
-}
-
-model CMSContent {
-  ID        Int     @id @default(autoincrement()) @db.SmallInt
-  Name      String
-  Content   String
-  KeyWord   String
-  IsDeleted Boolean @default(false)
-}
-
-enum FieldType {
-  Text
-  Number
-  Boolean
-  Select
-  Date
-  DateTime
-  Image
-}
-
-enum Method {
-  POST
-  GET
-  PUT
-  PATCH
-  DELETE
-}
-
-enum ParameterLocation {
-  Url
-  Body
-  Header
-}
-
-enum Gender {
-  M
-  F
-  T
-}
-
-enum ActionColumns {
-  View
-  Edit
-  Delete
+model favourite {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   product @relation(fields: [productId], references: [id])
 }

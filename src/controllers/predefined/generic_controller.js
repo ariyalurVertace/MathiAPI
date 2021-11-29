@@ -26,7 +26,7 @@ export async function genericCreate({Table, json, req, res}) {
         }
         createAuditLog({
             Table,
-            itemId: item.ID,
+            itemId: item.id,
             json,
             isNew: true,
             UserIP: clientIp,
@@ -155,7 +155,7 @@ export async function genericGetOne({
         //TODO - Has Attachments
         if (TablesWithAttachments.includes(actualTable)) {
             const attachments = await prisma.fileAttachment.findMany({
-                where: {EntityName: actualTable, EntityIDRef: item.ID},
+                where: {EntityName: actualTable, EntityIDRef: item.id},
             });
             item.FileAttachments = attachments;
         }
@@ -178,7 +178,7 @@ export async function genericDelete({
             let result = await genericUpdate({
                 Table,
                 condition,
-                json: {IsDeleted: true},
+                json: {isDeleted: true},
                 req,
                 res,
             });
@@ -269,7 +269,7 @@ export async function genericSaveAttachments({
     try {
         attachments.forEach(attachment => {
             attachment.EntityName = Table;
-            attachment.EntityIDRef = item.ID;
+            attachment.EntityIDRef = item.id;
             attachment.UploadedByID = res.locals.UserID;
             attachment.UploadedDateTime = new Date();
             attachment.Remarks = "";
@@ -326,16 +326,16 @@ export function getNewObject(obj = {}) {
 
 export const foreignKeyReplacement = input => {
     let output = input;
-    const foreignKeys = Object.keys(input).filter(k => k.match(/ID$/));
+    const foreignKeys = Object.keys(input).filter(k => k.match(/id$/));
 
     foreignKeys.forEach(key => {
-        const modelName = key.replace(/ID$/, "");
+        const modelName = key.replace(/id$/, "");
         const value = input[key];
 
         delete output[key];
         if (value)
             output = Object.assign(output, {
-                [modelName]: {connect: {ID: value}},
+                [modelName]: {connect: {id: value}},
             });
     });
 
