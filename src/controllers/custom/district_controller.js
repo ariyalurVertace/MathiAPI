@@ -78,9 +78,6 @@ export async function getOne(req, res, next) {
             name: true,
             stateId: true,
             state: {
-                where: {
-                    isDeleted: false,
-                },
                 select: {
                     id: true,
                     name: true,
@@ -119,9 +116,6 @@ export async function getAll(req, res, next) {
             name: true,
             stateId: true,
             state: {
-                where: {
-                    isDeleted: false,
-                },
                 select: {
                     id: true,
                     name: true,
