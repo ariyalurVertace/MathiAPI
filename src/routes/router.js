@@ -25,6 +25,8 @@ import customerProfileRouter from "./custom/customerProfile_router.js";
 import districtRouter from "./custom/district_router.js";
 import stateRouter from "./custom/state_router.js";
 import productReviewRouter from "./custom/productReview_router.js";
+import productRouter from "./custom/product_router.js";
+import orderRouter from "./custom/order_router.js";
 
 export default function exportedRouter(app) {
     app.use("/api/user", userRouter());
@@ -52,6 +54,8 @@ export default function exportedRouter(app) {
     app.use("/api/cart", cartRouter());
     app.use("/api/favourite", favouriteRouter());
     app.use("/api/productReview", productReviewRouter());
+    app.use("/api/product", productRouter());
+    app.use("/api/order", orderRouter());
 
     //NEW_REGISTER
 }
