@@ -89,6 +89,12 @@ export async function getOne(req, res, next) {
                     id: true,
                     name: true,
                     parentCategoryId: true,
+                    parentCategory: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
                 },
             },
             sellerId: true,
@@ -131,9 +137,6 @@ export async function getOne(req, res, next) {
                             districtId: true,
 
                             district: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,
@@ -196,6 +199,12 @@ export async function getAll(req, res, next) {
                     id: true,
                     name: true,
                     parentCategoryId: true,
+                    parentCategory: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
                 },
             },
             sellerId: true,
@@ -237,9 +246,6 @@ export async function getAll(req, res, next) {
                             districtId: true,
 
                             district: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,

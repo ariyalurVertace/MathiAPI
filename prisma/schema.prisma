@@ -8,7 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model UserPeofile {
+model userProfile {
   id                  Int               @id @default(autoincrement())
   name                String?
   userName            String            @unique
@@ -19,8 +19,8 @@ model UserPeofile {
   isActive            Boolean?          @default(true)
   lastLoginDateTime   DateTime?         @db.Timetz(6)
   isDeleted           Boolean?          @default(false)
-  customerProfile     customerProfile[]
-  userRole            userRole[]
+  customerProfiles     customerProfile[]
+  userRoles           userRole[]
 }
 
 model address {
