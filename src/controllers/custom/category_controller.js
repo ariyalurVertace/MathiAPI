@@ -17,7 +17,7 @@ export async function create(req, res, next) {
         const item = await genericCreate({Table, json, req, res});
         return genericResponse({
             res,
-            result: item || null,
+            result: item,
             exception: null,
             pagination: null,
             statusCode: item ? statusCodes.SUCCESS : statusCodes.INVALID_DATA,
@@ -76,7 +76,13 @@ export async function getOne(req, res, next) {
         let selectFields = {
             id: true,
             name: true,
-            parentCategoryid: {},
+            parentCategoryId: true,
+            parentCategory: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
         };
         let includeFields = null;
         let sortConditions = null;
@@ -110,9 +116,6 @@ export async function getAll(req, res, next) {
             name: true,
             parentCategoryId: true,
             parentCategory: {
-                where: {
-                    isDeleted: false,
-                },
                 select: {
                     id: true,
                     name: true,
