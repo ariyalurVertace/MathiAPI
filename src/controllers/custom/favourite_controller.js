@@ -99,9 +99,6 @@ export async function getOne(req, res, next) {
                             parentCategoryId: true,
 
                             parentCategory: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,
@@ -149,9 +146,6 @@ export async function getOne(req, res, next) {
                                     districtId: true,
 
                                     district: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
                                         select: {
                                             id: true,
                                             name: true,
@@ -217,9 +211,6 @@ export async function getOne(req, res, next) {
                             districtId: true,
 
                             district: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,
@@ -297,9 +288,6 @@ export async function getAll(req, res, next) {
                             parentCategoryId: true,
 
                             parentCategory: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,

@@ -8,6 +8,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model userProfile {
+  id                  Int               @id @default(autoincrement())
+  name                String?
+  userName            String            @unique
+  password            String?
+  salt                String?
+  forcePasswordChange Boolean?
+  passwordValidFrom   Int?
+  isActive            Boolean?          @default(true)
+  lastLoginDateTime   DateTime?         @db.Timetz(6)
+  isDeleted           Boolean?          @default(false)
+  customerProfiles     customerProfile[]
+  userRoles           userRole[]
+}
+
 model address {
   id              Int               @id @default(autoincrement())
   name            String
@@ -19,64 +34,7 @@ model address {
   isDeleted       Boolean           @default(false)
   district        district          @relation(fields: [districtId], references: [id])
   customerProfiles customerProfile[]
-  sellerProfiles  sellerProfile[]
-}
-
-model cart {
-  id              Int             @id @default(autoincrement())
-  productId       Int
-  count           Int
-  isDeleted       Boolean         @default(false)
-  customerId      Int
-  customer        customerProfile @relation(fields: [customerId], references: [id])
-  product         product         @relation(fields: [productId], references: [id])
-}
-
-model category {
-  id               Int        @id @default(autoincrement())
-  name             String
-  parentCategoryId Int?
-  image            String?    @default(dbgenerated("false"))
-  description      String?
-  isDeleted        Boolean    @default(false)
-  parentCategory   category?  @relation("categoryTocategory_parentCategoryId", fields: [parentCategoryId], references: [id])
-  categories       category[] @relation("categoryTocategory_parentCategoryId")
-  products         product[]
-}
-
-model district {
-  id        Int       @id @default(autoincrement())
-  name      String
-  stateId   Int
-  isDeleted Boolean   @default(false)
-  state     state     @relation(fields: [stateId], references: [id])
-  addresses  address[]
-}
-
-model product {
-  id            Int             @id @default(autoincrement())
-  name          String
-  image         String
-  price         Decimal         @db.Decimal
-  description   String
-  stock         Int
-  categoryId    Int
-  sellerId      Int
-  isDeleted     Boolean?        @default(false)
-  category      category        @relation(fields: [categoryId], references: [id])
-  seller        sellerProfile   @relation(fields: [sellerId], references: [id])
-  banners       banner[]
-  carts         cart[]
-  favourites    favourite[]
-  orders        order[]
-  productReviews productReview[]
-}
-
-model state {
-  id        Int        @id @default(autoincrement())
-  name      String
-  isDeleted Boolean    @default(false)
-  district  district[]
+  sellerProfiles   sellerProfile[]
 }
 
 model banner {
@@ -89,6 +47,28 @@ model banner {
   product   product  @relation(fields: [productId], references: [id])
 }
 
+model cart {
+  id              Int             @id @default(autoincrement())
+  productId       Int
+  count           Int
+  isDeleted       Boolean         @default(false)
+  customerId      Int
+  customer       customerProfile @relation(fields: [customerId], references: [id])
+  product         product         @relation(fields: [productId], references: [id])
+}
+
+model category {
+  id               Int        @id @default(autoincrement())
+  name             String
+  parentCategoryId Int?
+  image            String?    @default(dbgenerated("false"))
+  description      String?
+  isDeleted        Boolean    @default(false)
+  category         category?  @relation("categoryTocategory_parentCategoryId", fields: [parentCategoryId], references: [id])
+  categories       category[] @relation("categoryTocategory_parentCategoryId")
+  products          product[]
+}
+
 model customerProfile {
   id            Int             @id @default(autoincrement())
   firstName     String
@@ -99,11 +79,38 @@ model customerProfile {
   isDeleted     Boolean         @default(false)
   userId        Int
   address       address         @relation(fields: [addressId], references: [id])
-  user          user     @relation(fields: [userId], references: [id])
+  userProfile   userProfile     @relation(fields: [userId], references: [id])
   carts         cart[]
-  favourites    favourite[]
-  orders        order[]
+  favourites     favourite[]
+  orders         order[]
   productReviews productReview[]
+}
+
+model district {
+  id        Int       @id @default(autoincrement())
+  name      String
+  stateId   Int
+  isDeleted Boolean   @default(false)
+  state     state     @relation(fields: [stateId], references: [id])
+  addresses address[]
+}
+
+model entityState {
+  id                                                                  Int                   @id @default(autoincrement())
+  name                                                                String?
+  type                                                                String?
+  isDeleted                                                           Boolean?              @default(false)
+  isDefault                                                           Boolean?
+  entityStateProgress_entityStateToentityStateProgress_currentStateId entityStateProgress[] @relation("entityStateToentityStateProgress_currentStateId")
+  entityStateProgress_entityStateToentityStateProgress_nextStateId    entityStateProgress[] @relation("entityStateToentityStateProgress_nextStateId")
+}
+
+model entityStateProgress {
+  id                                                          Int         @id
+  currentStateId                                              Int
+  nextStateId                                                 Int
+  currentState                entityState @relation("entityStateToentityStateProgress_currentStateId", fields: [currentStateId], references: [id])
+  nextState                  entityState @relation("entityStateToentityStateProgress_nextStateId", fields: [nextStateId], references: [id])
 }
 
 model favourite {
@@ -127,11 +134,42 @@ model order {
   product         product         @relation(fields: [productId], references: [id])
 }
 
+model product {
+  id            Int             @id @default(autoincrement())
+  name          String
+  image         String
+  price         Decimal         @db.Decimal
+  description   String
+  stock         Int
+  categoryId    Int
+  sellerId      Int
+  isDeleted     Boolean?        @default(false)
+  category      category        @relation(fields: [categoryId], references: [id])
+  seller        sellerProfile   @relation(fields: [sellerId], references: [id])
+  banners       banner[]
+  carts          cart[]
+  favourites     favourite[]
+  orders         order[]
+  productReviews productReview[]
+}
+
+model productReview {
+  id              Int              @id @default(autoincrement())
+  image           String?
+  description     String?
+  rating          Int?
+  isDeleted       Boolean?         @default(false)
+  productId       Int?
+  customerId      Int?
+  customer        customerProfile? @relation(fields: [customerId], references: [id])
+  product         product?         @relation(fields: [productId], references: [id])
+}
+
 model role {
   id        Int        @id @default(autoincrement())
   name      String
   isDeleted Boolean    @default(false)
-  userRoles userRole[]
+  userRoles  userRole[]
 }
 
 model sellerProfile {
@@ -145,7 +183,14 @@ model sellerProfile {
   isDeleted   Boolean?  @default(false)
   user        Int
   address     address   @relation(fields: [addressId], references: [id])
-  products    product[]
+  products     product[]
+}
+
+model state {
+  id        Int        @id @default(autoincrement())
+  name      String
+  isDeleted Boolean    @default(false)
+  districts  district[]
 }
 
 model userRole {
@@ -153,50 +198,5 @@ model userRole {
   roleId      Int
   userId      Int
   role        role        @relation(fields: [roleId], references: [id])
-  user        user @relation(fields: [userId], references: [id])
-}
-
-model user {
-  id                  Int               @id @default(autoincrement())
-  name                String?
-  userName            String            @unique
-  password            String?
-  salt                String?
-  forcePasswordChange Boolean?
-  passwordValidFrom   Int?
-  isActive            Boolean?          @default(true)
-  lastLoginDateTime   DateTime?         @db.Timetz(6)
-  isDeleted           Boolean?          @default(false)
-  customerProfiles     customerProfile[]
-  userRoles            userRole[]
-}
-
-model entityState {
-  id                                                                  Int                   @id @default(autoincrement())
-  name                                                                String?
-  type                                                                String?
-  isDeleted                                                           Boolean?              @default(false)
-  isDefault                                                           Boolean?
-  entityStateProgress_entityStateToentityStateProgress_currentStateId entityStateProgress[] @relation("entityStateToentityStateProgress_currentStateId")
-  entityStateProgress_entityStateToentityStateProgress_nextStateId    entityStateProgress[] @relation("entityStateToentityStateProgress_nextStateId")
-}
-
-model entityStateProgress {
-  id                                                          Int         @id
-  currentStateId                                              Int
-  nextStateId                                                 Int
-  currentState entityState @relation("entityStateToentityStateProgress_currentStateId", fields: [currentStateId], references: [id])
-  nextState    entityState @relation("entityStateToentityStateProgress_nextStateId", fields: [nextStateId], references: [id])
-}
-
-model productReview {
-  id              Int              @id @default(autoincrement())
-  image           String?
-  description     String?
-  rating          Int?
-  isDeleted       Boolean?         @default(false)
-  productId       Int?
-  customerId      Int?
-  customer        customerProfile? @relation(fields: [customerId], references: [id])
-  product         product?         @relation(fields: [productId], references: [id])
+  user        userProfile @relation(fields: [userId], references: [id])
 }
