@@ -99,7 +99,7 @@ model customerProfile {
   isDeleted     Boolean         @default(false)
   userId        Int
   address       address         @relation(fields: [addressId], references: [id])
-  User          UserProfile     @relation(fields: [userId], references: [id])
+  user          user     @relation(fields: [userId], references: [id])
   carts         cart[]
   favourites    favourite[]
   orders        order[]
@@ -153,10 +153,10 @@ model userRole {
   roleId      Int
   userId      Int
   role        role        @relation(fields: [roleId], references: [id])
-  User        UserProfile @relation(fields: [userId], references: [id])
+  user        user @relation(fields: [userId], references: [id])
 }
 
-model userProfile {
+model user {
   id                  Int               @id @default(autoincrement())
   name                String?
   userName            String            @unique
