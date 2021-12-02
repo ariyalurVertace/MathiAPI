@@ -74,10 +74,45 @@ export async function remove(req, res, next) {
 export async function getOne(req, res, next) {
     try {
         let selectFields = {
-            ID: true,
-            Name: true,
-            Route: true,
-            Method: true,
+            id: true,
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+            email: true,
+            addressId: true,
+            address: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    addressLine1: true,
+                    addressLine2: true,
+                    districtId: true,
+                    district: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            stateId: true,
+                            state: {
+                                where: {
+                                    isDeleted: false,
+                                },
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                    postalCode: true,
+                    landmark: true,
+                },
+            },
         };
         let includeFields = null;
         let sortConditions = null;
