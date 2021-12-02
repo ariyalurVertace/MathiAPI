@@ -154,7 +154,7 @@ model userRole {
   user        userPeofile @relation(fields: [userId], references: [id])
 }
 
-model userPeofile {
+model userProfile {
   id                  Int               @id @default(autoincrement())
   name                String?
   userName            String            @unique
