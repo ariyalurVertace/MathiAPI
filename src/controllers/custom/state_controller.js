@@ -40,7 +40,7 @@ export async function update(req, res, next) {
         });
         return genericResponse({
             res,
-            result: null,
+            result: item,
             exception: null,
             pagination: null,
             statusCode: item ? statusCodes.SUCCESS : statusCodes.NOT_FOUND,
