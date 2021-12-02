@@ -73,6 +73,8 @@ export async function remove(req, res, next) {
 
 export async function getOne(req, res, next) {
     try {
+        const json = req.body;
+        let condition = {isDeleted: false};
         let selectFields = {
             id: true,
             name: true,
