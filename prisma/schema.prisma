@@ -8,6 +8,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model UserPeofile {
+  id                  Int               @id @default(autoincrement())
+  name                String?
+  userName            String            @unique
+  password            String?
+  salt                String?
+  forcePasswordChange Boolean?
+  passwordValidFrom   Int?
+  isActive            Boolean?          @default(true)
+  lastLoginDateTime   DateTime?         @db.Timetz(6)
+  isDeleted           Boolean?          @default(false)
+  customerProfile     customerProfile[]
+  userRole            userRole[]
+}
+
 model address {
   id               Int               @id @default(autoincrement())
   name             String
@@ -92,7 +107,7 @@ model favourite {
   productId       Int
   customerId      Int
   isDeleted       Boolean         @default(false)
-  customerProfile customerProfile @relation(fields: [customerId], references: [id])
+  customer        customerProfile @relation(fields: [customerId], references: [id])
   product         product         @relation(fields: [productId], references: [id])
 }
 
@@ -146,15 +161,22 @@ model sellerProfile {
   isDeleted   Boolean?  @default(false)
   user        Int
   address     address   @relation(fields: [addressId], references: [id])
-  products    product[]
+  products     product[]
+}
+
+model state {
+  id        Int        @id @default(autoincrement())
+  name      String
+  isDeleted Boolean    @default(false)
+  districts  district[]
 }
 
 model userRole {
-  id     Int  @id @default(autoincrement())
-  roleId Int
-  userId Int
-  role   role @relation(fields: [roleId], references: [id])
-  user   user @relation(fields: [userId], references: [id])
+  id          Int         @id @default(autoincrement())
+  roleId      Int
+  userId      Int
+  role        role        @relation(fields: [roleId], references: [id])
+  User        UserProfile @relation(fields: [userId], references: [id])
 }
 
 model entityState {
@@ -198,6 +220,6 @@ model user {
   isActive            Boolean?          @default(true)
   lastLoginDateTime   DateTime?         @db.Timetz(6)
   isDeleted           Boolean?          @default(false)
-  customerProfile     customerProfile[]
-  userRole            userRole[]
+  customerProfiles     customerProfile[]
+  userRoles            userRole[]
 }

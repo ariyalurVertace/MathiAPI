@@ -326,10 +326,10 @@ export function getNewObject(obj = {}) {
 
 export const foreignKeyReplacement = input => {
     let output = input;
-    const foreignKeys = Object.keys(input).filter(k => k.match(/id$/));
+    const foreignKeys = Object.keys(input).filter(k => k.match(/Id$/));
 
     foreignKeys.forEach(key => {
-        const modelName = key.replace(/id$/, "");
+        const modelName = key.replace(/Id$/, "");
         const value = input[key];
 
         delete output[key];
