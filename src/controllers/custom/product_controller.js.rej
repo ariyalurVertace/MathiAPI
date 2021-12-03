@@ -1,0 +1,6 @@
+diff a/src/controllers/custom/product_controller.js b/src/controllers/custom/product_controller.js	(rejected hunks)
+@@ -191 +191 @@ export async function getAll(req, res, next) {
+-            
++
+@@ -193 +192,0 @@ export async function getAll(req, res, next) {
+-           

@@ -188,8 +188,80 @@ export async function getAll(req, res, next) {
             id: true,
             name: true,
             categoryId: true,
-
+            category: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    parentCategoryId: true,
+                    parentCategory: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                },
+            },
             sellerProfileId: true,
+            sellerProfile: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    userId: true,
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            password: true,
+                            forcePasswordChange: true,
+                            passwordValidFrom: true,
+                            isActive: true,
+                            lastLoginDateTime: true,
+                        },
+                    },
+                    addressId: true,
+
+                    address: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            addressLine1: true,
+                            addressLine2: true,
+                            districtId: true,
+
+                            district: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    stateId: true,
+
+                                    state: {
+                                        where: {
+                                            isDeleted: false,
+                                        },
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                        },
+                                    },
+                                },
+                            },
+                            postalCode: true,
+                            landMark: true,
+                        },
+                    },
+                },
+            },
         };
         let includeFields = null;
         let sortConditions = null;
