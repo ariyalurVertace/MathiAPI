@@ -25,21 +25,21 @@ model user {
 }
 
 model address {
-  id              Int              @id @default(autoincrement())
-  name            String
-  addressLine1    String
-  addressLine2    String?
-  districtId      Int
-  postalCode      Int?
-  landmark        String?
-  isDeleted       Boolean          @default(false)
-  stateId         Int              @default(1)
-  customerId      Int?
-  sellerId        Int?             @default(0)
-  customer        customerProfile? @relation(fields: [customerId], references: [id])
-  district        district         @relation(fields: [districtId], references: [id])
-  seller          sellerProfile?   @relation(fields: [sellerId], references: [id])
-  state           state            @relation(fields: [stateId], references: [id])
+  id           Int              @id @default(autoincrement())
+  name         String
+  addressLine1 String
+  addressLine2 String?
+  districtId   Int
+  postalCode   Int?
+  landmark     String?
+  isDeleted    Boolean          @default(false)
+  customerId   Int?
+  sellerId     Int?             @default(0)
+  stateId      Int              @default(1)
+  customer     customerProfile? @relation(fields: [customerId], references: [id])
+  district     district         @relation(fields: [districtId], references: [id])
+  seller       sellerProfile?   @relation(fields: [sellerId], references: [id])
+  state        state            @relation(fields: [stateId], references: [id])
 }
 
 model district {
@@ -148,11 +148,11 @@ model product {
 }
 
 model role {
-  id        Int        @id @default(autoincrement())
-  name      String
-  isDeleted Boolean    @default(false)
-  roleId    String     @db.Inet
-  userRoles userRole[]
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  isDeleted           Boolean               @default(false)
+  apiModuleRoleAccess apiModuleRoleAccess[]
+  userRoles           userRole[]
 }
 
 model sellerProfile {
@@ -213,4 +213,32 @@ model productImage {
   productId Int
   isDeleted Boolean? @default(false)
   product   product  @relation(fields: [productId], references: [id])
+}
+
+model apiModule {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  route               String                @unique
+  method              method?
+  isDeleted           Boolean               @default(false)
+  apiModuleRoleAccess apiModuleRoleAccess[]
+}
+
+model apiModuleRoleAccess {
+  id          Int       @id @default(autoincrement())
+  apiModuleId Int
+  roleId      Int
+  apiModule   apiModule @relation(fields: [apiModuleId], references: [id])
+  role        role      @relation(fields: [roleId], references: [id])
+
+  @@index([apiModuleId], name: "fki_apiModuleId")
+  @@index([roleId], name: "fki_roleId")
+}
+
+enum method {
+  POST
+  GET
+  PUT
+  PATCH
+  DELETE
 }
