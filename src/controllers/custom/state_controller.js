@@ -107,6 +107,15 @@ export async function getAll(req, res, next) {
         let selectFields = {
             id: true,
             name: true,
+            districts: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
         };
         let includeFields = null;
         let sortConditions = null;
