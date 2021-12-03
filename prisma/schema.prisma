@@ -20,9 +20,9 @@ model address {
   customerId      Int?
   sellerId        Int?             @default(0)
   stateId         Int              @default(1)
-  customerProfile customerProfile? @relation(fields: [customerId], references: [id])
+  customer        customerProfile? @relation(fields: [customerId], references: [id])
   district        district         @relation(fields: [districtId], references: [id])
-  sellerProfile   sellerProfile?   @relation(fields: [sellerId], references: [id])
+  seller          sellerProfile?   @relation(fields: [sellerId], references: [id])
   state           state            @relation(fields: [stateId], references: [id])
 }
 
@@ -57,7 +57,7 @@ model product {
   sellerId       Int
   isDeleted      Boolean?        @default(false)
   category       category        @relation(fields: [categoryId], references: [id])
-  sellerProfile  sellerProfile   @relation(fields: [sellerId], references: [id])
+  seller         sellerProfile   @relation(fields: [sellerId], references: [id])
   banners        banner[]
   carts          cart[]
   favourites     favourite[]
@@ -74,8 +74,8 @@ model state {
   districts district[]
 }
 
-model banner {
-  id        Int      @id @default(autoincrement())
+model district {
+  id        Int       @id @default(autoincrement())
   name      String
   isActive  Boolean? @default(false)
   isDeleted Boolean  @default(false)
@@ -103,7 +103,7 @@ model customerProfile {
   isDeleted      Boolean         @default(false)
   userId         Int
   user           user            @relation(fields: [userId], references: [id])
-  addresses        address[]
+  addresses      address[]
   carts          cart[]
   favourites     favourite[]
   orders         order[]
@@ -151,6 +151,14 @@ model sellerProfile {
   user        user      @relation(fields: [userId], references: [id])
   addresses   address[]
   products    product[]
+}
+
+model state {
+  id        Int        @id @default(autoincrement())
+  name      String
+  isDeleted Boolean    @default(false)
+  addresses address[]
+  districts district[]
 }
 
 model userRole {

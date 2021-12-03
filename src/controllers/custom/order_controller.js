@@ -9,7 +9,7 @@ import {
 } from "../predefined/generic_controller.js";
 import {statusCodes} from "../../config/constants.js";
 
-const Table = "cart";
+const Table = "order";
 
 export async function create(req, res, next) {
     try {
@@ -75,6 +75,9 @@ export async function getOne(req, res, next) {
     try {
         let selectFields = {
             id: true,
+            shippingDate: true,
+            orderDate: true,
+            isDelievered: true,
             productId: true,
             product: {
                 where: {
@@ -146,9 +149,6 @@ export async function getOne(req, res, next) {
                                     districtId: true,
 
                                     district: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
                                         select: {
                                             id: true,
                                             name: true,
@@ -214,9 +214,6 @@ export async function getOne(req, res, next) {
                             districtId: true,
 
                             district: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,
@@ -269,7 +266,11 @@ export async function getAll(req, res, next) {
         let condition = {isDeleted: false};
         let selectFields = {
             id: true,
+            shippingDate: true,
+            orderDate: true,
+            isDelievered: true,
             productId: true,
+
             product: {
                 where: {
                     isDeleted: false,
@@ -340,9 +341,6 @@ export async function getAll(req, res, next) {
                                     districtId: true,
 
                                     district: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
                                         select: {
                                             id: true,
                                             name: true,
@@ -408,9 +406,6 @@ export async function getAll(req, res, next) {
                             districtId: true,
 
                             district: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,
@@ -463,7 +458,7 @@ export async function getAll(req, res, next) {
 export async function getCount(req, res, next) {
     try {
         const json = req.body;
-        let condition = {isDeleted: false};
+        let condition = {IsDeleted: false};
 
         let count = await genericGetCount({
             Table,

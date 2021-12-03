@@ -14,8 +14,6 @@ import cronScheduleRouter from "./predefined/cron_schedule_router.js";
 import uploadFilesRouter from "./predefined/fileupload_router.js";
 // import {userResolver} from "../controllers/predefined/user_controller.js";
 
-//CUSTOM
-
 import sellerProfileRouter from "./custom/sellerProfile_router.js";
 import categoryRouter from "./custom/category_router.js";
 import cartRouter from "./custom/cart_router.js";
@@ -24,6 +22,9 @@ import addressRouter from "./custom/address_router.js";
 import customerProfileRouter from "./custom/customerProfile_router.js";
 import districtRouter from "./custom/district_router.js";
 import stateRouter from "./custom/state_router.js";
+import productReviewRouter from "./custom/productReview_router.js";
+import productRouter from "./custom/product_router.js";
+import orderRouter from "./custom/order_router.js";
 
 export default function exportedRouter(app) {
     app.use("/api/user", userRouter());
@@ -50,6 +51,9 @@ export default function exportedRouter(app) {
     app.use("/api/state", stateRouter());
     app.use("/api/cart", cartRouter());
     app.use("/api/favourite", favouriteRouter());
+    app.use("/api/productReview", productReviewRouter());
+    app.use("/api/product", productRouter());
+    app.use("/api/order", orderRouter());
 
     //NEW_REGISTER
 }

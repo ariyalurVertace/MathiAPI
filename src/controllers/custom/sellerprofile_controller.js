@@ -40,7 +40,7 @@ export async function update(req, res, next) {
         });
         return genericResponse({
             res,
-            result: null,
+            result: item,
             exception: null,
             pagination: null,
             statusCode: item ? statusCodes.SUCCESS : statusCodes.NOT_FOUND,
@@ -75,7 +75,54 @@ export async function getOne(req, res, next) {
     try {
         let selectFields = {
             id: true,
-            name: true,
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+            userId: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    userName: true,
+                    password: true,
+                    salt: true,
+                    forcePasswordChange: true,
+                    passwordValidFrom: true,
+                    isActive: true,
+                    lastLastDateTime: true,
+                    isDeleted: true,
+                },
+            },
+            address: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    addressline1: true,
+                    addressline2: true,
+                    districtId: true,
+                    district: {
+                        select: {
+                            id: true,
+                            name: true,
+                            stateId: true,
+                            state: {
+                                where: {
+                                    isDeleted: false,
+                                },
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
         };
         let includeFields = null;
         let sortConditions = null;
@@ -137,9 +184,6 @@ export async function getAll(req, res, next) {
                     addressline2: true,
                     districtId: true,
                     district: {
-                        where: {
-                            isDeleted: false,
-                        },
                         select: {
                             id: true,
                             name: true,

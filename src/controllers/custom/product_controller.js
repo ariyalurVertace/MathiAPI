@@ -9,7 +9,7 @@ import {
 } from "../predefined/generic_controller.js";
 import {statusCodes} from "../../config/constants.js";
 
-const Table = "cart";
+const Table = "product";
 
 export async function create(req, res, next) {
     try {
@@ -75,107 +75,30 @@ export async function getOne(req, res, next) {
     try {
         let selectFields = {
             id: true,
-            productId: true,
-            product: {
+            name: true,
+            image: true,
+            price: true,
+            description: true,
+            stock: true,
+            categoryId: true,
+            category: {
                 where: {
                     isDeleted: false,
                 },
                 select: {
                     id: true,
                     name: true,
-                    price: true,
-                    description: true,
-                    image: true,
-                    color: true,
-                    categoryId: true,
-
-                    category: {
-                        where: {
-                            isDeleted: false,
-                        },
+                    parentCategoryId: true,
+                    parentCategory: {
                         select: {
                             id: true,
                             name: true,
-                            parentCategoryId: true,
-
-                            parentCategory: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
-                    sellerId: true,
-
-                    seller: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            firstName: true,
-                            lastName: true,
-                            email: true,
-                            userId: true,
-                            user: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    password: true,
-                                    forcePasswordChange: true,
-                                    passwordValidFrom: true,
-                                    isActive: true,
-                                    lastLoginDateTime: true,
-                                },
-                            },
-                            addressId: true,
-
-                            address: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    addressLine1: true,
-                                    addressLine2: true,
-                                    districtId: true,
-
-                                    district: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                            stateId: true,
-
-                                            state: {
-                                                where: {
-                                                    isDeleted: false,
-                                                },
-                                                select: {
-                                                    id: true,
-                                                    name: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    postalCode: true,
-                                    landMark: true,
-                                },
-                            },
                         },
                     },
                 },
             },
-            customerId: true,
-
-            customer: {
+            sellerId: true,
+            seller: {
                 where: {
                     isDeleted: false,
                 },
@@ -183,7 +106,6 @@ export async function getOne(req, res, next) {
                     id: true,
                     firstName: true,
                     lastName: true,
-                    phoneNumber: true,
                     email: true,
                     userId: true,
                     user: {
@@ -206,6 +128,7 @@ export async function getOne(req, res, next) {
                         where: {
                             isDeleted: false,
                         },
+
                         select: {
                             id: true,
                             name: true,
@@ -214,9 +137,6 @@ export async function getOne(req, res, next) {
                             districtId: true,
 
                             district: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,
@@ -269,107 +189,26 @@ export async function getAll(req, res, next) {
         let condition = {isDeleted: false};
         let selectFields = {
             id: true,
-            productId: true,
-            product: {
+            name: true,
+            categoryId: true,
+            category: {
                 where: {
                     isDeleted: false,
                 },
                 select: {
                     id: true,
                     name: true,
-                    price: true,
-                    description: true,
-                    image: true,
-                    color: true,
-                    categoryId: true,
-
-                    category: {
-                        where: {
-                            isDeleted: false,
-                        },
+                    parentCategoryId: true,
+                    parentCategory: {
                         select: {
                             id: true,
                             name: true,
-                            parentCategoryId: true,
-
-                            parentCategory: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
-                    sellerId: true,
-
-                    seller: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            firstName: true,
-                            lastName: true,
-                            email: true,
-                            userId: true,
-                            user: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    password: true,
-                                    forcePasswordChange: true,
-                                    passwordValidFrom: true,
-                                    isActive: true,
-                                    lastLoginDateTime: true,
-                                },
-                            },
-                            addressId: true,
-
-                            address: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    addressLine1: true,
-                                    addressLine2: true,
-                                    districtId: true,
-
-                                    district: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                            stateId: true,
-
-                                            state: {
-                                                where: {
-                                                    isDeleted: false,
-                                                },
-                                                select: {
-                                                    id: true,
-                                                    name: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    postalCode: true,
-                                    landMark: true,
-                                },
-                            },
                         },
                     },
                 },
             },
-            customerId: true,
-
-            customer: {
+            sellerId: true,
+            seller: {
                 where: {
                     isDeleted: false,
                 },
@@ -377,7 +216,6 @@ export async function getAll(req, res, next) {
                     id: true,
                     firstName: true,
                     lastName: true,
-                    phoneNumber: true,
                     email: true,
                     userId: true,
                     user: {
@@ -408,9 +246,6 @@ export async function getAll(req, res, next) {
                             districtId: true,
 
                             district: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,
