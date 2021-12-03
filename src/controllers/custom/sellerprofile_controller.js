@@ -1,4 +1,5 @@
 import moment from "moment";
+import crypto from "crypto";
 import {genericResponse} from "../predefined/base_controller.js";
 import {
     genericCreate,
@@ -20,18 +21,20 @@ export async function create(req, res, next) {
             Table: "role",
             condition: {name: "Seller", isDeleted: false},
         });
-
+        let salt = crypto.randomBytes(16).toString("base64");
+        let saltBuffer = Buffer.from(salt, "base64");
         const user = {
+            name: json.firstName,
             username: json.phoneNumber.trim().toLowerCase(),
             forcePasswordChange: json.forcePasswordChange || false,
+            salt,
+            password: await hashPassword("123456", saltBuffer),
+            passwordValidFrom: moment().unix(),
+            isDeleted: false,
+            isActive: true,
+            userRole: {create: {roleId: role.id}},
         };
-        user.salt = crypto.randomBytes(16).toString("base64");
-        let saltBuffer = Buffer.from(user.salt, "base64");
-        user.password = await hashPassword("123456", saltBuffer);
-        user.passwordValidFrom = moment().unix();
-        user.isDeleted = false;
-        user.isActive = true;
-        user.userRole = {create: {roleId: role.id}};
+
         json.user = {create: user};
         const item = await genericCreate({Table, json, req, res});
         return genericResponse({
