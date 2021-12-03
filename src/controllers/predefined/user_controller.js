@@ -58,7 +58,7 @@ export async function userResolver(req, res, next) {
         let selectFields = {
             id: true,
             passwordValidFrom: true,
-            username: true,
+            userName: true,
             userRole: {
                 select: {
                     roleId: true,
@@ -119,7 +119,7 @@ export async function userResolver(req, res, next) {
                 });
             }
             res.locals.userID = item.id;
-            res.locals.username = item.username;
+            res.locals.userName = item.userName;
             res.locals.roles = item.userRole.map(x => x.roleId);
             res.locals.customerId = item.customer[0]?.id;
             res.locals.sellerId = item.seller[0]?.id;
@@ -156,12 +156,12 @@ export async function userLogin(req, res, next) {
             password: true,
             passwordValidFrom: true,
             salt: true,
-            username: true,
+            userName: true,
             forcePasswordChange: true,
             lastLoginDateTime: true,
         };
         let condition = {
-            username: req?.body?.username?.trim().toLowerCase(),
+            userName: req?.body?.userName?.trim().toLowerCase(),
             isActive: true,
             isDeleted: false,
         };
@@ -226,7 +226,7 @@ export async function LoginAuthenticate(req, res, check, user, next) {
             let result = {
                 token: null,
                 userId: user.id,
-                username: user.username,
+                userName: user.userName,
                 name: user.name,
                 customer,
                 seller,
@@ -244,7 +244,7 @@ export async function LoginAuthenticate(req, res, check, user, next) {
                 genericCreate({
                     Table: "userLoginLog",
                     json: {
-                        username: user.Username,
+                        userName: user.Username,
                         result: "Success",
                         address: requestIp.getClientIp(req),
                     },
@@ -263,7 +263,7 @@ export async function LoginAuthenticate(req, res, check, user, next) {
             genericCreate({
                 Table: "userLoginLog",
                 json: {
-                    username: req?.body?.username?.trim().toLowerCase(),
+                    userName: req?.body?.userName?.trim().toLowerCase(),
                     result: "Failure",
                     address: requestIp.getClientIp(req),
                 },
@@ -286,7 +286,7 @@ export async function userRegister(req, res, next) {
         let json = req.body;
         let {userProfile} = json;
         let user = {
-            username: json.username.trim().toLowerCase(),
+            userName: json.userName.trim().toLowerCase(),
             password: json.password,
             forcePasswordChange: json.forcePasswordChange || false,
         };
@@ -294,7 +294,7 @@ export async function userRegister(req, res, next) {
         let item = await genericGetOne({
             Table,
             condition: {
-                username: user.username,
+                userName: user.userName,
             },
         });
         if (item) {
@@ -490,7 +490,7 @@ export async function getOne(req, res, next) {
     try {
         let selectFields = {
             id: true,
-            username: true,
+            userName: true,
             lastLoginDateTime: true,
             userRoles: {
                 select: {
@@ -541,7 +541,7 @@ export async function getAll(req, res, next) {
         }
         let selectFields = {
             id: true,
-            username: true,
+            userName: true,
             lastLoginDateTime: true,
             userRole: {
                 select: {
