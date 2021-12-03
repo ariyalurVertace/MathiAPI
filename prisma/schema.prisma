@@ -20,9 +20,9 @@ model address {
   customerId      Int?
   sellerId        Int?             @default(0)
   stateId         Int              @default(1)
-  customerProfile customerProfile? @relation(fields: [customerId], references: [id])
+  customer        customerProfile? @relation(fields: [customerId], references: [id])
   district        district         @relation(fields: [districtId], references: [id])
-  sellerProfile   sellerProfile?   @relation(fields: [sellerId], references: [id])
+  seller          sellerProfile?   @relation(fields: [sellerId], references: [id])
   state           state            @relation(fields: [stateId], references: [id])
 }
 
@@ -67,7 +67,7 @@ model customerProfile {
   isDeleted      Boolean         @default(false)
   userId         Int
   user           user            @relation(fields: [userId], references: [id])
-  address        address[]
+  addresses        address[]
   carts          cart[]
   favourites     favourite[]
   orders         order[]
@@ -137,7 +137,7 @@ model product {
   carts          cart[]
   favourites     favourite[]
   orders         order[]
-  productImage   productImage[]
+  productImages   productImage[]
   productReviews productReview[]
 }
 
@@ -157,7 +157,7 @@ model role {
   id                  Int                   @id @default(autoincrement())
   name                String
   isDeleted           Boolean               @default(false)
-  apiModuleRoleAccess apiModuleRoleAccess[]
+  apiModuleRoleAccesses apiModuleRoleAccess[]
   userRoles           userRole[]
 }
 
@@ -171,7 +171,7 @@ model sellerProfile {
   isDeleted   Boolean?  @default(false)
   userId      Int
   user        user      @relation(fields: [userId], references: [id])
-  address     address[]
+  addresses     address[]
   products    product[]
 }
 
@@ -179,7 +179,7 @@ model state {
   id        Int        @id @default(autoincrement())
   name      String
   isDeleted Boolean    @default(false)
-  address   address[]
+  addresses  address[]
   districts district[]
 }
 
@@ -197,7 +197,7 @@ model apiModule {
   route               String                @unique
   method              method?
   isDeleted           Boolean               @default(false)
-  apiModuleRoleAccess apiModuleRoleAccess[]
+  apiModuleRoleAccesses apiModuleRoleAccess[]
 }
 
 model apiModuleRoleAccess {
@@ -230,9 +230,9 @@ model user {
   isActive            Boolean?          @default(true)
   lastLoginDateTime   DateTime?         @db.Timetz(6)
   isDeleted           Boolean?          @default(false)
-  customerProfile     customerProfile[]
-  sellerProfile       sellerProfile[]
-  userRole            userRole[]
+  customerProfiles    customerProfile[]
+  sellerProfiles       sellerProfile[]
+  userRoles            userRole[]
 }
 
 enum method {
