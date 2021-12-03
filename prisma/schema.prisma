@@ -203,13 +203,13 @@ model user {
   id                  Int               @id @default(autoincrement())
   name                String?
   userName            String            @unique
-  password            String?
-  salt                String?
-  forcePasswordChange Boolean?
+  password            String
+  salt                String
+  forcePasswordChange Boolean
   passwordValidFrom   Int?
-  isActive            Boolean?          @default(true)
+  isActive            Boolean          @default(true)
   lastLoginDateTime   DateTime?         @db.Timetz(6)
-  isDeleted           Boolean?          @default(false)
+  isDeleted           Boolean          @default(false)
   customerProfile     customerProfile[]
   sellerProfile       sellerProfile[]
   userRole            userRole[]

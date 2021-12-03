@@ -1,3 +1,4 @@
+import JsonQuery from "json-query";
 import {genericResponse} from "../predefined/base_controller.js";
 import {
     genericCreate,
