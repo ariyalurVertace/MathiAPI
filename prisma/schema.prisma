@@ -159,11 +159,11 @@ model sellerProfile {
   id          Int       @id @default(autoincrement())
   firstName   String
   lastName    String
-  phoneNumber Int
   email       String
   isApproved  Boolean?  @default(false)
   isDeleted   Boolean?  @default(false)
   userId      Int
+  phoneNumber String
   user        user      @relation(fields: [userId], references: [id])
   address     address[]
   products    product[]
