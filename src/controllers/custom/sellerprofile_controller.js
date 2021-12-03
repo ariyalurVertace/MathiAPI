@@ -1,3 +1,5 @@
+import moment from "moment";
+import crypto from "crypto";
 import {genericResponse} from "../predefined/base_controller.js";
 import {
     genericCreate,
@@ -8,12 +10,32 @@ import {
     genericGetCount,
 } from "../predefined/generic_controller.js";
 import {statusCodes} from "../../config/constants.js";
+import {hashPassword} from "../predefined/user_controller.js";
 
 const Table = "sellerProfile";
 
 export async function create(req, res, next) {
     try {
         const json = req.body;
+        let role = await genericGetOne({
+            Table: "role",
+            condition: {name: "Seller", isDeleted: false},
+        });
+        let salt = crypto.randomBytes(16).toString("base64");
+        let saltBuffer = Buffer.from(salt, "base64");
+        const user = {
+            name: json.firstName,
+            userName: json.phoneNumber.trim().toLowerCase(),
+            forcePasswordChange: json.forcePasswordChange || false,
+            salt,
+            password: await hashPassword("123456", saltBuffer),
+            passwordValidFrom: moment().unix(),
+            isDeleted: false,
+            isActive: true,
+            userRoles: {create: {roleId: role.id}},
+        };
+
+        json.user = {create: user};
         const item = await genericCreate({Table, json, req, res});
         return genericResponse({
             res,
