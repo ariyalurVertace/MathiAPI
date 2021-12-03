@@ -29,11 +29,6 @@ export const getCurrentUser = async token => {
     if (!token) return {user: null};
     try {
         const result = await jwt.verify(token, ENV.secretKey);
-        // const result = {
-        //     user: {id: 5},
-        //     iat: 1632827874,
-        //     ForcePasswordChange: true,
-        // };
         return result;
     } catch (err) {
         return {user: null};
@@ -47,7 +42,7 @@ export async function userResolver(req, res, next) {
 
     if (user) {
         if (
-            user.ForcePasswordChange &&
+            user.forcePasswordChange &&
             originalUrl !== "/api/user/changepassword"
         ) {
             return genericResponse({
@@ -55,37 +50,27 @@ export async function userResolver(req, res, next) {
                 result: null,
                 exception: null,
                 pagination: null,
-                stringResult: "Change Password",
+                stringResult: "Change password",
                 statusCode: statusCodes.NOT_AUTHORIZED,
             });
         }
 
         let selectFields = {
             id: true,
-            PasswordValidFrom: true,
-            Username: true,
-            UserRole: {
+            passwordValidFrom: true,
+            username: true,
+            userRole: {
                 select: {
-                    RoleId: true,
-                    Role: {
+                    roleId: true,
+                    role: {
                         select: {
-                            APIModuleRoleAccess: {
+                            apiModuleRoleAccess: {
                                 select: {
-                                    APIModule: {
+                                    apiModule: {
                                         select: {
-                                            Name: true,
-                                            Route: true,
-                                            Method: true,
-                                            APIModuleParameter: {
-                                                where: {
-                                                    isDeleted: false,
-                                                },
-                                                select: {
-                                                    Name: true,
-                                                    Variable: true,
-                                                    Location: true,
-                                                },
-                                            },
+                                            name: true,
+                                            route: true,
+                                            method: true,
                                         },
                                     },
                                 },
@@ -94,40 +79,34 @@ export async function userResolver(req, res, next) {
                     },
                 },
             },
-            Officer: {
+            customer: {
                 select: {
                     id: true,
-                    Office: {
-                        select: {id: true},
-                    },
-                    Designation: {
-                        select: {id: true, Rank: true},
-                    },
+                    firstName: true,
+                    lastName: true,
+                    phoneNumber: true,
+                    email: true,
                 },
             },
-            WelfareDepartmentOfficial: {
+
+            seller: {
                 select: {
                     id: true,
-                    Office: {
-                        select: {id: true},
-                    },
-                    WelfareDepartmentDesignation: {
-                        select: {id: true, Rank: true},
-                    },
-                    WelfareDepartmentPosting: {
-                        select: {id: true},
-                    },
+                    firstName: true,
+                    lastName: true,
+                    phoneNumber: true,
+                    email: true,
                 },
             },
         };
 
         const item = await genericGetOne({
             Table,
-            condition: {id: user.id, IsActive: true, isDeleted: false},
+            condition: {id: user.id, isActive: true, isDeleted: false},
             selectFields,
         });
 
-        if (item && item.PasswordValidFrom <= iat) {
+        if (item && item.passwordValidFrom <= iat) {
             let hasAccess = await checkApiAccess(item, req);
             if (!hasAccess) {
                 return genericResponse({
@@ -139,28 +118,16 @@ export async function userResolver(req, res, next) {
                     statusCode: statusCodes.NOT_AUTHORIZED,
                 });
             }
-            res.locals.UserID = item.id;
-            res.locals.Username = item.Username;
-            res.locals.Roles = item.UserRole.map(x => x.RoleId);
-            res.locals.OfficerID = item.Officer[0]?.id;
-            res.locals.OfficialID = item.WelfareDepartmentOfficial[0]?.id;
-            res.locals.OfficialPostingID =
-                item.WelfareDepartmentOfficial[0]?.WelfareDepartmentPosting[0]?.id;
-            res.locals.User = item;
-            res.locals.OfficeID = item.WelfareDepartmentOfficial[0]?.Office?.id;
-            res.locals.DesignationID =
-                item.WelfareDepartmentOfficial[0]?.WelfareDepartmentDesignation?.id;
-            res.locals.DesignationRank =
-                item.WelfareDepartmentOfficial[0]?.WelfareDepartmentDesignation?.Rank;
-            res.locals.ControllingOffices = await getControllingOffices(
-                item.id,
-                res,
-            );
-
+            res.locals.userID = item.id;
+            res.locals.username = item.username;
+            res.locals.roles = item.userRole.map(x => x.roleId);
+            res.locals.customerId = item.customer[0]?.id;
+            res.locals.sellerId = item.seller[0]?.id;
+            res.locals.user = item;
             next();
             return true;
         }
-        if (!item || item.PasswordValidFrom > iat) {
+        if (!item || item.passwordValidFrom > iat) {
             if (!res.locals.skipResponse)
                 return genericResponse({
                     res,
@@ -186,16 +153,16 @@ export async function userLogin(req, res, next) {
     try {
         let selectFields = {
             id: true,
-            Password: true,
-            PasswordValidFrom: true,
-            Salt: true,
-            Username: true,
-            ForcePasswordChange: true,
-            LastLoginDateTime: true,
+            password: true,
+            passwordValidFrom: true,
+            salt: true,
+            username: true,
+            forcePasswordChange: true,
+            lastLoginDateTime: true,
         };
         let condition = {
-            Username: req?.body?.Username?.trim().toLowerCase(),
-            IsActive: true,
+            username: req?.body?.username?.trim().toLowerCase(),
+            isActive: true,
             isDeleted: false,
         };
         const user = await genericGetOne({
@@ -205,15 +172,15 @@ export async function userLogin(req, res, next) {
         });
         let check = false;
 
-        if (req?.body?.Password) {
-            req.body.Password = await decryptField(req?.body?.Password);
+        if (req?.body?.password) {
+            req.body.password = await decryptField(req?.body?.password);
         }
 
         if (user) {
-            let saltBuffer = Buffer.from(user.Salt, "base64");
+            let saltBuffer = Buffer.from(user.salt, "base64");
             check =
-                user.Password ===
-                (await hashPassword(req?.body?.Password, saltBuffer));
+                user.password ===
+                (await hashPassword(req?.body?.password, saltBuffer));
         }
         LoginAuthenticate(req, res, check, user, next);
     } catch (err) {
@@ -227,7 +194,7 @@ export async function LoginAuthenticate(req, res, check, user, next) {
         if (check) {
             let condition = {
                 id: user.id,
-                IsActive: true,
+                isActive: true,
                 isDeleted: false,
             };
 
@@ -235,7 +202,7 @@ export async function LoginAuthenticate(req, res, check, user, next) {
                 {
                     user: {
                         id: user.id,
-                        ForcePasswordChange: user.ForcePasswordChange,
+                        forcePasswordChange: user.forcePasswordChange,
                     },
                 },
                 ENV.secretKey,
@@ -245,76 +212,41 @@ export async function LoginAuthenticate(req, res, check, user, next) {
                 },
             );
 
-            let includeFields = {Designation: true, Office: true};
-
-            //TODO - Populate officer and dept official
-            let officer = await genericGetOne({
-                Table: "Officer",
-                condition: {UserID: user.id, isDeleted: false},
-                includeFields,
+            //TODO - Populate customer and dept official
+            let customer = await genericGetOne({
+                Table: "customerProfile",
+                condition: {userID: user.id, isDeleted: false},
             });
 
-            let deptOfficial = await genericGetOne({
-                Table: "WelfareDepartmentOfficial",
+            let seller = await genericGetOne({
+                Table: "sellerProfile",
                 condition: {UserID: user.id, isDeleted: false},
-                selectFields: {
-                    id: true,
-                    MobileNumber1: true,
-                    Name: true,
-                    MobileNumber2: true,
-                    Email: true,
-                    DepartmentID: true,
-                    WelfareDepartmentDesignation: {
-                        select: {
-                            id: true,
-                            Name: true,
-                            Rank: true,
-                        },
-                    },
-                    UserID: true,
-                    PhotoURL: true,
-                    IsVerified: true,
-                    VerifiedByID: true,
-                    VerifiedDate: true,
-                    Office: {
-                        select: {
-                            id: true,
-                            AreaID: true,
-                            Name: true,
-                            Address: true,
-                            ControllingOfficerID: true,
-                            OfficeTypeID: true,
-                            ReportingOfficeID: true,
-                            DepartmentID: true,
-                        },
-                    },
-                },
             });
 
             let result = {
                 token: null,
-                UserId: user.id,
-                Username: user.Username,
-                Name: user.Name,
-                Officer: officer,
-                DepartmentOfficial: deptOfficial,
-                LastLoginDateTime: user.LastLoginDateTime,
+                userId: user.id,
+                username: user.username,
+                name: user.name,
+                customer,
+                seller,
+                lastLoginDateTime: user.lastLoginDateTime,
             };
             if (token) result.token = token;
-            if (deptOfficial)
+            if (seller)
                 genericUpdate({
                     Table,
                     condition,
-                    json: {LastLoginDateTime: new Date()},
+                    json: {lastLoginDateTime: new Date()},
                     next,
                 });
             if (ENV.loginLog) {
                 genericCreate({
-                    Table: "UserLoginLog",
+                    Table: "userLoginLog",
                     json: {
-                        Username: user.Username,
-                        Result: "Success",
-                        Address: requestIp.getClientIp(req),
+                        username: user.Username,
+                        result: "Success",
+                        address: requestIp.getClientIp(req),
                     },
                     next,
                 });
@@ -329,11 +261,11 @@ export async function LoginAuthenticate(req, res, check, user, next) {
         }
         if (ENV.loginLog) {
             genericCreate({
-                Table: "UserLoginLog",
+                Table: "userLoginLog",
                 json: {
-                    Username: req?.body?.Username?.trim().toLowerCase(),
-                    Result: "Failure",
-                    Address: requestIp.getClientIp(req),
+                    username: req?.body?.username?.trim().toLowerCase(),
+                    result: "Failure",
+                    address: requestIp.getClientIp(req),
                 },
             });
         }
@@ -349,129 +281,20 @@ export async function LoginAuthenticate(req, res, check, user, next) {
     }
 }
 
-export async function userGetOTP(req, res, next) {
-    try {
-        let json = req.body;
-        let user = await genericGetOne({
-            Table,
-            condition: {
-                Username: json.Username,
-                IsActive: true,
-                isDeleted: false,
-            },
-        });
-
-        if (!user) {
-            return genericResponse({
-                res,
-                result: null,
-                exception: null,
-                pagination: null,
-                statusCode: statusCodes.NOT_FOUND,
-            });
-        }
-        let otp = getOTP();
-        let otpJson = {
-            OTP: otp,
-            UserID: user.id,
-            ValidUntil: getFutureTime(ENV.OTPValidMinutes),
-            IsUsed: false,
-            MobileNumber: user.Username,
-        };
-
-        let otpSaved = await genericCreate({
-            Table: "OTP",
-            json: otpJson,
-            req,
-            res,
-        });
-
-        if (otpSaved) {
-            await sendSMS(
-                user.Username,
-                `Your OTP to login is:${otp}. Valid for 15 minutes`,
-                next,
-            );
-        }
-
-        return genericResponse({
-            res,
-            result: null,
-            exception: null,
-            pagination: null,
-            statusCode: otpSaved
-                ? statusCodes.SUCCESS
-                : statusCodes.SERVER_ERROR,
-        });
-    } catch (err) {
-        return next(err);
-    }
-}
-
-export async function verifyOtp(req, res, next) {
-    try {
-        const json = req.body;
-        let condition = {
-            IsUsed: false,
-            ValidUntil: {gte: new Date()},
-            MobileNumber: json.Username,
-            OTP: json.OTP,
-        };
-
-        let otp = await genericGetOne({
-            Table: "OTP",
-            condition,
-        });
-
-        let testOtp = null;
-
-        if (ENV.environment !== "master") {
-            testOtp = {
-                id: null,
-                OTP: "000000",
-            };
-        }
-
-        let user = null;
-
-        if (otp) {
-            await genericUpdate({
-                Table: "OTP",
-                condition: {id: otp.id},
-                json: {IsUsed: true},
-            });
-            user = await genericGetOne({
-                Table,
-                condition: {id: otp.UserID},
-                selectFields: {id: true, Username: true, Name: true},
-            });
-            LoginAuthenticate(req, res, true, user, next);
-        } else LoginAuthenticate(req, res, false, null, next);
-    } catch (error) {
-        return genericResponse({
-            res,
-            result: null,
-            exception: error,
-            pagination: null,
-            statusCode: statusCodes.SERVER_ERROR,
-        });
-    }
-}
-
 export async function userRegister(req, res, next) {
     try {
         let json = req.body;
-        let userProfile = json.UserProfile;
+        let {userProfile} = json;
         let user = {
-            Username: json.Username.trim().toLowerCase(),
-            Password: json.Password,
-            ForcePasswordChange: json.ForcePasswordChange || false,
+            username: json.username.trim().toLowerCase(),
+            password: json.password,
+            forcePasswordChange: json.forcePasswordChange || false,
         };
 
         let item = await genericGetOne({
             Table,
             condition: {
-                Username: user.Username,
+                username: user.username,
             },
         });
         if (item) {
@@ -484,13 +307,13 @@ export async function userRegister(req, res, next) {
             });
         }
 
-        user.Salt = crypto.randomBytes(16).toString("base64");
-        let saltBuffer = Buffer.from(user.Salt, "base64");
+        user.salt = crypto.randomBytes(16).toString("base64");
+        let saltBuffer = Buffer.from(user.salt, "base64");
 
-        user.Password = await hashPassword(user.Password, saltBuffer);
-        user.PasswordValidFrom = moment().unix();
+        user.password = await hashPassword(user.password, saltBuffer);
+        user.passwordValidFrom = moment().unix();
         user.isDeleted = false;
-        user.IsActive = true;
+        user.isActive = true;
 
         item = await genericCreate({
             Table,
@@ -539,20 +362,20 @@ export async function userUpdate(req, res, next) {
 export async function userChangePassword(req, res, next) {
     try {
         const json = req.body;
-        if (json.Password) {
-            json.Password = await decryptField(json.Password);
+        if (json.password) {
+            json.password = await decryptField(json.password);
         } else {
             return genericResponse({
                 res,
                 result: null,
-                stringResult: "Password not found",
+                stringResult: "password not found",
                 exception: null,
                 pagination: null,
                 statusCode: statusCodes.NOT_FOUND,
             });
         }
-        if (json.NewPassword) {
-            json.NewPassword = await decryptField(json.NewPassword);
+        if (json.newPassword) {
+            json.newPassword = await decryptField(json.newPassword);
         } else {
             return genericResponse({
                 res,
@@ -564,7 +387,7 @@ export async function userChangePassword(req, res, next) {
             });
         }
 
-        if (json.Password === json.NewPassword) {
+        if (json.password === json.newPassword) {
             return genericResponse({
                 res,
                 result: null,
@@ -576,8 +399,8 @@ export async function userChangePassword(req, res, next) {
         }
 
         let condition = {
-            id: res.locals.UserID,
-            IsActive: true,
+            id: res.locals.userID,
+            isActive: true,
             isDeleted: false,
         };
         let item = await genericGetOne({
@@ -587,25 +410,25 @@ export async function userChangePassword(req, res, next) {
         if (!item) {
             return false;
         }
-        let saltBuffer = Buffer.from(item.Salt, "base64");
+        let saltBuffer = Buffer.from(item.salt, "base64");
         let isValidPassword =
-            item.Password === (await hashPassword(json.Password, saltBuffer));
+            item.password === (await hashPassword(json.password, saltBuffer));
         if (!isValidPassword) {
             return genericResponse({
                 res,
                 result: null,
-                stringResult: "Password does not match",
+                stringResult: "password does not match",
                 exception: null,
                 pagination: null,
                 statusCode: statusCodes.NOT_FOUND,
             });
         }
-        item.Salt = crypto.randomBytes(16).toString("base64");
-        saltBuffer = Buffer.from(item.Salt, "base64");
+        item.salt = crypto.randomBytes(16).toString("base64");
+        saltBuffer = Buffer.from(item.salt, "base64");
 
-        item.Password = await hashPassword(json.NewPassword, saltBuffer);
-        item.PasswordValidFrom = moment().unix();
-        item.ForcePasswordChange = false;
+        item.password = await hashPassword(json.newPassword, saltBuffer);
+        item.passwordValidFrom = moment().unix();
+        item.forcePasswordChange = false;
 
         let result = await genericUpdate({
             Table,
@@ -644,11 +467,11 @@ export async function userUpdatePassword(userId, password, req, res) {
             return false;
         }
 
-        item.Salt = crypto.randomBytes(16).toString("base64");
-        let saltBuffer = Buffer.from(item.Salt, "base64");
+        item.salt = crypto.randomBytes(16).toString("base64");
+        let saltBuffer = Buffer.from(item.salt, "base64");
 
-        item.Password = await hashPassword(password, saltBuffer);
-        item.PasswordValidFrom = moment().unix();
+        item.password = await hashPassword(password, saltBuffer);
+        item.passwordValidFrom = moment().unix();
 
         let result = await genericUpdate({
             Table,
@@ -667,14 +490,14 @@ export async function getOne(req, res, next) {
     try {
         let selectFields = {
             id: true,
-            Username: true,
-            LastLoginDateTime: true,
-            UserRoles: {
+            username: true,
+            lastLoginDateTime: true,
+            userRoles: {
                 select: {
-                    Role: {
+                    role: {
                         select: {
                             id: true,
-                            Name: true,
+                            name: true,
                         },
                     },
                 },
@@ -709,7 +532,7 @@ export async function getAll(req, res, next) {
         const json = req.body;
         let condition = {isDeleted: false};
         if (json.searchString) {
-            condition.UserProfile = {
+            condition.userProfile = {
                 Name: {
                     contains: json.searchString,
                     mode: "insensitive",
@@ -718,14 +541,14 @@ export async function getAll(req, res, next) {
         }
         let selectFields = {
             id: true,
-            Username: true,
-            LastLoginDateTime: true,
-            UserRole: {
+            username: true,
+            lastLoginDateTime: true,
+            userRole: {
                 select: {
-                    Role: {
+                    role: {
                         select: {
                             id: true,
-                            Name: true,
+                            name: true,
                         },
                     },
                 },
@@ -781,14 +604,14 @@ export async function getCount(req, res, next) {
     }
 }
 
-async function hashPassword(Password, Salt) {
-    if (Salt && Password) {
+export async function hashPassword(password, salt) {
+    if (salt && password) {
         const check = crypto
-            .pbkdf2Sync(Password, Salt, 10000, 64, "sha1")
+            .pbkdf2Sync(password, salt, 10000, 64, "sha1")
             .toString("base64");
         return check;
     }
-    return Password;
+    return password;
 }
 
 async function checkApiAccess(user, req) {
@@ -803,8 +626,8 @@ async function checkApiAccess(user, req) {
         }
 
         let userAccessApiModules = lodash
-            .flatten(user.UserRole.map(x => x.Role.APIModuleRoleAccess))
-            .map(x => x.APIModule);
+            .flatten(user.userRole.map(x => x.role.apiModuleRoleAccess))
+            .map(x => x.apiModule);
 
         const accessApi = userAccessApiModules.find(
             x => x.Route === noParamsRoute && x.Method === method,
@@ -814,14 +637,14 @@ async function checkApiAccess(user, req) {
             return false;
         }
 
-        let userRoleIds = user.UserRole.map(x => x.RoleId);
+        let userRoleIds = user.userRole.map(x => x.roleId);
         let condition = {
-            APIModuleId: accessApi.id,
-            RoleId: {in: userRoleIds},
+            apiModuleId: accessApi.id,
+            roleId: {in: userRoleIds},
         };
 
         const apiModuleRoleAccess = await genericGetOne({
-            Table: "APIModuleRoleAccess",
+            Table: "apiModuleRoleAccess",
             condition,
             pageNumber: 1,
             pageLimit: -1,
@@ -845,45 +668,4 @@ async function checkApiDataAccess(user, req, accessApi) {
     //     return true;
     // }
     // return true;
-}
-
-async function getControllingOffices(userID, res) {
-    try {
-        const userIDgiven = userID;
-
-        const result = await prisma.$queryRaw`WITH RECURSIVE ControllingOffices 
-        AS(SELECT "id","Name" FROM "Office" WHERE "id" = ${res.locals.OfficerID}
-            UNION ALL
-            SELECT ofc."id",ofc."Name" FROM "Office" Ofc
-            INNER JOIN ControllingOffices ctrl
-            ON ofc."ReportingOfficeID" = ctrl."id"
-           ) 
-           SELECT * FROM ControllingOffices`;
-
-        const ControllingOffices = [];
-        result.forEach(x => {
-            ControllingOffices.push(x.id);
-        });
-        return ControllingOffices;
-
-        // result.forEach(x => {
-        //     console.log(x.id +" " +x.Name);
-        // })
-    } catch (e) {
-        throw new Error(e);
-    }
-}
-
-export async function getAuto(req, res, next) {
-    try {
-        return genericResponse({
-            res,
-            result: "2",
-            exception: null,
-            pagination: null,
-            statusCode: statusCodes.SUCCESS,
-        });
-    } catch (error) {
-        return next(error);
-    }
 }

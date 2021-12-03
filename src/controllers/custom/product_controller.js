@@ -76,7 +76,7 @@ export async function getOne(req, res, next) {
         let selectFields = {
             id: true,
             name: true,
-            image: true,
+
             price: true,
             description: true,
             stock: true,
@@ -98,7 +98,7 @@ export async function getOne(req, res, next) {
                 },
             },
             sellerId: true,
-            seller: {
+            sellerProfile: {
                 where: {
                     isDeleted: false,
                 },
@@ -108,10 +108,7 @@ export async function getOne(req, res, next) {
                     lastName: true,
                     email: true,
                     userId: true,
-                    user: {
-                        where: {
-                            isDeleted: false,
-                        },
+                    product: {
                         select: {
                             id: true,
                             name: true,
@@ -207,8 +204,8 @@ export async function getAll(req, res, next) {
                     },
                 },
             },
-            sellerId: true,
-            seller: {
+            sellerProfileId: true,
+            sellerProfile: {
                 where: {
                     isDeleted: false,
                 },
@@ -219,9 +216,6 @@ export async function getAll(req, res, next) {
                     email: true,
                     userId: true,
                     user: {
-                        where: {
-                            isDeleted: false,
-                        },
                         select: {
                             id: true,
                             name: true,

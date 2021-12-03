@@ -85,7 +85,7 @@ export async function getOne(req, res, next) {
                     name: true,
                     price: true,
                     description: true,
-                    image: true,
+
                     color: true,
                     categoryId: true,
 
@@ -106,9 +106,9 @@ export async function getOne(req, res, next) {
                             },
                         },
                     },
-                    sellerId: true,
+                    sellerProfileId: true,
 
-                    seller: {
+                    sellerProfile: {
                         where: {
                             isDeleted: false,
                         },
@@ -119,9 +119,6 @@ export async function getOne(req, res, next) {
                             email: true,
                             userId: true,
                             user: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,
@@ -184,9 +181,6 @@ export async function getOne(req, res, next) {
                     email: true,
                     userId: true,
                     user: {
-                        where: {
-                            isDeleted: false,
-                        },
                         select: {
                             id: true,
                             name: true,
@@ -274,7 +268,7 @@ export async function getAll(req, res, next) {
                     name: true,
                     price: true,
                     description: true,
-                    image: true,
+
                     color: true,
                     categoryId: true,
 
@@ -295,9 +289,9 @@ export async function getAll(req, res, next) {
                             },
                         },
                     },
-                    sellerId: true,
+                    sellerProfileId: true,
 
-                    seller: {
+                    sellerProfile: {
                         where: {
                             isDeleted: false,
                         },
@@ -308,9 +302,6 @@ export async function getAll(req, res, next) {
                             email: true,
                             userId: true,
                             user: {
-                                where: {
-                                    isDeleted: false,
-                                },
                                 select: {
                                     id: true,
                                     name: true,
@@ -376,9 +367,6 @@ export async function getAll(req, res, next) {
                     email: true,
                     userId: true,
                     user: {
-                        where: {
-                            isDeleted: false,
-                        },
                         select: {
                             id: true,
                             name: true,
@@ -458,7 +446,7 @@ export async function getAll(req, res, next) {
 export async function getCount(req, res, next) {
     try {
         const json = req.body;
-        let condition = {IsDeleted: false};
+        let condition = {isDeleted: false};
 
         let count = await genericGetCount({
             Table,
