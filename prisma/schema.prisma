@@ -191,7 +191,6 @@ model userRole {
   user   user @relation(fields: [userId], references: [id])
 }
 
-<<<<<<< HEAD
 model productImage {
   id        Int      @id @default(autoincrement())
   image     String
@@ -216,8 +215,6 @@ model user {
   userRole            userRole[]
 }
 
-=======
->>>>>>> a5780dd4faa1a9ea31b70a225b570912363710ac
 model apiModule {
   id                  Int                   @id @default(autoincrement())
   name                String
@@ -238,33 +235,6 @@ model apiModuleRoleAccess {
   @@index([roleId], name: "fki_roleId")
 }
 
-<<<<<<< HEAD
-=======
-model productImage {
-  id        Int      @id @default(autoincrement())
-  image     String
-  productId Int
-  isDeleted Boolean? @default(false)
-  product   product  @relation(fields: [productId], references: [id])
-}
-
-model user {
-  id                  Int               @id @default(autoincrement())
-  name                String?
-  userName            String            @unique
-  password            String?
-  salt                String?
-  forcePasswordChange Boolean?
-  passwordValidFrom   Int?
-  isActive            Boolean?          @default(true)
-  lastLoginDateTime   DateTime?         @db.Timetz(6)
-  isDeleted           Boolean?          @default(false)
-  customerProfile     customerProfile[]
-  sellerProfile       sellerProfile[]
-  userRole            userRole[]
-}
-
->>>>>>> a5780dd4faa1a9ea31b70a225b570912363710ac
 enum method {
   POST
   GET
