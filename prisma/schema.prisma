@@ -37,9 +37,9 @@ model address {
   postalCode      Int?
   landmark        String?
   isDeleted       Boolean          @default(false)
-  stateId         Int              @default(1)
   customerId      Int?
   sellerId        Int?             @default(0)
+  stateId         Int              @default(1)
   customerProfile customerProfile? @relation(fields: [customerId], references: [id])
   district        district         @relation(fields: [districtId], references: [id])
   sellerProfile   sellerProfile?   @relation(fields: [sellerId], references: [id])
@@ -177,8 +177,8 @@ model role {
   id                    Int                   @id @default(autoincrement())
   name                  String
   isDeleted             Boolean               @default(false)
-  userRoles             userRole[]
   apiModuleRoleAccesses apiModuleRoleAccess[]
+  userRoles             userRole[]
 }
 
 model sellerProfile {
