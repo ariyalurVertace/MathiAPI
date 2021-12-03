@@ -38,14 +38,7 @@ model category {
   products         product[]
 }
 
-model district {
-  id        Int       @id @default(autoincrement())
-  name      String
-  stateId   Int
-  isDeleted Boolean   @default(false)
-  state     state     @relation(fields: [stateId], references: [id])
-  addresses address[]
-}
+
 
 model product {
   id             Int             @id @default(autoincrement())
@@ -153,13 +146,7 @@ model sellerProfile {
   products    product[]
 }
 
-model state {
-  id        Int        @id @default(autoincrement())
-  name      String
-  isDeleted Boolean    @default(false)
-  addresses address[]
-  districts district[]
-}
+
 
 model userRole {
   id     Int  @id @default(autoincrement())
