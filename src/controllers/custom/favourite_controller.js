@@ -458,7 +458,7 @@ export async function getAll(req, res, next) {
 export async function getCount(req, res, next) {
     try {
         const json = req.body;
-        let condition = {IsDeleted: false};
+        let condition = {isDeleted: false};
 
         let count = await genericGetCount({
             Table,

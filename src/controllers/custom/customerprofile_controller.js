@@ -9,7 +9,7 @@ import {
 } from "../predefined/generic_controller.js";
 import {statusCodes} from "../../config/constants.js";
 
-const Table = "customerprofile";
+const Table = "customerProfile";
 
 export async function create(req, res, next) {
     try {
@@ -33,14 +33,14 @@ export async function update(req, res, next) {
         let newJson = {...json};
         const item = await genericUpdate({
             Table,
-            condition: {ID: parseInt(req.params.id, 10), IsDeleted: false},
+            condition: {id: parseInt(req.params.id, 10), isDeleted: false},
             json: newJson,
             req,
             res,
         });
         return genericResponse({
             res,
-            result: null,
+            result: item,
             exception: null,
             pagination: null,
             statusCode: item ? statusCodes.SUCCESS : statusCodes.NOT_FOUND,
@@ -54,7 +54,7 @@ export async function remove(req, res, next) {
     try {
         let result = await genericDelete({
             Table,
-            condition: {ID: parseInt(req.params.id, 10), IsDeleted: false},
+            condition: {id: parseInt(req.params.id, 10), isDeleted: false},
             softDelete: true,
             req,
             res,
@@ -74,17 +74,52 @@ export async function remove(req, res, next) {
 export async function getOne(req, res, next) {
     try {
         let selectFields = {
-            ID: true,
-            Name: true,
-            Route: true,
-            Method: true,
+            id: true,
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+            email: true,
+            addressId: true,
+            address: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    addressLine1: true,
+                    addressLine2: true,
+                    districtId: true,
+                    district: {
+                        where: {
+                            isDeleted: false,
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            stateId: true,
+                            state: {
+                                where: {
+                                    isDeleted: false,
+                                },
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                    postalCode: true,
+                    landmark: true,
+                },
+            },
         };
         let includeFields = null;
         let sortConditions = null;
 
         let item = await genericGetOne({
             Table,
-            condition: {ID: parseInt(req.params.id, 10), IsDeleted: false},
+            condition: {id: parseInt(req.params.id, 10), isDeleted: false},
             selectFields,
             includeFields,
             sortConditions,
@@ -105,7 +140,7 @@ export async function getOne(req, res, next) {
 export async function getAll(req, res, next) {
     try {
         const json = req.body;
-        let condition = {IsDeleted: false};
+        let condition = {isDeleted: false};
         let selectFields = {
             id: true,
             firstName: true,
@@ -176,7 +211,7 @@ export async function getAll(req, res, next) {
 export async function getCount(req, res, next) {
     try {
         const json = req.body;
-        let condition = {IsDeleted: false};
+        let condition = {isDeleted: false};
 
         let count = await genericGetCount({
             Table,

@@ -14,8 +14,6 @@ import cronScheduleRouter from "./predefined/cron_schedule_router.js";
 import uploadFilesRouter from "./predefined/fileupload_router.js";
 // import {userResolver} from "../controllers/predefined/user_controller.js";
 
-//CUSTOM
-
 import sellerProfileRouter from "./custom/sellerProfile_router.js";
 import categoryRouter from "./custom/category_router.js";
 import cartRouter from "./custom/cart_router.js";
