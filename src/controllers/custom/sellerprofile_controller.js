@@ -25,7 +25,7 @@ export async function create(req, res, next) {
         let saltBuffer = Buffer.from(salt, "base64");
         const user = {
             name: json.firstName,
-            username: json.phoneNumber.trim().toLowerCase(),
+            userName: json.phoneNumber.trim().toLowerCase(),
             forcePasswordChange: json.forcePasswordChange || false,
             salt,
             password: await hashPassword("123456", saltBuffer),
