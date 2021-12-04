@@ -14,7 +14,7 @@ DROP INDEX "person_name_index";
 ALTER TABLE "Person" DROP COLUMN "IsActive";
 
 -- CreateIndex
-CREATE INDEX "person_mobile_index" ON "Person"("Mobile", "IsDeleted");
+CREATE INDEX "person_mobile_index" ON "Person"("Mobile", "isDeleted");
 
 -- CreateIndex
-CREATE INDEX "person_name_index" ON "Person"("Name", "IsDeleted");
+CREATE INDEX "person_name_index" ON "Person"("Name", "isDeleted");

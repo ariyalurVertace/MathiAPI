@@ -21,7 +21,7 @@ CREATE TABLE "PersonStatus" (
     "id" SERIAL NOT NULL,
     "Name" TEXT NOT NULL,
     "SortOrder" INTEGER NOT NULL,
-    "IsDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY ("id")
 );

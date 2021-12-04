@@ -127,6 +127,7 @@ export async function getAll(req, res, next) {
             name: true,
             addressLine1: true,
             addressLine2: true,
+            stateId: true,
             district: {
                 select: {
                     id: true,
@@ -141,6 +142,8 @@ export async function getAll(req, res, next) {
             },
             postalCode: true,
             landmark: true,
+            sellerId: true,
+            customerId: true,
         };
         let includeFields = null;
         let sortConditions = null;

@@ -8,7 +8,7 @@
 
             <AvForm
               onSubmit={() =>
-                this.delete##MODEL_NAME##(this.state.##MODEL_NAME##.ID)
+                this.delete##MODEL_NAME##(this.state.##MODEL_NAME##.id)
               }
             >
               <ModalBody>

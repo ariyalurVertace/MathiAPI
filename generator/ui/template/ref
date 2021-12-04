@@ -145,7 +145,7 @@ class ##MODEL_NAME## extends Component {
 
               <AvForm
                 onSubmit={() =>
-                  this.delete##MODEL_NAME##(this.state.##MODEL_NAME##.ID)
+                  this.delete##MODEL_NAME##(this.state.##MODEL_NAME##.id)
                 }
               >
                 <ModalBody>
@@ -187,7 +187,7 @@ class ##MODEL_NAME## extends Component {
               toggle={this.toggleManageModal}
             >
               <ModalHeader toggle={this.toggleManageModal}>
-                {this.state.##MODEL_NAME## && this.state.##MODEL_NAME##.ID
+                {this.state.##MODEL_NAME## && this.state.##MODEL_NAME##.id
                   ? "Update E-Beat Location"
                   : "Add E-Beat Location"}
               </ModalHeader>
@@ -228,12 +228,12 @@ class ##MODEL_NAME## extends Component {
                                 isSearchable
                                 options={this.state.##MODEL_FOREIGN_1##}
                                 ClearAction={() => {
-                                  setFieldValue(`##MODEL_FOREIGN_1##ID`, "")
+                                  setFieldValue(`##MODEL_FOREIGN_1##id`, "")
                                 }}
                                 Action={entity => {
                                   if (entity) {
                                     setFieldValue(
-                                      "##MODEL_FOREIGN_1##ID",
+                                      "##MODEL_FOREIGN_1##id",
                                       entity ? entity.value : null
                                     )
                                     setFieldValue(
@@ -242,7 +242,7 @@ class ##MODEL_NAME## extends Component {
                                     )
                                   }
                                 }}
-                                errors={errors.##MODEL_FOREIGN_1##ID}
+                                errors={errors.##MODEL_FOREIGN_1##id}
                               />
                             </FormGroup>
                           </Col>
@@ -272,7 +272,7 @@ class ##MODEL_NAME## extends Component {
                           </Col>
 
                           <FormGroup className="float-right ">
-                            {this.state.##MODEL_NAME##.ID ? (
+                            {this.state.##MODEL_NAME##.id ? (
                               <Button
                                 className={
                                   this.state.buttonAction ? "disabled" : ""

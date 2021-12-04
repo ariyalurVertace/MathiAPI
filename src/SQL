@@ -64,7 +64,7 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 --
 
 CREATE TABLE public."Designation" (
-    "ID" smallint NOT NULL,
+    "id" smallint NOT NULL,
     "Name" text NOT NULL,
     "Rank" smallint NOT NULL
 );
@@ -94,7 +94,7 @@ ALTER TABLE public."Designation_ID_seq" OWNER TO superadmin;
 -- Name: Designation_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."Designation_ID_seq" OWNED BY public."Designation"."ID";
+ALTER SEQUENCE public."Designation_ID_seq" OWNED BY public."Designation"."id";
 
 
 --
@@ -103,7 +103,7 @@ ALTER SEQUENCE public."Designation_ID_seq" OWNED BY public."Designation"."ID";
 --
 
 CREATE TABLE public."EBeatCheckin" (
-    "ID" integer NOT NULL,
+    "id" integer NOT NULL,
     "CheckinBy" smallint NOT NULL,
     "CheckinDate" time with time zone NOT NULL,
     "Lat" double precision NOT NULL,
@@ -121,7 +121,7 @@ ALTER TABLE public."EBeatCheckin" OWNER TO superadmin;
 --
 
 CREATE TABLE public."EBeatLocation" (
-    "ID" smallint NOT NULL,
+    "id" smallint NOT NULL,
     "Name" text NOT NULL,
     "EBeatLocationTypeID" smallint NOT NULL,
     "CreatedBy" smallint NOT NULL,
@@ -144,7 +144,7 @@ ALTER TABLE public."EBeatLocation" OWNER TO superadmin;
 --
 
 CREATE TABLE public."EBeatLocationType" (
-    "ID" smallint NOT NULL,
+    "id" smallint NOT NULL,
     "Name" text NOT NULL
 );
 
@@ -162,7 +162,7 @@ ALTER TABLE public."EBeatLocationType" OWNER TO superadmin;
 --
 
 CREATE TABLE public."FeedbackStatus" (
-    "ID" smallint NOT NULL,
+    "id" smallint NOT NULL,
     "Name" text NOT NULL
 );
 
@@ -191,7 +191,7 @@ ALTER TABLE public."FeedbackStatus_ID_seq" OWNER TO superadmin;
 -- Name: FeedbackStatus_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."FeedbackStatus_ID_seq" OWNED BY public."FeedbackStatus"."ID";
+ALTER SEQUENCE public."FeedbackStatus_ID_seq" OWNED BY public."FeedbackStatus"."id";
 
 
 --
@@ -200,7 +200,7 @@ ALTER SEQUENCE public."FeedbackStatus_ID_seq" OWNED BY public."FeedbackStatus"."
 --
 
 CREATE TABLE public."FeedbackType" (
-    "ID" smallint NOT NULL,
+    "id" smallint NOT NULL,
     "Name" text NOT NULL
 );
 
@@ -229,7 +229,7 @@ ALTER TABLE public."FeedbackType_ID_seq" OWNER TO superadmin;
 -- Name: FeedbackType_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."FeedbackType_ID_seq" OWNED BY public."FeedbackType"."ID";
+ALTER SEQUENCE public."FeedbackType_ID_seq" OWNED BY public."FeedbackType"."id";
 
 
 --
@@ -254,7 +254,7 @@ ALTER TABLE public."Feedback_ID_seq" OWNER TO superadmin;
 -- Name: Feedback_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."Feedback_ID_seq" OWNED BY public."Feedback"."ID";
+ALTER SEQUENCE public."Feedback_ID_seq" OWNED BY public."Feedback"."id";
 
 
 --
@@ -269,7 +269,7 @@ ALTER SEQUENCE public."Feedback_ID_seq" OWNED BY public."Feedback"."ID";
 --
 
 CREATE TABLE public."Office" (
-    "ID" smallint NOT NULL,
+    "id" smallint NOT NULL,
     "AreaID" smallint NOT NULL,
     "ControllingOfficerID" smallint,
     "Name" text NOT NULL,
@@ -305,7 +305,7 @@ ALTER TABLE public."Office_ID_seq" OWNER TO superadmin;
 -- Name: Office_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."Office_ID_seq" OWNED BY public."Office"."ID";
+ALTER SEQUENCE public."Office_ID_seq" OWNED BY public."Office"."id";
 
 
 --
@@ -314,14 +314,14 @@ ALTER SEQUENCE public."Office_ID_seq" OWNED BY public."Office"."ID";
 --
 
 CREATE TABLE public."Officer" (
-    "ID" smallint NOT NULL,
+    "id" smallint NOT NULL,
     "Name" text NOT NULL,
     "DesignationID" smallint NOT NULL,
     "MobileNumber1" text NOT NULL,
     "MobileNumber2" text,
     "OfficeID" smallint,
     "UserID" smallint,
-    "IsDeleted" boolean DEFAULT false
+    "isDeleted" boolean DEFAULT false
 );
 
 
@@ -349,7 +349,7 @@ ALTER TABLE public."Officer_ID_seq" OWNER TO superadmin;
 -- Name: Officer_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."Officer_ID_seq" OWNED BY public."Officer"."ID";
+ALTER SEQUENCE public."Officer_ID_seq" OWNED BY public."Officer"."id";
 
 
 --
@@ -359,8 +359,8 @@ ALTER SEQUENCE public."Officer_ID_seq" OWNED BY public."Officer"."ID";
 
 CREATE TABLE public."Role" (
     "Name" text NOT NULL,
-    "IsDeleted" boolean DEFAULT false NOT NULL,
-    "ID" smallint NOT NULL
+    "isDeleted" boolean DEFAULT false NOT NULL,
+    "id" smallint NOT NULL
 );
 
 
@@ -388,7 +388,7 @@ ALTER TABLE public."Role_ID_seq" OWNER TO superadmin;
 -- Name: Role_ID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."Role_ID_seq" OWNED BY public."Role"."ID";
+ALTER SEQUENCE public."Role_ID_seq" OWNED BY public."Role"."id";
 
 
 --
@@ -399,7 +399,7 @@ ALTER SEQUENCE public."Role_ID_seq" OWNED BY public."Role"."ID";
 CREATE TABLE public."UIModule" (
     id smallint NOT NULL,
     "Name" text NOT NULL,
-    "IsDeleted" boolean DEFAULT false NOT NULL
+    "isDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -415,7 +415,7 @@ CREATE TABLE public."UIModuleComponent" (
     "Name" text NOT NULL,
     "UIModuleId" smallint,
     "IsItemSpecific" boolean DEFAULT false NOT NULL,
-    "IsDeleted" boolean DEFAULT false NOT NULL
+    "isDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -483,9 +483,9 @@ CREATE TABLE public."User" (
     "Salt" text,
     "ForcePasswordChange" boolean,
     "PasswordValidFrom" integer,
-    "ID" smallint NOT NULL,
+    "id" smallint NOT NULL,
     "IsActive" boolean,
-    "IsDeleted" boolean,
+    "isDeleted" boolean,
     "LastLoginDateTime" time with time zone
 );
 
@@ -539,7 +539,7 @@ ALTER SEQUENCE public."UserLoginLog_id_seq" OWNED BY public."UserLoginLog".id;
 --
 
 CREATE TABLE public."UserRole" (
-    "ID" smallint NOT NULL,
+    "id" smallint NOT NULL,
     "UserId" smallint NOT NULL,
     "RoleId" smallint NOT NULL
 );
@@ -569,7 +569,7 @@ ALTER TABLE public."UserRole_id_seq" OWNER TO superadmin;
 -- Name: UserRole_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."UserRole_id_seq" OWNED BY public."UserRole"."ID";
+ALTER SEQUENCE public."UserRole_id_seq" OWNED BY public."UserRole"."id";
 
 
 --
@@ -577,7 +577,7 @@ ALTER SEQUENCE public."UserRole_id_seq" OWNED BY public."UserRole"."ID";
 -- Name: User_ID_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-ALTER TABLE public."User" ALTER COLUMN "ID" ADD GENERATED ALWAYS AS IDENTITY (
+ALTER TABLE public."User" ALTER COLUMN "id" ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME public."User_ID_seq"
     START WITH 1
     INCREMENT BY 1
@@ -589,110 +589,110 @@ ALTER TABLE public."User" ALTER COLUMN "ID" ADD GENERATED ALWAYS AS IDENTITY (
 
 --
 -- TOC entry 3292 (class 2604 OID 16880)
--- Name: APIModule ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: APIModule id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."APIModule" ALTER COLUMN "ID" SET DEFAULT nextval('public."APIModule_ID_seq"'::regclass);
+ALTER TABLE ONLY public."APIModule" ALTER COLUMN "id" SET DEFAULT nextval('public."APIModule_ID_seq"'::regclass);
 
 
 --
 -- TOC entry 3296 (class 2604 OID 16939)
--- Name: APIModuleParameter ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: APIModuleParameter id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."APIModuleParameter" ALTER COLUMN "ID" SET DEFAULT nextval('public."APIModuleParameter_ID_seq"'::regclass);
+ALTER TABLE ONLY public."APIModuleParameter" ALTER COLUMN "id" SET DEFAULT nextval('public."APIModuleParameter_ID_seq"'::regclass);
 
 
 --
 -- TOC entry 3297 (class 2604 OID 16956)
--- Name: APIModuleRoleAccess ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: APIModuleRoleAccess id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."APIModuleRoleAccess" ALTER COLUMN "ID" SET DEFAULT nextval('public."APIModuleRoleAccess_ID_seq"'::regclass);
+ALTER TABLE ONLY public."APIModuleRoleAccess" ALTER COLUMN "id" SET DEFAULT nextval('public."APIModuleRoleAccess_ID_seq"'::regclass);
 
 
 --
 -- TOC entry 3274 (class 2604 OID 16459)
--- Name: Area ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: Area id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 
 
 --
 -- TOC entry 3278 (class 2604 OID 16506)
--- Name: Designation ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: Designation id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Designation" ALTER COLUMN "ID" SET DEFAULT nextval('public."Designation_ID_seq"'::regclass);
+ALTER TABLE ONLY public."Designation" ALTER COLUMN "id" SET DEFAULT nextval('public."Designation_ID_seq"'::regclass);
 
 
 --
 -- TOC entry 3301 (class 2604 OID 17125)
--- Name: EntityState ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: EntityState id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 
 
 --
 -- TOC entry 3302 (class 2604 OID 17136)
--- Name: EntityStateProgress ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: EntityStateProgress id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 
 
 --
 -- TOC entry 3299 (class 2604 OID 17083)
--- Name: Feedback ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: Feedback id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Feedback" ALTER COLUMN "ID" SET DEFAULT nextval('public."Feedback_ID_seq"'::regclass);
+ALTER TABLE ONLY public."Feedback" ALTER COLUMN "id" SET DEFAULT nextval('public."Feedback_ID_seq"'::regclass);
 
 
 --
 -- TOC entry 3283 (class 2604 OID 16561)
--- Name: FeedbackStatus ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: FeedbackStatus id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."FeedbackStatus" ALTER COLUMN "ID" SET DEFAULT nextval('public."FeedbackStatus_ID_seq"'::regclass);
+ALTER TABLE ONLY public."FeedbackStatus" ALTER COLUMN "id" SET DEFAULT nextval('public."FeedbackStatus_ID_seq"'::regclass);
 
 
 --
 -- TOC entry 3282 (class 2604 OID 16539)
--- Name: FeedbackType ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: FeedbackType id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."FeedbackType" ALTER COLUMN "ID" SET DEFAULT nextval('public."FeedbackType_ID_seq"'::regclass);
+ALTER TABLE ONLY public."FeedbackType" ALTER COLUMN "id" SET DEFAULT nextval('public."FeedbackType_ID_seq"'::regclass);
 
 
 --
 -- TOC entry 3276 (class 2604 OID 16473)
--- Name: Level ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: Level id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 
 
 --
 -- TOC entry 3279 (class 2604 OID 16517)
--- Name: Office ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: Office id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Office" ALTER COLUMN "ID" SET DEFAULT nextval('public."Office_ID_seq"'::regclass);
+ALTER TABLE ONLY public."Office" ALTER COLUMN "id" SET DEFAULT nextval('public."Office_ID_seq"'::regclass);
 
 
 --
 -- TOC entry 3280 (class 2604 OID 16528)
--- Name: Officer ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: Officer id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Officer" ALTER COLUMN "ID" SET DEFAULT nextval('public."Officer_ID_seq"'::regclass);
+ALTER TABLE ONLY public."Officer" ALTER COLUMN "id" SET DEFAULT nextval('public."Officer_ID_seq"'::regclass);
 
 
 --
 -- TOC entry 3294 (class 2604 OID 16927)
--- Name: Role ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: Role id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Role" ALTER COLUMN "ID" SET DEFAULT nextval('public."Role_ID_seq"'::regclass);
+ALTER TABLE ONLY public."Role" ALTER COLUMN "id" SET DEFAULT nextval('public."Role_ID_seq"'::regclass);
 
 
 --
@@ -721,10 +721,10 @@ ALTER TABLE ONLY public."UserLoginLog" ALTER COLUMN id SET DEFAULT nextval('publ
 
 --
 -- TOC entry 3298 (class 2604 OID 17031)
--- Name: UserRole ID; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: UserRole id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."UserRole" ALTER COLUMN "ID" SET DEFAULT nextval('public."UserRole_id_seq"'::regclass);
+ALTER TABLE ONLY public."UserRole" ALTER COLUMN "id" SET DEFAULT nextval('public."UserRole_id_seq"'::regclass);
 
 
 --
@@ -733,7 +733,7 @@ ALTER TABLE ONLY public."UserRole" ALTER COLUMN "ID" SET DEFAULT nextval('public
 --
 
 ALTER TABLE ONLY public."APIModuleParameter"
-    ADD CONSTRAINT "APIModuleParameter_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "APIModuleParameter_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -742,7 +742,7 @@ ALTER TABLE ONLY public."APIModuleParameter"
 --
 
 ALTER TABLE ONLY public."APIModuleRoleAccess"
-    ADD CONSTRAINT "APIModuleRoleAccess_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "APIModuleRoleAccess_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -751,7 +751,7 @@ ALTER TABLE ONLY public."APIModuleRoleAccess"
 --
 
 ALTER TABLE ONLY public."APIModule"
-    ADD CONSTRAINT "APIModule_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "APIModule_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -765,7 +765,7 @@ ALTER TABLE ONLY public."APIModule"
 --
 
 ALTER TABLE ONLY public."Designation"
-    ADD CONSTRAINT "Designation_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "Designation_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -774,7 +774,7 @@ ALTER TABLE ONLY public."Designation"
 --
 
 ALTER TABLE ONLY public."EBeatCheckin"
-    ADD CONSTRAINT "EBeatCheckin_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "EBeatCheckin_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -783,7 +783,7 @@ ALTER TABLE ONLY public."EBeatCheckin"
 --
 
 ALTER TABLE ONLY public."EBeatLocationType"
-    ADD CONSTRAINT "EBeatLocationType_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "EBeatLocationType_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -792,7 +792,7 @@ ALTER TABLE ONLY public."EBeatLocationType"
 --
 
 ALTER TABLE ONLY public."EBeatLocation"
-    ADD CONSTRAINT "EBeatLocation_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "EBeatLocation_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -807,7 +807,7 @@ ALTER TABLE ONLY public."EBeatLocation"
 --
 
 ALTER TABLE ONLY public."FeedbackStatus"
-    ADD CONSTRAINT "FeedbackStatus_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "FeedbackStatus_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -816,7 +816,7 @@ ALTER TABLE ONLY public."FeedbackStatus"
 --
 
 ALTER TABLE ONLY public."FeedbackType"
-    ADD CONSTRAINT "FeedbackType_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "FeedbackType_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -825,7 +825,7 @@ ALTER TABLE ONLY public."FeedbackType"
 --
 
 ALTER TABLE ONLY public."Feedback"
-    ADD CONSTRAINT "Feedback_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "Feedback_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -849,7 +849,7 @@ ALTER TABLE ONLY public."Officer"
 --
 
 ALTER TABLE ONLY public."Office"
-    ADD CONSTRAINT "Office_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "Office_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -858,7 +858,7 @@ ALTER TABLE ONLY public."Office"
 --
 
 ALTER TABLE ONLY public."Officer"
-    ADD CONSTRAINT "Officer_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "Officer_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -867,7 +867,7 @@ ALTER TABLE ONLY public."Officer"
 --
 
 ALTER TABLE ONLY public."Role"
-    ADD CONSTRAINT "Role_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "Role_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -909,7 +909,7 @@ ALTER TABLE ONLY public."UserLoginLog"
 --
 
 ALTER TABLE ONLY public."UserRole"
-    ADD CONSTRAINT "UserRole_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "UserRole_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -918,7 +918,7 @@ ALTER TABLE ONLY public."UserRole"
 --
 
 ALTER TABLE ONLY public."User"
-    ADD CONSTRAINT "User_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "User_pkey" PRIMARY KEY ("id");
 
 
 --
@@ -1125,7 +1125,7 @@ CREATE INDEX "fki_UserRole_User" ON public."UserRole" USING btree ("UserId");
 --
 
 ALTER TABLE ONLY public."APIModuleParameter"
-    ADD CONSTRAINT "APIModuleID" FOREIGN KEY ("APIModuleId") REFERENCES public."APIModule"("ID");
+    ADD CONSTRAINT "APIModuleID" FOREIGN KEY ("APIModuleId") REFERENCES public."APIModule"("id");
 
 
 --
@@ -1134,7 +1134,7 @@ ALTER TABLE ONLY public."APIModuleParameter"
 --
 
 ALTER TABLE ONLY public."APIModuleRoleAccess"
-    ADD CONSTRAINT "APIModuleIDFK" FOREIGN KEY ("APIModuleId") REFERENCES public."APIModule"("ID");
+    ADD CONSTRAINT "APIModuleIDFK" FOREIGN KEY ("APIModuleId") REFERENCES public."APIModule"("id");
 
 
 --
@@ -1143,7 +1143,7 @@ ALTER TABLE ONLY public."APIModuleRoleAccess"
 --
 
 ALTER TABLE ONLY public."APIModuleRoleAccess"
-    ADD CONSTRAINT "APIModuleRoleID" FOREIGN KEY ("RoleId") REFERENCES public."Role"("ID");
+    ADD CONSTRAINT "APIModuleRoleID" FOREIGN KEY ("RoleId") REFERENCES public."Role"("id");
 
 
 --
@@ -1152,7 +1152,7 @@ ALTER TABLE ONLY public."APIModuleRoleAccess"
 --
 
 ALTER TABLE ONLY public."Area"
-    ADD CONSTRAINT "AreaLevel" FOREIGN KEY ("LevelID") REFERENCES public."Level"("ID");
+    ADD CONSTRAINT "AreaLevel" FOREIGN KEY ("LevelID") REFERENCES public."Level"("id");
 
 
 --
@@ -1161,7 +1161,7 @@ ALTER TABLE ONLY public."Area"
 --
 
 ALTER TABLE ONLY public."EBeatCheckin"
-    ADD CONSTRAINT "CheckinBy" FOREIGN KEY ("CheckinBy") REFERENCES public."Officer"("ID");
+    ADD CONSTRAINT "CheckinBy" FOREIGN KEY ("CheckinBy") REFERENCES public."Officer"("id");
 
 
 --
@@ -1170,7 +1170,7 @@ ALTER TABLE ONLY public."EBeatCheckin"
 --
 
 ALTER TABLE ONLY public."Office"
-    ADD CONSTRAINT "ControllingOfficer" FOREIGN KEY ("ControllingOfficerID") REFERENCES public."Officer"("ID");
+    ADD CONSTRAINT "ControllingOfficer" FOREIGN KEY ("ControllingOfficerID") REFERENCES public."Officer"("id");
 
 
 --
@@ -1179,7 +1179,7 @@ ALTER TABLE ONLY public."Office"
 --
 
 ALTER TABLE ONLY public."EntityStateProgress"
-    ADD CONSTRAINT "CurrentEntityState" FOREIGN KEY ("CurrentEntityStateID") REFERENCES public."EntityState"("ID") NOT VALID;
+    ADD CONSTRAINT "CurrentEntityState" FOREIGN KEY ("CurrentEntityStateID") REFERENCES public."EntityState"("id") NOT VALID;
 
 
 --
@@ -1188,7 +1188,7 @@ ALTER TABLE ONLY public."EntityStateProgress"
 --
 
 ALTER TABLE ONLY public."EBeatLocation"
-    ADD CONSTRAINT "EBeatLocationActivatedBy" FOREIGN KEY ("ActivatedBy") REFERENCES public."Officer"("ID");
+    ADD CONSTRAINT "EBeatLocationActivatedBy" FOREIGN KEY ("ActivatedBy") REFERENCES public."Officer"("id");
 
 
 --
@@ -1197,7 +1197,7 @@ ALTER TABLE ONLY public."EBeatLocation"
 --
 
 ALTER TABLE ONLY public."EBeatLocation"
-    ADD CONSTRAINT "EBeatLocationCreatedAt" FOREIGN KEY ("CreatedAt") REFERENCES public."Office"("ID");
+    ADD CONSTRAINT "EBeatLocationCreatedAt" FOREIGN KEY ("CreatedAt") REFERENCES public."Office"("id");
 
 
 --
@@ -1206,7 +1206,7 @@ ALTER TABLE ONLY public."EBeatLocation"
 --
 
 ALTER TABLE ONLY public."EBeatLocation"
-    ADD CONSTRAINT "EBeatLocationCreatedBy" FOREIGN KEY ("CreatedBy") REFERENCES public."Officer"("ID");
+    ADD CONSTRAINT "EBeatLocationCreatedBy" FOREIGN KEY ("CreatedBy") REFERENCES public."Officer"("id");
 
 
 --
@@ -1215,7 +1215,7 @@ ALTER TABLE ONLY public."EBeatLocation"
 --
 
 ALTER TABLE ONLY public."EBeatLocation"
-    ADD CONSTRAINT "EBeatLocationType" FOREIGN KEY ("EBeatLocationTypeID") REFERENCES public."EBeatLocationType"("ID");
+    ADD CONSTRAINT "EBeatLocationType" FOREIGN KEY ("EBeatLocationTypeID") REFERENCES public."EBeatLocationType"("id");
 
 
 --
@@ -1224,7 +1224,7 @@ ALTER TABLE ONLY public."EBeatLocation"
 --
 
 ALTER TABLE ONLY public."Feedback"
-    ADD CONSTRAINT "EntityState" FOREIGN KEY ("EntityStateID") REFERENCES public."EntityState"("ID");
+    ADD CONSTRAINT "EntityState" FOREIGN KEY ("EntityStateID") REFERENCES public."EntityState"("id");
 
 
 --
@@ -1233,7 +1233,7 @@ ALTER TABLE ONLY public."Feedback"
 --
 
 ALTER TABLE ONLY public."Feedback"
-    ADD CONSTRAINT "FeedbackType" FOREIGN KEY ("FeedbackTypeID") REFERENCES public."FeedbackType"("ID");
+    ADD CONSTRAINT "FeedbackType" FOREIGN KEY ("FeedbackTypeID") REFERENCES public."FeedbackType"("id");
 
 
 --
@@ -1242,7 +1242,7 @@ ALTER TABLE ONLY public."Feedback"
 --
 
 ALTER TABLE ONLY public."EntityStateProgress"
-    ADD CONSTRAINT "NextEntityState" FOREIGN KEY ("NextEntityStateID") REFERENCES public."EntityState"("ID") NOT VALID;
+    ADD CONSTRAINT "NextEntityState" FOREIGN KEY ("NextEntityStateID") REFERENCES public."EntityState"("id") NOT VALID;
 
 
 --
@@ -1251,7 +1251,7 @@ ALTER TABLE ONLY public."EntityStateProgress"
 --
 
 ALTER TABLE ONLY public."Officer"
-    ADD CONSTRAINT "OfficerDesignation" FOREIGN KEY ("DesignationID") REFERENCES public."Designation"("ID");
+    ADD CONSTRAINT "OfficerDesignation" FOREIGN KEY ("DesignationID") REFERENCES public."Designation"("id");
 
 
 --
@@ -1260,7 +1260,7 @@ ALTER TABLE ONLY public."Officer"
 --
 
 ALTER TABLE ONLY public."Officer"
-    ADD CONSTRAINT "OfficerOffice" FOREIGN KEY ("OfficeID") REFERENCES public."Office"("ID");
+    ADD CONSTRAINT "OfficerOffice" FOREIGN KEY ("OfficeID") REFERENCES public."Office"("id");
 
 
 --
@@ -1269,7 +1269,7 @@ ALTER TABLE ONLY public."Officer"
 --
 
 ALTER TABLE ONLY public."Officer"
-    ADD CONSTRAINT "OfficerUser" FOREIGN KEY ("UserID") REFERENCES public."User"("ID");
+    ADD CONSTRAINT "OfficerUser" FOREIGN KEY ("UserID") REFERENCES public."User"("id");
 
 
 --
@@ -1284,7 +1284,7 @@ ALTER TABLE ONLY public."Officer"
 --
 
 ALTER TABLE ONLY public."Area"
-    ADD CONSTRAINT "SelfReferenceParentArea" FOREIGN KEY ("ParentArea") REFERENCES public."Area"("ID");
+    ADD CONSTRAINT "SelfReferenceParentArea" FOREIGN KEY ("ParentArea") REFERENCES public."Area"("id");
 
 
 --
@@ -1293,7 +1293,7 @@ ALTER TABLE ONLY public."Area"
 --
 
 ALTER TABLE ONLY public."Level"
-    ADD CONSTRAINT "SelfReferenceParentLevel" FOREIGN KEY ("ParentLevel") REFERENCES public."Level"("ID");
+    ADD CONSTRAINT "SelfReferenceParentLevel" FOREIGN KEY ("ParentLevel") REFERENCES public."Level"("id");
 
 
 --
@@ -1302,7 +1302,7 @@ ALTER TABLE ONLY public."Level"
 --
 
 ALTER TABLE ONLY public."Feedback"
-    ADD CONSTRAINT "SubmissionDesignation" FOREIGN KEY ("SubmissionDesignationID") REFERENCES public."Designation"("ID");
+    ADD CONSTRAINT "SubmissionDesignation" FOREIGN KEY ("SubmissionDesignationID") REFERENCES public."Designation"("id");
 
 
 --
@@ -1311,7 +1311,7 @@ ALTER TABLE ONLY public."Feedback"
 --
 
 ALTER TABLE ONLY public."Feedback"
-    ADD CONSTRAINT "SubmissionStation" FOREIGN KEY ("SubmissionStationID") REFERENCES public."Office"("ID");
+    ADD CONSTRAINT "SubmissionStation" FOREIGN KEY ("SubmissionStationID") REFERENCES public."Office"("id");
 
 
 --
@@ -1320,7 +1320,7 @@ ALTER TABLE ONLY public."Feedback"
 --
 
 ALTER TABLE ONLY public."Feedback"
-    ADD CONSTRAINT "SubmittedBy" FOREIGN KEY ("SubmittedByID") REFERENCES public."Officer"("ID");
+    ADD CONSTRAINT "SubmittedBy" FOREIGN KEY ("SubmittedByID") REFERENCES public."Officer"("id");
 
 
 --
@@ -1329,7 +1329,7 @@ ALTER TABLE ONLY public."Feedback"
 --
 
 ALTER TABLE ONLY public."UserRole"
-    ADD CONSTRAINT "UserRole_Role" FOREIGN KEY ("RoleId") REFERENCES public."Role"("ID");
+    ADD CONSTRAINT "UserRole_Role" FOREIGN KEY ("RoleId") REFERENCES public."Role"("id");
 
 
 --
@@ -1338,7 +1338,7 @@ ALTER TABLE ONLY public."UserRole"
 --
 
 ALTER TABLE ONLY public."UserRole"
-    ADD CONSTRAINT "UserRole_User" FOREIGN KEY ("UserId") REFERENCES public."User"("ID");
+    ADD CONSTRAINT "UserRole_User" FOREIGN KEY ("UserId") REFERENCES public."User"("id");
 
 
 -- Completed on 2021-07-08 14:53:36 IST

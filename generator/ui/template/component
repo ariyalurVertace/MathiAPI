@@ -174,8 +174,8 @@
 
   manage##MODEL_NAME## = values => {
     CallService(
-      values.ID ? ##MODEL_NAME_CAMELCASE##.Update + values.ID : ##MODEL_NAME_CAMELCASE##.Create,
-      values.ID ? MethodType.PATCH : MethodType.PUT,
+      values.id ? ##MODEL_NAME_CAMELCASE##.Update + values.id : ##MODEL_NAME_CAMELCASE##.Create,
+      values.id ? MethodType.PATCH : MethodType.PUT,
       false,
       values,
       "",
@@ -187,11 +187,11 @@
     if (data.statusCode === StatusCodes.Success) {
       SuccessMessage(
         "",
-        this.state.##MODEL_NAME##.ID
+        this.state.##MODEL_NAME##.id
           ? "##PAGE_TITLE## Updated Successfully"
           : "##PAGE_TITLE## Added Successfully"
       )
-      if (data && !this.state.##MODEL_NAME##.ID) {
+      if (data && !this.state.##MODEL_NAME##.id) {
         this.setState({
           ##MODEL_NAME##Detail: data.result,
           viewModal: !this.state.viewModal,

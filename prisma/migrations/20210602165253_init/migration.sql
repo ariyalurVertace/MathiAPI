@@ -169,7 +169,7 @@ CREATE TABLE "z_User" (
     "UserProfileId" INTEGER,
     "LastLoggedDateTime" TIMESTAMP(3),
     "IsActive" BOOLEAN NOT NULL DEFAULT true,
-    "IsDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY ("id")
 );
