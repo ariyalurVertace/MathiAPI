@@ -9,7 +9,7 @@ import {
 } from "../predefined/generic_controller.js";
 import {statusCodes} from "../../config/constants.js";
 
-const Table = "customerprofile";
+const Table = "customerProfile";
 
 export async function create(req, res, next) {
     try {
