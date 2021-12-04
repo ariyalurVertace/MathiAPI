@@ -15,7 +15,7 @@ GetAll##MODEL_FOREIGN## = () => {
     if (data.result) {
       this.setState({
         ##MODEL_FOREIGN_CAMELCASE##List: data.result.map(function (a) {
-          return { value: a.ID, label: a.Name }
+          return { value: a.id, label: a.Name }
         }),
       })
     }

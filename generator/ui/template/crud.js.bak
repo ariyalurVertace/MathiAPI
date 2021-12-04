@@ -188,7 +188,7 @@ class EntityState extends Component {
     if (data) {
       let nextEntityStates = []
       nextEntityStates = data.result.map(x => {
-        return { label: x.Name, value: x.ID }
+        return { label: x.Name, value: x.id }
       })
       this.setState({
         nextEntityStatesList: nextEntityStates,
@@ -281,7 +281,7 @@ class EntityState extends Component {
   handleRowClicked = row => {
     if (row) {
       row.NextStates = row.CurrentEntityStateID.map(x => {
-        return { value: x.NextEntityState.ID, label: x.NextEntityState.Name }
+        return { value: x.NextEntityState.id, label: x.NextEntityState.Name }
       })
       this.setState(
         {
@@ -300,8 +300,8 @@ class EntityState extends Component {
   handleSubmit = values => {
     delete values.CurrentEntityStateID
     CallService(
-      values.ID ? entity_state.Update + values.ID : entity_state.Create,
-      values.ID ? MethodType.PATCH : MethodType.PUT,
+      values.id ? entity_state.Update + values.id : entity_state.Create,
+      values.id ? MethodType.PATCH : MethodType.PUT,
       false,
       values,
       "",
@@ -363,7 +363,7 @@ class EntityState extends Component {
   manageEntityStateResponse = data => {
     if (data.statusCode === StatusCodes.Success) {
       SuccessMessage(
-        this.state.entityState.ID
+        this.state.entityState.id
           ? Message("entityState.update.success")
           : Message("entityState.add.success")
       )
@@ -507,7 +507,7 @@ class EntityState extends Component {
                     outline
                     color="primary"
                     onClick={() =>
-                      this.deleteEntityState(this.state.entityState.ID)
+                      this.deleteEntityState(this.state.entityState.id)
                     }
                   >
                     {Message("common.yes")}
@@ -528,7 +528,7 @@ class EntityState extends Component {
               toggle={this.toggleManageModal}
             >
               <ModalHeader toggle={this.toggleManageModal}>
-                {this.state.entityState && this.state.entityState.ID
+                {this.state.entityState && this.state.entityState.id
                   ? Message("entityState.updateState")
                   : Message("entityState.addState")}
               </ModalHeader>
@@ -744,7 +744,7 @@ class EntityState extends Component {
                           </Col>
 
                           <FormGroup className="float-right ">
-                            {this.state.entityState.ID ? (
+                            {this.state.entityState.id ? (
                               <Button
                                 className={
                                   this.state.buttonAction ? "disabled" : ""

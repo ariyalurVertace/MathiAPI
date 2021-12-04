@@ -13,7 +13,7 @@ CREATE TABLE "CenterTypeDiagnosticsSection" (
 CREATE TABLE "PersonCenterTypeStatus" (
     "id" SERIAL NOT NULL,
     "Name" TEXT NOT NULL,
-    "IsDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY ("id")
 );

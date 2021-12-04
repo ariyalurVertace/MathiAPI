@@ -1,2 +1,2 @@
 -- CreateIndex
-CREATE INDEX "center_active_index" ON "Center"("IsActive", "IsDeleted");
+CREATE INDEX "center_active_index" ON "Center"("IsActive", "isDeleted");

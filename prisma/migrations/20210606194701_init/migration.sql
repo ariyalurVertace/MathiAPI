@@ -1,20 +1,20 @@
 -- CreateIndex
-CREATE INDEX "main_apimodule_index" ON "z_APIModule"("id", "IsDeleted");
+CREATE INDEX "main_apimodule_index" ON "z_APIModule"("id", "isDeleted");
 
 -- CreateIndex
-CREATE INDEX "main_apimoduleparameter_index" ON "z_APIModuleParameter"("APIModuleId", "IsDeleted");
+CREATE INDEX "main_apimoduleparameter_index" ON "z_APIModuleParameter"("APIModuleId", "isDeleted");
 
 -- CreateIndex
-CREATE INDEX "main_uimodule_index" ON "z_UIModule"("id", "IsDeleted");
+CREATE INDEX "main_uimodule_index" ON "z_UIModule"("id", "isDeleted");
 
 -- CreateIndex
-CREATE INDEX "main_uimodulecomponent_index" ON "z_UIModuleComponent"("UIModuleId", "IsDeleted");
+CREATE INDEX "main_uimodulecomponent_index" ON "z_UIModuleComponent"("UIModuleId", "isDeleted");
 
 -- CreateIndex
-CREATE INDEX "main_role_index" ON "z_Role"("id", "IsDeleted");
+CREATE INDEX "main_role_index" ON "z_Role"("id", "isDeleted");
 
 -- CreateIndex
-CREATE INDEX "main_user_index" ON "z_User"("Username", "IsActive", "IsDeleted");
+CREATE INDEX "main_user_index" ON "z_User"("Username", "IsActive", "isDeleted");
 
 -- CreateIndex
 CREATE INDEX "user_index" ON "z_UserRole"("UserId");

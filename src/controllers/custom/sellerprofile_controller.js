@@ -1,5 +1,4 @@
-import moment from "moment";
-import crypto from "crypto";
+import JsonQuery from "json-query";
 import {genericResponse} from "../predefined/base_controller.js";
 import {
     genericCreate,
@@ -10,7 +9,6 @@ import {
     genericGetCount,
 } from "../predefined/generic_controller.js";
 import {statusCodes} from "../../config/constants.js";
-import {hashPassword} from "../predefined/user_controller.js";
 
 const Table = "sellerProfile";
 
@@ -28,8 +26,8 @@ export async function create(req, res, next) {
             userName: json.phoneNumber.trim().toLowerCase(),
             forcePasswordChange: json.forcePasswordChange || false,
             salt,
-            password: await hashPassword("123456", saltBuffer),
-            passwordValidFrom: moment().unix(),
+            //password: await hashPassword("123456", saltBuffer),
+            //passwordValidFrom: moment().unix(),
             isDeleted: false,
             isActive: true,
             userRoles: {create: {roleId: role.id}},

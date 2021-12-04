@@ -77,12 +77,6 @@ export async function getOne(req, res, next) {
             id: true,
             name: true,
             parentCategoryId: true,
-            parentCategory: {
-                select: {
-                    id: true,
-                    name: true,
-                },
-            },
         };
         let includeFields = null;
         let sortConditions = null;
@@ -115,12 +109,6 @@ export async function getAll(req, res, next) {
             id: true,
             name: true,
             parentCategoryId: true,
-            parentCategory: {
-                select: {
-                    id: true,
-                    name: true,
-                },
-            },
         };
         let includeFields = null;
         let sortConditions = null;

@@ -41,12 +41,12 @@ const generateCrud = async () => {
             var fieldName = matches[2].trim();
             var dataType = matches[3].trim();
             var others = matches[5].trim();
-            if(fieldName == "ID") continue;
+            if(fieldName == "id") continue;
             fields.push({
                 Name : fieldName, 
                 IsMandatory : dataType.indexOf('?')>0?false:true,
                 DataType : dataType.replace('?',''),
-                IsObjectReference : fieldName.endsWith("ID")?true:false,
+                IsObjectReference : fieldName.endsWith("id")?true:false,
                 IsObject : commonDatatypes.includes(dataType.replace('?',''))?false:true,
                 IsReverseReference : dataType.indexOf('[]')>0?true:false,
             });
@@ -125,13 +125,13 @@ var uiBasicListAdd =
 //     ActivatedDateTime   DateTime?         @db.Timetz(6)
 //     ActivatedByID       Int?              @db.SmallInt
 //     EBeatLocationQR     String?           @db.Uuid
-//     IsDeleted           Boolean?          @default(false)
-//     ID                  Int               @id @default(autoincrement()) @db.SmallInt
+//     isDeleted           Boolean?          @default(false)
+//     id                  Int               @id @default(autoincrement()) @db.SmallInt
 //     CreationDateTime    DateTime?         @db.Timestamptz(6)
-//     ActivatedBy         Officer?          @relation("EBeatLocation_ActivatedByIDToOfficer", fields: [ActivatedByID], references: [ID])
-//     CreatedAtStation    Office            @relation(fields: [CreatedAtStationID], references: [ID])
-//     CreatedBy           User              @relation(fields: [CreatedByID], references: [ID])
-//     EBeatLocationType   EBeatLocationType @relation(fields: [EBeatLocationTypeID], references: [ID])
+//     ActivatedBy         Officer?          @relation("EBeatLocation_ActivatedByIDToOfficer", fields: [ActivatedByID], references: [id])
+//     CreatedAtStation    Office            @relation(fields: [CreatedAtStationID], references: [id])
+//     CreatedBy           User              @relation(fields: [CreatedByID], references: [id])
+//     EBeatLocationType   EBeatLocationType @relation(fields: [EBeatLocationTypeID], references: [id])
 //     EBeatCheckin        EBeatCheckin[]
   
 //     @@index([ActivatedByID], name: "fki_EBeatLocationActivatedBy")

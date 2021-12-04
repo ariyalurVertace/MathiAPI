@@ -89,7 +89,7 @@ CREATE TABLE "Center" (
     "Name" TEXT NOT NULL,
     "CenterType" "CenterType" NOT NULL,
     "IsActive" BOOLEAN NOT NULL DEFAULT true,
-    "IsDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY ("id")
 );
@@ -112,7 +112,7 @@ CREATE TABLE "Person" (
     "Mobile" TEXT NOT NULL,
     "DOB" TIMESTAMP(3),
     "IsActive" BOOLEAN NOT NULL DEFAULT true,
-    "IsDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY ("id")
 );
@@ -150,10 +150,10 @@ CREATE INDEX "centersection_main_index" ON "CenterSection"("CenterType");
 CREATE UNIQUE INDEX "Center.Name_unique" ON "Center"("Name");
 
 -- CreateIndex
-CREATE INDEX "center_main_index" ON "Center"("CenterType", "IsActive", "IsDeleted");
+CREATE INDEX "center_main_index" ON "Center"("CenterType", "IsActive", "isDeleted");
 
 -- CreateIndex
-CREATE INDEX "center_name_index" ON "Center"("Name", "IsActive", "IsDeleted");
+CREATE INDEX "center_name_index" ON "Center"("Name", "IsActive", "isDeleted");
 
 -- CreateIndex
 CREATE INDEX "centersectionfieldvalue_main_index" ON "CenterSectionFieldValue"("CenterId");
@@ -162,10 +162,10 @@ CREATE INDEX "centersectionfieldvalue_main_index" ON "CenterSectionFieldValue"("
 CREATE UNIQUE INDEX "Person.Mobile_unique" ON "Person"("Mobile");
 
 -- CreateIndex
-CREATE INDEX "person_mobile_index" ON "Person"("Mobile", "IsActive", "IsDeleted");
+CREATE INDEX "person_mobile_index" ON "Person"("Mobile", "IsActive", "isDeleted");
 
 -- CreateIndex
-CREATE INDEX "person_name_index" ON "Person"("Name", "IsActive", "IsDeleted");
+CREATE INDEX "person_name_index" ON "Person"("Name", "IsActive", "isDeleted");
 
 -- CreateIndex
 CREATE INDEX "personsectionfieldvalue_main_index" ON "PersonSectionFieldValue"("PersonId");
