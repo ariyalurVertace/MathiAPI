@@ -11,6 +11,43 @@ import {statusCodes} from "../../config/constants.js";
 
 const Table = "cart";
 
+let selectFields = {
+    id: true,
+    product: {
+        where: {
+            isDeleted: false,
+        },
+        select: {
+            id: true,
+            name: true,
+            price: true,
+            description: true,
+            color: true,
+            category: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+            sellerProfile: {
+                where: {
+                    isDeleted: false,
+                },
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                },
+            },
+        },
+    },
+    customerId: true,
+};
+
 export async function create(req, res, next) {
     try {
         const json = req.body;
@@ -73,173 +110,6 @@ export async function remove(req, res, next) {
 
 export async function getOne(req, res, next) {
     try {
-        let selectFields = {
-            id: true,
-            productId: true,
-            product: {
-                where: {
-                    isDeleted: false,
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    price: true,
-                    description: true,
-                    image: true,
-                    color: true,
-                    categoryId: true,
-
-                    category: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            name: true,
-                            parentCategoryId: true,
-
-                            parentCategory: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
-                    sellerId: true,
-
-                    seller: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            firstName: true,
-                            lastName: true,
-                            email: true,
-                            userId: true,
-                            user: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    password: true,
-                                    forcePasswordChange: true,
-                                    passwordValidFrom: true,
-                                    isActive: true,
-                                    lastLoginDateTime: true,
-                                },
-                            },
-                            addressId: true,
-
-                            address: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    addressLine1: true,
-                                    addressLine2: true,
-                                    districtId: true,
-
-                                    district: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                            stateId: true,
-
-                                            state: {
-                                                where: {
-                                                    isDeleted: false,
-                                                },
-                                                select: {
-                                                    id: true,
-                                                    name: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    postalCode: true,
-                                    landMark: true,
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            customerId: true,
-
-            customer: {
-                where: {
-                    isDeleted: false,
-                },
-                select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    phoneNumber: true,
-                    email: true,
-                    userId: true,
-                    user: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            name: true,
-                            password: true,
-                            forcePasswordChange: true,
-                            passwordValidFrom: true,
-                            isActive: true,
-                            lastLoginDateTime: true,
-                        },
-                    },
-                    addressId: true,
-
-                    address: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            name: true,
-                            addressLine1: true,
-                            addressLine2: true,
-                            districtId: true,
-
-                            district: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    stateId: true,
-
-                                    state: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                        },
-                                    },
-                                },
-                            },
-                            postalCode: true,
-                            landMark: true,
-                        },
-                    },
-                },
-            },
-        };
         let includeFields = null;
         let sortConditions = null;
 
@@ -273,173 +143,7 @@ export async function getAll(req, res, next) {
                 categoryId: json.categoryId,
             },
         };
-        let selectFields = {
-            id: true,
-            productId: true,
-            product: {
-                where: {
-                    isDeleted: false,
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    price: true,
-                    description: true,
-                    image: true,
-                    color: true,
-                    categoryId: true,
 
-                    category: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            name: true,
-                            parentCategoryId: true,
-
-                            parentCategory: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
-                    sellerId: true,
-
-                    seller: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            firstName: true,
-                            lastName: true,
-                            email: true,
-                            userId: true,
-                            user: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    password: true,
-                                    forcePasswordChange: true,
-                                    passwordValidFrom: true,
-                                    isActive: true,
-                                    lastLoginDateTime: true,
-                                },
-                            },
-                            addressId: true,
-
-                            address: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    addressLine1: true,
-                                    addressLine2: true,
-                                    districtId: true,
-
-                                    district: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                            stateId: true,
-
-                                            state: {
-                                                where: {
-                                                    isDeleted: false,
-                                                },
-                                                select: {
-                                                    id: true,
-                                                    name: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    postalCode: true,
-                                    landMark: true,
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            customerId: true,
-
-            customer: {
-                where: {
-                    isDeleted: false,
-                },
-                select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    phoneNumber: true,
-                    email: true,
-                    userId: true,
-                    user: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            name: true,
-                            password: true,
-                            forcePasswordChange: true,
-                            passwordValidFrom: true,
-                            isActive: true,
-                            lastLoginDateTime: true,
-                        },
-                    },
-                    addressId: true,
-
-                    address: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            name: true,
-                            addressLine1: true,
-                            addressLine2: true,
-                            districtId: true,
-
-                            district: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    stateId: true,
-
-                                    state: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                        },
-                                    },
-                                },
-                            },
-                            postalCode: true,
-                            landMark: true,
-                        },
-                    },
-                },
-            },
-        };
         let includeFields = null;
         let sortConditions = null;
 

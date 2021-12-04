@@ -88,7 +88,7 @@ export async function getOne(req, res, next) {
                     name: true,
                     price: true,
                     description: true,
-                    image: true,
+
                     color: true,
                     categoryId: true,
 
@@ -100,18 +100,11 @@ export async function getOne(req, res, next) {
                             id: true,
                             name: true,
                             parentCategoryId: true,
-
-                            parentCategory: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
                         },
                     },
-                    sellerId: true,
+                    sellerProfileId: true,
 
-                    seller: {
+                    sellerProfile: {
                         where: {
                             isDeleted: false,
                         },
@@ -121,54 +114,8 @@ export async function getOne(req, res, next) {
                             lastName: true,
                             email: true,
                             userId: true,
-                            user: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    password: true,
-                                    forcePasswordChange: true,
-                                    passwordValidFrom: true,
-                                    isActive: true,
-                                    lastLoginDateTime: true,
-                                },
-                            },
+
                             addressId: true,
-
-                            address: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    addressLine1: true,
-                                    addressLine2: true,
-                                    districtId: true,
-
-                                    district: {
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                            stateId: true,
-
-                                            state: {
-                                                where: {
-                                                    isDeleted: false,
-                                                },
-                                                select: {
-                                                    id: true,
-                                                    name: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    postalCode: true,
-                                    landMark: true,
-                                },
-                            },
                         },
                     },
                 },
@@ -187,9 +134,6 @@ export async function getOne(req, res, next) {
                     email: true,
                     userId: true,
                     user: {
-                        where: {
-                            isDeleted: false,
-                        },
                         select: {
                             id: true,
                             name: true,
@@ -286,10 +230,7 @@ export async function getAll(req, res, next) {
                     name: true,
                     price: true,
                     description: true,
-                    image: true,
                     color: true,
-                    categoryId: true,
-
                     category: {
                         where: {
                             isDeleted: false,
@@ -297,19 +238,9 @@ export async function getAll(req, res, next) {
                         select: {
                             id: true,
                             name: true,
-                            parentCategoryId: true,
-
-                            parentCategory: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
                         },
                     },
-                    sellerId: true,
-
-                    seller: {
+                    sellerProfile: {
                         where: {
                             isDeleted: false,
                         },
@@ -318,118 +249,7 @@ export async function getAll(req, res, next) {
                             firstName: true,
                             lastName: true,
                             email: true,
-                            userId: true,
-                            user: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    password: true,
-                                    forcePasswordChange: true,
-                                    passwordValidFrom: true,
-                                    isActive: true,
-                                    lastLoginDateTime: true,
-                                },
-                            },
                             addressId: true,
-
-                            address: {
-                                where: {
-                                    isDeleted: false,
-                                },
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    addressLine1: true,
-                                    addressLine2: true,
-                                    districtId: true,
-
-                                    district: {
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                            stateId: true,
-
-                                            state: {
-                                                where: {
-                                                    isDeleted: false,
-                                                },
-                                                select: {
-                                                    id: true,
-                                                    name: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    postalCode: true,
-                                    landMark: true,
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            customerId: true,
-
-            customer: {
-                where: {
-                    isDeleted: false,
-                },
-                select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    phoneNumber: true,
-                    email: true,
-                    userId: true,
-                    user: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            name: true,
-                            password: true,
-                            forcePasswordChange: true,
-                            passwordValidFrom: true,
-                            isActive: true,
-                            lastLoginDateTime: true,
-                        },
-                    },
-                    addressId: true,
-
-                    address: {
-                        where: {
-                            isDeleted: false,
-                        },
-                        select: {
-                            id: true,
-                            name: true,
-                            addressLine1: true,
-                            addressLine2: true,
-                            districtId: true,
-
-                            district: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    stateId: true,
-
-                                    state: {
-                                        where: {
-                                            isDeleted: false,
-                                        },
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                        },
-                                    },
-                                },
-                            },
-                            postalCode: true,
-                            landMark: true,
                         },
                     },
                 },
@@ -464,7 +284,7 @@ export async function getAll(req, res, next) {
 export async function getCount(req, res, next) {
     try {
         const json = req.body;
-        let condition = {IsDeleted: false};
+        let condition = {isDeleted: false};
 
         let count = await genericGetCount({
             Table,
