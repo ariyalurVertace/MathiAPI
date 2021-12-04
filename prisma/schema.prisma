@@ -53,7 +53,7 @@ model category {
   image            String?    @default(dbgenerated("false"))
   description      String?
   isDeleted        Boolean    @default(false)
-  category         category?  @relation("categoryTocategory_parentCategoryId", fields: [parentCategoryId], references: [id])
+  parentCategory   category?  @relation("categoryTocategory_parentCategoryId", fields: [parentCategoryId], references: [id])
   categories       category[] @relation("categoryTocategory_parentCategoryId")
   products         product[]
 }
