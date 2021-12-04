@@ -263,7 +263,13 @@ export async function getOne(req, res, next) {
 export async function getAll(req, res, next) {
     try {
         const json = req.body;
-        let condition = {isDeleted: false};
+        let condition = {
+            customerId: res.locals.customerId,
+            isDeleted: false,
+            product: {
+                categoryId: json.categoryId,
+            },
+        };
         let selectFields = {
             id: true,
             shippingDate: true,
