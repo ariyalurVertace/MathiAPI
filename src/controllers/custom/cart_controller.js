@@ -14,38 +14,25 @@ const Table = "cart";
 let selectFields = {
     id: true,
     product: {
-        where: {
-            isDeleted: false,
-        },
         select: {
             id: true,
             name: true,
             price: true,
             description: true,
-            color: true,
-            category: {
-                where: {
-                    isDeleted: false,
-                },
-                select: {
-                    id: true,
-                    name: true,
-                },
-            },
-            sellerProfile: {
-                where: {
-                    isDeleted: false,
-                },
-                select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                },
-            },
+            stock: true,
+            categoryId: true,
+            count: true,
         },
     },
-    customerId: true,
+    customerId: {
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+            email: true,
+        },
+    },
 };
 
 export async function create(req, res, next) {
@@ -77,7 +64,7 @@ export async function update(req, res, next) {
         });
         return genericResponse({
             res,
-            result: null,
+            result: item,
             exception: null,
             pagination: null,
             statusCode: item ? statusCodes.SUCCESS : statusCodes.NOT_FOUND,
