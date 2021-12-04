@@ -14,6 +14,10 @@ const Table = "product";
 export async function create(req, res, next) {
     try {
         const json = req.body;
+        const productImage = {
+            image: json.image1,
+        };
+        json.productImage = {create: productImage};
         const item = await genericCreate({Table, json, req, res});
         return genericResponse({
             res,
