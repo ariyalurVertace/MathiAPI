@@ -9,21 +9,21 @@ datasource db {
 }
 
 model address {
-  id              Int              @id @default(autoincrement())
-  name            String
-  addressLine1    String
-  addressLine2    String?
-  districtId      Int
-  postalCode      Int?
-  landmark        String?
-  isDeleted       Boolean          @default(false)
-  customerId      Int?
-  sellerId        Int?             @default(0)
-  stateId         Int              @default(1)
-  customer        customerProfile? @relation(fields: [customerId], references: [id])
-  district        district         @relation(fields: [districtId], references: [id])
-  seller          sellerProfile?   @relation(fields: [sellerId], references: [id])
-  state           state            @relation(fields: [stateId], references: [id])
+  id           Int              @id @default(autoincrement())
+  name         String
+  addressLine1 String
+  addressLine2 String?
+  districtId   Int
+  postalCode   Int?
+  landmark     String?
+  isDeleted    Boolean          @default(false)
+  customerId   Int?
+  sellerId     Int?             @default(0)
+  stateId      Int              @default(1)
+  customer     customerProfile? @relation(fields: [customerId], references: [id])
+  district     district         @relation(fields: [districtId], references: [id])
+  seller       sellerProfile?   @relation(fields: [sellerId], references: [id])
+  state        state            @relation(fields: [stateId], references: [id])
 }
 
 model banner {
@@ -67,7 +67,7 @@ model customerProfile {
   isDeleted      Boolean         @default(false)
   userId         Int
   user           user            @relation(fields: [userId], references: [id])
-  addresses        address[]
+  addresses      address[]
   carts          cart[]
   favourites     favourite[]
   orders         order[]
@@ -137,7 +137,7 @@ model product {
   carts          cart[]
   favourites     favourite[]
   orders         order[]
-  productImages   productImage[]
+  productImages  productImage[]
   productReviews productReview[]
 }
 
@@ -154,24 +154,24 @@ model productReview {
 }
 
 model role {
-  id                  Int                   @id @default(autoincrement())
-  name                String
-  isDeleted           Boolean               @default(false)
+  id                    Int                   @id @default(autoincrement())
+  name                  String
+  isDeleted             Boolean               @default(false)
   apiModuleRoleAccesses apiModuleRoleAccess[]
-  userRoles           userRole[]
+  userRoles             userRole[]
 }
 
 model sellerProfile {
   id          Int       @id @default(autoincrement())
   firstName   String
   lastName    String
-  phoneNumber Int
   email       String
   isApproved  Boolean?  @default(false)
   isDeleted   Boolean?  @default(false)
   userId      Int
+  phoneNumber String
   user        user      @relation(fields: [userId], references: [id])
-  addresses     address[]
+  addresses   address[]
   products    product[]
 }
 
@@ -179,7 +179,7 @@ model state {
   id        Int        @id @default(autoincrement())
   name      String
   isDeleted Boolean    @default(false)
-  addresses  address[]
+  addresses address[]
   districts district[]
 }
 
@@ -203,24 +203,24 @@ model user {
   id                  Int               @id @default(autoincrement())
   name                String?
   userName            String            @unique
-  password            String
-  salt                String
-  forcePasswordChange Boolean
+  password            String?
+  salt                String?
+  forcePasswordChange Boolean?
   passwordValidFrom   Int?
-  isActive            Boolean          @default(true)
+  isActive            Boolean?          @default(true)
   lastLoginDateTime   DateTime?         @db.Timetz(6)
-  isDeleted           Boolean          @default(false)
+  isDeleted           Boolean?          @default(false)
   customerProfile     customerProfile[]
   sellerProfile       sellerProfile[]
   userRole            userRole[]
 }
 
 model apiModule {
-  id                  Int                   @id @default(autoincrement())
-  name                String
-  route               String                @unique
-  method              method?
-  isDeleted           Boolean               @default(false)
+  id                    Int                   @id @default(autoincrement())
+  name                  String
+  route                 String                @unique
+  method                method?
+  isDeleted             Boolean               @default(false)
   apiModuleRoleAccesses apiModuleRoleAccess[]
 }
 
